@@ -124,10 +124,10 @@
     <div class="section-container">
         <div class="section-left">
             <ul class="link-list">
-                <li><a href="about.html" target="content-frame">about</a></li>
-                <li><a href="archive.html" target="content-frame">archive</a></li>
+                <li><a id="about" href="about.html" target="content-frame">about</a></li>
+                <li><a id="archive" href="archive.html" target="content-frame">archive</a></li>
                 <li>
-                    <a href="Writings.html" target="content-frame">writings</a>
+                    <a id="writings" href="Writings.html" target="content-frame">writings</a>
                 </li>
             </ul>
         </div>
@@ -189,6 +189,102 @@
             clearInterval(intervalId);
             textElement.textContent = originalText;
         });
+
+        const navTranslations = {
+            about: [
+                '소개', // Korean
+                'acerca de', // Spanish
+                'a propos', // French
+                'uber uns', // German
+                '概要', // Japanese
+                '关于', // Chinese
+                'informazioni', // Italian
+                'sobre', // Portuguese
+                'о нас', // Russian
+                'حول', // Arabic
+                'परिचय', // Hindi
+                'om', // Norwegian
+                'درباره', // Farsi
+                'เกี่ยวกับ', // Thai
+                'тухай', // Mongolian
+                'परिचय', // Nepali
+                'အကြောင်း', // Burmese
+                'អំពី', // Khmer
+                'gioi thieu' // Vietnamese
+            ],
+            archive: [
+                '아카이브', // Korean
+                'archivo', // Spanish
+                'archive', // French
+                'archiv', // German
+                'アーカイブ', // Japanese
+                '档案', // Chinese
+                'archivio', // Italian
+                'arquivo', // Portuguese
+                'архив', // Russian
+                'أرشيف', // Arabic
+                'संग्रह', // Hindi
+                'arkiv', // Norwegian
+                'آرشیو', // Farsi
+                'คลังเก็บ', // Thai
+                'архив', // Mongolian
+                'अभिलेख', // Nepali
+                'မှတ်တမ်းတိုက်', // Burmese
+                'បណ្ណសារ', // Khmer
+                'luu tru' // Vietnamese
+            ],
+            writings: [
+                '글', // Korean
+                'escritos', // Spanish
+                'ecrits', // French
+                'schriften', // German
+                '執筆', // Japanese
+                '写作', // Chinese
+                'scritti', // Italian
+                'escritos', // Portuguese
+                'тексты', // Russian
+                'كتابات', // Arabic
+                'लेखन', // Hindi
+                'skrifter', // Norwegian
+                'نوشته‌ها', // Farsi
+                'งานเขียน', // Thai
+                'бичвэрүүд', // Mongolian
+                'लेखनहरू', // Nepali
+                'ရေးသားချက်များ', // Burmese
+                'អត្ថបទ', // Khmer
+                'bai viet' // Vietnamese
+            ]
+        };
+
+        function attachCyclingTranslations(id, originalText, translationList) {
+            const element = document.getElementById(id);
+            if (!element) {
+                return;
+            }
+
+            let navIntervalId;
+
+            element.addEventListener('mouseenter', function() {
+                const shuffled = [...translationList];
+                shuffleArray(shuffled);
+                let index = 0;
+                element.textContent = shuffled[index];
+
+                navIntervalId = setInterval(() => {
+                    index = (index + 1) % shuffled.length;
+                    element.textContent = shuffled[index];
+                }, 800);
+            });
+
+            element.addEventListener('mouseleave', function() {
+                clearInterval(navIntervalId);
+                element.textContent = originalText;
+            });
+        }
+
+        attachCyclingTranslations('about', 'about', navTranslations.about);
+        attachCyclingTranslations('archive', 'archive', navTranslations.archive);
+        attachCyclingTranslations('writings', 'writings', navTranslations.writings);
     </script>
 </body>
 </html>
