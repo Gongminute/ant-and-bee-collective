@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700");
+        @font-face {
+          font-family: "Dusseldot";
+          src: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/108082/Dusseldot-variable-web.woff2")
+              format("woff2 supports variations"),
+            url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/108082/Dusseldot-variable-web.woff2")
+              format("woff2-variations");
+          font-display: swap;
+          font-weight: 5 5;
+        }
+
+        #text {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+        #body-text {
+            display: block;
+            position: relative;
+            margin-top: 20px;
+        }
+        #body-text span {
+          font-size: 20px;
+          font-family: "Dusseldot";
+          text-shadow: -5px 6px 13px rgba(150, 150, 150, 1);
+          color: black;
+          font-weight: 250;
+          display: inline;
+          margin-right: 4px;
+          font-variation-settings: "wdth" 50;
+        }
+        #body-text span:hover {
+          animation: pulse 20s 1s infinite 
+        }
+
+        @keyframes pulse {
+          0% {
+            font-variation-settings: "wdth" 50;
+          }
+          20% {
+            font-variation-settings: "wdth" 145;
+          }
+          30% {
+            font-variation-settings: "wdth" 155;
+          }
+          50% {
+            font-variation-settings: "wdth" 250;
+          }
+          70% {
+            font-variation-settings: "wdth" 155;
+          }
+          80% {
+            font-variation-settings: "wdth" 145;
+          }
+          100% {
+            font-variation-settings: "wdth" 50;
+          }
+        }
+
+        @keyframes spin2 {
+          0% {
+            font-variation-settings: "wdth" 50;
+          }
+          20% {
+            font-variation-settings: "wdth" 145;
+          }
+          30% {
+            font-variation-settings: "wdth" 155;
+          }
+          50% {
+            font-variation-settings: "wdth" 250;
+          }
+          70% {
+            font-variation-settings: "wdth" 155;
+          }
+          80% {
+            font-variation-settings: "wdth" 145;
+          }
+          100% {
+            font-variation-settings: "wdth" 50;
+          }
+        }
+
+        @keyframes spin3 {
+          0% {
+            font-variation-settings: "wdth" 50;
+          }
+          20% {
+            font-variation-settings: "wdth" 145;
+          }
+          30% {
+            font-variation-settings: "wdth" 155;
+          }
+          50% {
+            font-variation-settings: "wdth" 250;
+          }
+          70% {
+            font-variation-settings: "wdth" 155;
+          }
+          80% {
+            font-variation-settings: "wdth" 145;
+          }
+          100% {
+            font-variation-settings: "wdth" 50;
+          }
+        }
+
+        @keyframes spin4 {
+          0% {
+            font-variation-settings: "wdth" 50;
+          }
+          20% {
+            font-variation-settings: "wdth" 145;
+          }
+          30% {
+            font-variation-settings: "wdth" 155;
+          }
+          50% {
+            font-variation-settings: "wdth" 250;
+          }
+          70% {
+            font-variation-settings: "wdth" 155;
+          }
+          80% {
+            font-variation-settings: "wdth" 145;
+          }
+          100% {
+            font-variation-settings: "wdth" 50;
+          }
+        }
+
+        @keyframes spin5 {
+          0% {
+            font-variation-settings: "wdth" 50;
+          }
+          20% {
+            font-variation-settings: "wdth" 145;
+          }
+          30% {
+            font-variation-settings: "wdth" 155;
+          }
+          50% {
+            font-variation-settings: "wdth" 250;
+          }
+          70% {
+            font-variation-settings: "wdth" 155;
+          }
+          80% {
+            font-variation-settings: "wdth" 145;
+          }
+          100% {
+            font-variation-settings: "wdth" 50;
+          }
+        }
+
+       
+    </style>
+</head>
+<body>
+    <div id="body-text">
+        <span>testing the text, not sure what to do here. </span>
+        <br>
+        <br>
+        <span>what to do with this space. I am just testing the ant texts.</span>
+      
+    </div>
+
+    <script>
+       
+
+
+        textElement.addEventListener('mouseenter', function() {
+            shuffleArray(translations);
+            let index = 0;
+            textElement.textContent = translations[index];
+            intervalId = setInterval(() => {
+                index = (index + 1) % translations.length;
+                textElement.textContent = translations[index];
+            }, 800);
+        });
+
+    </script>
+</body>
+</html>

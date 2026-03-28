@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ant and bee collective</title>
+    <style>
+        :root {
+            --header-height: 72px;
+        }
+        body {
+            margin: 0;
+            position: relative;
+            min-height: 100vh;
+            padding-top: var(--header-height);
+            box-sizing: border-box;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            background-color: #000000;
+            transform: translateX(-0.5px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        #title {
+            text-decoration: none;
+            color: #ffffff;
+            display: block;
+            min-height: 50px;
+            padding: 10px;
+        }
+        .title-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: #000000;
+            z-index: 1000;
+        }
+        .fixed-line {
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            right: 0;
+            margin: 0;
+        }
+        .section-container {
+            display: flex;
+            position: relative;
+            min-height: calc(100vh - var(--header-height));
+            z-index: 1;
+        }
+        .section-left, .section-right {
+            width: 50%;
+            padding: 10px;
+            border: none;
+            box-sizing: border-box;
+        }
+        .section-left {
+            padding: 16px;
+        }
+        .section-left h2 {
+            margin-top: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .link-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .link-list li {
+            margin-bottom: 10px;
+        }
+        .link-list a {
+            color: #000000;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+        }
+        .link-list a:hover {
+            border-bottom-color: #000000;
+        }
+        .child-links {
+            padding-left: 16px;
+            list-style: none;
+            margin: 4px 0 4px 0;
+            font-size: 0.9em;
+        }
+        .child-links li {
+            margin-bottom: 6px;
+        }
+        .child-links a {
+            color: #555;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+        }
+        .child-links a:hover {
+            border-bottom-color: #555;
+        }
+        .section-right {
+            padding: 0;
+        }
+        .content-frame {
+            display: block;
+            width: 100%;
+            min-height: calc(100vh - var(--header-height));
+            border: none;
+            background: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="title-container">
+        <a id="title" href="index.html">ant and bee collective</a>
+        <hr class="fixed-line">
+    </div>
+
+    <div class="section-container">
+        <div class="section-left">
+            <ul class="link-list">
+                <li><a href="about.html" target="content-frame">about</a></li>
+                <li><a href="archive.html" target="content-frame">archive</a></li>
+                <li>
+                    <a href="Writings.html" target="content-frame">writings</a>
+                </li>
+            </ul>
+        </div>
+        <div class="section-right">
+            <iframe
+                class="content-frame"
+                name="content-frame"
+                src="about:blank"
+                title="Linked content panel"
+            ></iframe>
+        </div>
+    </div>
+
+    <script>
+        const textElement = document.getElementById('title');
+        const originalText = 'ant and bee collective';
+        const translations = [
+            '창작집단 개미와 꿀벌', // Korean
+            'Colectivo de Hormiga y Abeja', // Spanish
+            'Collectif Fourmi et Abeille', // French
+            'Ameise und Biene Kollektiv', // German
+            'アリと蜂の集団', // Japanese
+            '蚂蚁和蜜蜂集体', // Chinese
+            'Collettivo Formica e Ape', // Italian
+            'Coletivo Formiga e Abelha', // Portuguese
+            'Коллектив Муравья и Пчелы', // Russian
+            'مجموعة النملة والنحلة', // Arabic
+            'चींटी और मधुमक्खी समूह', // Hindi
+            'Maur og Bi Kollektiv', // Norwegian
+            'مجموعه مورچه و زنبور', // Farsi
+            'กลุ่มมดและผึ้ง', // Thai
+            'Шоргоолж ба Зөгийний Цугларалт', // Mongolian
+            'कमिला र भमराको समूह', // Nepali
+            'ပုရွက်နှင့် လူးကောင်အဖွဲ့', // Burmese
+            'ក្រុមខ្យងនិងឃ្លោក', // Khmer
+            'Tập thể Kiến và Ong' // Vietnamese
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        let intervalId;
+
+        textElement.addEventListener('mouseenter', function() {
+            shuffleArray(translations);
+            let index = 0;
+            textElement.textContent = translations[index];
+            intervalId = setInterval(() => {
+                index = (index + 1) % translations.length;
+                textElement.textContent = translations[index];
+            }, 800);
+        });
+
+        textElement.addEventListener('mouseleave', function() {
+            clearInterval(intervalId);
+            textElement.textContent = originalText;
+        });
+    </script>
+</body>
+</html>

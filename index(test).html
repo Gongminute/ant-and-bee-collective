@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ant and bee collective</title>
+    <style>
+        #text {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+    <a id="text" href="main.html">ant and bee collective</a>
+
+    <script>
+        const textElement = document.getElementById('text');
+        const originalText = 'ant and bee collective';
+        const translations = [
+            '창작집단 개미와 꿀벌', // Korean
+            'Colectivo de Hormiga y Abeja', // Spanish
+            'Collectif Fourmi et Abeille', // French
+            'Ameise und Biene Kollektiv', // German
+            'アリと蜂の集団', // Japanese
+            '蚂蚁和蜜蜂集体', // Chinese
+            'Collettivo Formica e Ape', // Italian
+            'Coletivo Formiga e Abelha', // Portuguese
+            'Коллектив Муравья и Пчелы', // Russian
+            'مجموعة النملة والنحلة', // Arabic
+            'चींटी और मधुमक्खी समूह', // Hindi
+            'Maur og Bi Kollektiv', // Norwegian
+            'مجموعه مورچه و زنبور', // Farsi
+            'กลุ่มมดและผึ้ง', // Thai
+            'Шоргоолж ба Зөгийний Цугларалт', // Mongolian
+            'कमिला र भमराको समूह', // Nepali
+            'ပုရွက်နှင့် လူးကောင်အဖွဲ့', // Burmese
+            'ក្រុមខ្យងនិងឃ្លោក', // Khmer
+            'Tập thể Kiến và Ong' // Vietnamese
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        let intervalId;
+
+        textElement.addEventListener('mouseenter', function() {
+            shuffleArray(translations);
+            let index = 0;
+            textElement.textContent = translations[index];
+            intervalId = setInterval(() => {
+                index = (index + 1) % translations.length;
+                textElement.textContent = translations[index];
+            }, 800);
+        });
+
+        textElement.addEventListener('mouseleave', function() {
+            clearInterval(intervalId);
+            textElement.textContent = originalText;
+        });
+    </script>
+</body>
+</html>
