@@ -1,17 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Writings Archive</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Writings</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --paper: #ffffff;
+            --ink: #292929;
+            --shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+            --edge: rgba(0, 0, 0, 0.08);
+            --card-width: 188px;
+            --card-height: 266px;
+            --card-count: 6;
+            --collapsed-step: 28px;
+            --expanded-step: 28px;
+            --slant-step: 15px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 15% 12%, rgba(255, 255, 255, 0.35), transparent 28%),
+                radial-gradient(circle at 88% 80%, rgba(255, 255, 255, 0.28), transparent 32%),
+                var(--bg);
+            color: var(--ink);
+            font-family: "Noto Serif KR", "Iowan Old Style", "Century", serif;
+        }
+
+        main {
+            width: 100%;
+            margin: 0 auto;
+            padding: 4rem 1.5rem 6rem;
+        }
+
+        .thumb-grid {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: calc(var(--card-width) + (var(--slant-step) * (var(--card-count) - 1)));
+            min-height: calc(var(--card-height) + (var(--expanded-step) * (var(--card-count) - 1)));
+            position: relative;
+            margin-left: auto;
+            margin-right: 4vw;
+        }
+
+        .thumb-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--card-width);
+            list-style: none;
+            transform: translateX(calc(var(--slant-step) * var(--index))) translateY(calc(var(--collapsed-step) * var(--index)));
+            transition: transform 320ms ease;
+        }
+
+        .thumb-item:nth-child(1) {
+            --index: 0;
+            z-index: 1;
+        }
+
+        .thumb-item:nth-child(2) {
+            --index: 1;
+            z-index: 2;
+        }
+
+        .thumb-item:nth-child(3) {
+            --index: 2;
+            z-index: 3;
+        }
+
+        .thumb-item:nth-child(4) {
+            --index: 3;
+            z-index: 4;
+        }
+
+        .thumb-item:nth-child(5) {
+            --index: 4;
+            z-index: 5;
+        }
+
+        .thumb-item:nth-child(6) {
+            --index: 5;
+            z-index: 6;
+        }
+
+        .thumb-grid:hover .thumb-item,
+        .thumb-grid:focus-within .thumb-item {
+            transform: translateX(calc(var(--slant-step) * var(--index))) translateY(calc(var(--expanded-step) * var(--index)));
+        }
+
+        .thumb-card {
+            display: block;
+            width: var(--card-width);
+            min-height: var(--card-height);
+            text-decoration: none;
+            color: inherit;
+            background: var(--paper);
+            border: 1px solid var(--edge);
+            box-shadow: var(--shadow);
+            padding: 1rem 0.95rem 1.05rem;
+            transition: transform 260ms ease, box-shadow 260ms ease;
+            will-change: transform;
+        }
+
+        .thumb-card:hover,
+        .thumb-card:focus-visible {
+            transform: translateY(-30px);
+            box-shadow: 0 20px 34px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        .thumb-title {
+            margin: 0 0 0.55rem;
+            font-size: 0.88rem;
+            line-height: 1.25;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
+        .thumb-preview {
+            margin: 0;
+            font-size: 0.76rem;
+            line-height: 1.45;
+            color: rgba(0, 0, 0, 0.84);
+            display: -webkit-box;
+            line-clamp: 9;
+            -webkit-line-clamp: 9;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 10.8em;
+        }
+    </style>
 </head>
 <body>
-    <ul>
-        <li><a href="writings/writing-1.html">Writing Title 1</a></li>
-        <li><a href="writings/writing-2.html">Writing Title 2</a></li>
-        <li><a href="writings/writing-3.html">Writing Title 3</a></li>
-        <li><a href="writings/writing-4.html">Writing Title 4</a></li>
-        <li><a href="writings/writing-5.html">Writing Title 5</a></li>
-    </ul>
+    <main>
+        <ul class="thumb-grid">
+            <li class="thumb-item">
+                <a class="thumb-card" href="writings/writing-1.html" data-source="writings/writing-1.html">
+                    <h2 class="thumb-title">Writing Title 1</h2>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item">
+                <a class="thumb-card" href="writings/writing-2.html" data-source="writings/writing-2.html">
+                    <h2 class="thumb-title">Writing Title 2</h2>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item">
+                <a class="thumb-card" href="writings/writing-3.html" data-source="writings/writing-3.html">
+                    <h2 class="thumb-title">Writing Title 3</h2>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item">
+                <a class="thumb-card" href="writings/writing-4.html" data-source="writings/writing-4.html">
+                    <h2 class="thumb-title">Writing Title 4</h2>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item">
+                <a class="thumb-card" href="writings/writing-5.html" data-source="writings/writing-5.html">
+                    <h2 class="thumb-title">Writing Title 5</h2>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item">
+                <a class="thumb-card" href="writings/writing-6.html" data-source="writings/writing-6.html">
+                    <h2 class="thumb-title">Writing Title 6</h2>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+        </ul>
+    </main>
+
+    <script>
+        const cards = document.querySelectorAll('.thumb-card');
+
+        function cleanPreviewText(rawText) {
+            return rawText
+                .replace(/<!\[CDATA\[/gi, ' ')
+                .replace(/]]>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .replace(/[\r\n]+/g, ' ')
+                .trim();
+        }
+
+        function extractPreviewText(doc) {
+            const bodyClone = doc.body ? doc.body.cloneNode(true) : null;
+
+            if (!bodyClone) {
+                return '';
+            }
+
+            bodyClone.querySelectorAll('script, style, noscript, template, svg').forEach((node) => {
+                node.remove();
+            });
+
+            const textChunks = Array.from(bodyClone.querySelectorAll('h1, h2, h3, p, li, blockquote'))
+                .map((node) => cleanPreviewText(node.textContent || ''))
+                .filter(Boolean);
+
+            if (textChunks.length > 0) {
+                return textChunks.join(' ');
+            }
+
+            return cleanPreviewText(bodyClone.textContent || '');
+        }
+
+        async function hydrateCardPreview(card) {
+            const preview = card.querySelector('.thumb-preview');
+            const title = card.querySelector('.thumb-title');
+            const source = card.getAttribute('data-source');
+
+            try {
+                const response = await fetch(source);
+                if (!response.ok) {
+                    throw new Error('preview fetch failed');
+                }
+
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const bodyText = extractPreviewText(doc);
+                const pageTitle = cleanPreviewText(doc.title || '');
+
+                if (pageTitle && title && title.textContent.startsWith('Writing Title')) {
+                    title.textContent = pageTitle;
+                }
+
+                preview.textContent = bodyText || 'Preview will appear once this page has text content.';
+            } catch (error) {
+                preview.textContent = 'Preview unavailable in this browser context. Click to open the writing.';
+            }
+        }
+
+        cards.forEach((card) => {
+            hydrateCardPreview(card);
+        });
+    </script>
 </body>
 </html>
