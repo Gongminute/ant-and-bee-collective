@@ -3,20 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
+    <title>Writing Title 1</title>
     <style>
-        body {
-            line-height: 1;
-            margin: 0;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
+        :root {
+            --bg: #f6f2eb;
+            --ink: #111111;
+            --cube-size: min(42vw, 300px);
+        }
 
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 280vh;
+            overflow-x: hidden;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Times New Roman", serif;
+        }
+
+        .stage {
+            position: sticky;
+            top: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            perspective: 1400px;
+            perspective-origin: 50% 50%;
+        }
+
+        .cube-wrap {
+            position: relative;
+            width: var(--cube-size);
+            height: var(--cube-size);
+            transform-style: preserve-3d;
+        }
+
+        .cube {
+            position: absolute;
+            inset: 0;
+            transform-style: preserve-3d;
+            transform: rotateX(-18deg) rotateY(24deg);
+            will-change: transform;
+        }
+
+        .face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: var(--ink);
+            background: transparent;
+            border: none;
+            backface-visibility: hidden;
+            overflow: hidden;
+        }
+
+        .face p {
+            margin: 0;
+            font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+            line-height: 1.08;
+            letter-spacing: 0.01em;
+            text-align: center;
+            text-transform: uppercase;
+            word-break: break-word;
+        }
+
+        .face-front {
+            transform: translateZ(calc(var(--cube-size) / 2));
+        }
+
+        .face-back {
+            transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
+        }
+
+        .face-right {
+            transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
+        }
+
+        .face-left {
+            transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
+        }
+
+        .face-top {
+            transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
+        }
+
+        .face-bottom {
+            transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2));
+        }
+
+        @media (max-width: 820px) {
+            :root {
+                --cube-size: min(62vw, 260px);
+            }
+
+            .face {
+                padding: 18px;
+            }
+
+            .face p {
+                font-size: clamp(0.7rem, 2vw, 0.84rem);
+                line-height: 1.04;
+            }
         }
     </style>
 </head>
 <body>
-    <p>개미와 꿀벌 소개 페이지</p>
-    <p>Tell visitors who you are, what you do, and why it matters.</p>
+    <main class="stage" aria-label="Scroll-driven 3D cube">
+        <div class="cube-wrap">
+            <div class="cube" id="scroll-cube">
+                <div class="face face-front">
+                    <p>ant and bee collective ant and bee collective ant and bee collective ant and bee collective</p>
+                </div>
+                <div class="face face-back">
+                    <p>writing writing writing writing writing writing writing writing writing writing writing writing</p>
+                </div>
+                <div class="face face-right">
+                    <p>scroll turn scroll turn scroll turn scroll turn scroll turn scroll turn scroll turn</p>
+                </div>
+                <div class="face face-left">
+                    <p>page body text page body text page body text page body text page body text</p>
+                </div>
+                <div class="face face-top">
+                    <p>dense words dense words dense words dense words dense words dense words dense words</p>
+                </div>
+                <div class="face face-bottom">
+                    <p>cube face cube face cube face cube face cube face cube face cube face cube face</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const cube = document.getElementById('scroll-cube');
+
+        function updateCubeRotation() {
+            const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+            const progress = window.scrollY / scrollable;
+            const rotateX = -18 + progress * 120;
+            const rotateY = 24 + progress * 160;
+            const rotateZ = progress * 18;
+
+            cube.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`;
+        }
+
+        updateCubeRotation();
+        window.addEventListener('scroll', updateCubeRotation, { passive: true });
+        window.addEventListener('resize', updateCubeRotation);
+    </script>
 </body>
 </html>
