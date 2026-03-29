@@ -15,17 +15,12 @@
             padding-top: var(--header-height);
             box-sizing: border-box;
         }
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 1px;
-            background-color: #000000;
-            transform: translateX(-0.5px);
+        body.dragging {
+            cursor: col-resize;
+            user-select: none;
+        }
+        body.dragging .content-frame {
             pointer-events: none;
-            z-index: 0;
         }
         #title {
             text-decoration: none;
@@ -57,13 +52,14 @@
             z-index: 1;
         }
         .section-left, .section-right {
-            width: 50%;
             padding: 10px;
             border: none;
             box-sizing: border-box;
         }
         .section-left {
             padding: 16px;
+            flex: 0 0 50%;
+            min-width: 220px;
         }
         .section-left h2 {
             margin-top: 0;
@@ -105,6 +101,24 @@
         }
         .section-right {
             padding: 0;
+            flex: 1 1 auto;
+            min-width: 220px;
+        }
+        .drag-divider {
+            flex: 0 0 12px;
+            cursor: col-resize;
+            position: relative;
+            z-index: 2;
+        }
+        .drag-divider::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            background: #000000;
+            transform: translateX(-0.5px);
         }
         .content-frame {
             display: block;
@@ -131,6 +145,7 @@
                 </li>
             </ul>
         </div>
+        <div class="drag-divider" id="drag-divider" aria-label="Resize panels" role="separator"></div>
         <div class="section-right">
             <iframe
                 class="content-frame"
@@ -285,6 +300,46 @@
         attachCyclingTranslations('about', 'about', navTranslations.about);
         attachCyclingTranslations('archive', 'archive', navTranslations.archive);
         attachCyclingTranslations('writings', 'writings', navTranslations.writings);
+
+        const sectionContainer = document.querySelector('.section-container');
+        const leftPanel = document.querySelector('.section-left');
+        const dragDivider = document.getElementById('drag-divider');
+        let dragging = false;
+
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function onDrag(event) {
+            if (!dragging) {
+                return;
+            }
+
+            const rect = sectionContainer.getBoundingClientRect();
+            const dividerWidth = dragDivider.offsetWidth;
+            const minPanelWidth = 220;
+            const maxLeft = rect.width - minPanelWidth - dividerWidth;
+
+            const proposedLeftWidth = event.clientX - rect.left - dividerWidth / 2;
+            const nextLeftWidth = clamp(proposedLeftWidth, minPanelWidth, maxLeft);
+
+            leftPanel.style.flexBasis = `${nextLeftWidth}px`;
+        }
+
+        function stopDrag() {
+            dragging = false;
+            document.body.classList.remove('dragging');
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+
+        dragDivider.addEventListener('mousedown', function(event) {
+            event.preventDefault();
+            dragging = true;
+            document.body.classList.add('dragging');
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', stopDrag);
+        });
     </script>
 </body>
 </html>
