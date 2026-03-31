@@ -1,0 +1,13 @@
+{
+  "name": "ant-and-bee-collective",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Admin backend for creating writing pages and updating archive cards.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

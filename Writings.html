@@ -13,7 +13,7 @@
             --edge: rgba(0, 0, 0, 0.08);
             --card-width: 188px;
             --card-height: 266px;
-            --card-count: 6;
+            --card-count: 7;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -38,6 +38,28 @@
             width: 100%;
             margin: 0 auto;
             padding: 4rem 1.5rem 6rem;
+        }
+
+        .tag-toolbar {
+            display: flex;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+            margin: 0 0 1.2rem;
+        }
+
+        .tag-filter-btn {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            background: #fbfbfa;
+            color: var(--ink);
+            padding: 0.26rem 0.56rem;
+            font-size: 0.76rem;
+            cursor: pointer;
+        }
+
+        .tag-filter-btn.is-active {
+            background: #1f3d2f;
+            border-color: #1f3d2f;
+            color: #fff;
         }
 
         .thumb-grid {
@@ -125,6 +147,21 @@
             letter-spacing: 0.01em;
         }
 
+        .thumb-tags {
+            display: flex;
+            gap: 0.28rem;
+            flex-wrap: wrap;
+            margin: 0 0 0.45rem;
+        }
+
+        .tag-pill {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            padding: 0.08rem 0.34rem;
+            font-size: 0.67rem;
+            line-height: 1.2;
+            background: rgba(255, 255, 255, 0.85);
+        }
+
         .thumb-preview {
             margin: 0;
             font-size: 0.76rem;
@@ -137,52 +174,100 @@
             overflow: hidden;
             min-height: 10.8em;
         }
+
+        .tag-stacks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 0.7rem;
+        }
+
+        .tag-stack {
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            background: #fafaf9;
+            padding: 0.7rem;
+        }
+
+        .tag-stack h3 {
+            margin: 0 0 0.55rem;
+            font-size: 0.84rem;
+            font-weight: 600;
+        }
+
+        .tag-stack .thumb-grid {
+            margin-right: 0;
+            margin-left: 0;
+        }
+
+        .tag-stack .thumb-card:hover,
+        .tag-stack .thumb-card:focus-visible {
+            transform: translateY(-12px);
+        }
     </style>
 </head>
 <body>
     <main>
+        <div id="tag-toolbar" class="tag-toolbar"></div>
         <ul class="thumb-grid">
-            <li class="thumb-item">
-                <a class="thumb-card" href="writings/writing-1.html" data-source="writings/writing-1.html">
+            <li class="thumb-item" style="--index: 0; z-index: 1;">
+                <a class="thumb-card" href="writings/writing-1.html" data-source="writings/writing-1.html" data-tags="" data-id="1">
                     <h2 class="thumb-title">Writing Title 1</h2>
+                    
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
-            <li class="thumb-item">
-                <a class="thumb-card" href="writings/writing-2.html" data-source="writings/writing-2.html">
+            <li class="thumb-item" style="--index: 1; z-index: 2;">
+                <a class="thumb-card" href="writings/writing-2.html" data-source="writings/writing-2.html" data-tags="" data-id="2">
                     <h2 class="thumb-title">Writing Title 2</h2>
+                    
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
-            <li class="thumb-item">
-                <a class="thumb-card" href="writings/writing-3.html" data-source="writings/writing-3.html">
+            <li class="thumb-item" style="--index: 2; z-index: 3;">
+                <a class="thumb-card" href="writings/writing-3.html" data-source="writings/writing-3.html" data-tags="" data-id="3">
                     <h2 class="thumb-title">Writing Title 3</h2>
+                    
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
-            <li class="thumb-item">
-                <a class="thumb-card" href="writings/writing-4.html" data-source="writings/writing-4.html">
+            <li class="thumb-item" style="--index: 3; z-index: 4;">
+                <a class="thumb-card" href="writings/writing-4.html" data-source="writings/writing-4.html" data-tags="" data-id="4">
                     <h2 class="thumb-title">Writing Title 4</h2>
+                    
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
-            <li class="thumb-item">
-                <a class="thumb-card" href="writings/writing-5.html" data-source="writings/writing-5.html">
+            <li class="thumb-item" style="--index: 4; z-index: 5;">
+                <a class="thumb-card" href="writings/writing-5.html" data-source="writings/writing-5.html" data-tags="" data-id="5">
                     <h2 class="thumb-title">Writing Title 5</h2>
+                    
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
-            <li class="thumb-item">
-                <a class="thumb-card" href="writings/writing-6.html" data-source="writings/writing-6.html">
-                    <h2 class="thumb-title">Writing Title 6</h2>
+            <li class="thumb-item" style="--index: 5; z-index: 6;">
+                <a class="thumb-card" href="writings/writing-6.html" data-source="writings/writing-6.html" data-tags="" data-id="6">
+                    <h2 class="thumb-title">Writing Title 5</h2>
+                    
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 6; z-index: 7;">
+                <a class="thumb-card" href="writings/writing-7.html" data-source="writings/writing-7.html" data-tags="" data-id="7">
+                    <h2 class="thumb-title">testing backend 1</h2>
+                    
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
         </ul>
+        <section id="tag-stacks" class="tag-stacks" hidden></section>
     </main>
 
     <script>
-        const cards = document.querySelectorAll('.thumb-card');
+        const cards = Array.from(document.querySelectorAll('.thumb-card'));
+        const toolbar = document.getElementById('tag-toolbar');
+        const rootGrid = document.querySelector('.thumb-grid');
+        const tagStacks = document.getElementById('tag-stacks');
+        const activeTags = new Set();
 
         function cleanPreviewText(rawText) {
             return rawText
@@ -243,9 +328,114 @@
             }
         }
 
+        function parseTags(card) {
+            return (card.dataset.tags || '')
+                .split('|')
+                .map((tag) => tag.trim())
+                .filter(Boolean);
+        }
+
+        function allTags() {
+            const set = new Set();
+            cards.forEach((card) => {
+                parseTags(card).forEach((tag) => set.add(tag));
+            });
+            return Array.from(set).sort((a, b) => a.localeCompare(b));
+        }
+
+        function cardRecord(card) {
+            const titleEl = card.querySelector('.thumb-title');
+            const previewEl = card.querySelector('.thumb-preview');
+            return {
+                title: titleEl ? titleEl.textContent : '',
+                href: card.getAttribute('href') || '',
+                source: card.getAttribute('data-source') || '',
+                tags: parseTags(card),
+                preview: previewEl ? previewEl.textContent : 'Loading preview...'
+            };
+        }
+
+        function renderTagStacks() {
+            if (activeTags.size === 0) {
+                rootGrid.hidden = false;
+                tagStacks.hidden = true;
+                tagStacks.innerHTML = '';
+                return;
+            }
+
+            rootGrid.hidden = true;
+            tagStacks.hidden = false;
+
+            const records = cards.map((card) => cardRecord(card));
+
+            tagStacks.innerHTML = Array.from(activeTags).map((tag) => {
+                const entries = records.filter((record) => record.tags.includes(tag));
+
+                if (!entries.length) {
+                    return `<article class="tag-stack"><h3>#${tag}</h3><p>No entries yet.</p></article>`;
+                }
+
+                const markup = entries.map((entry, index) => `
+                    <li class="thumb-item" style="--index: ${index}; z-index: ${index + 1};">
+                        <a class="thumb-card" href="${entry.href}" data-source="${entry.source}" data-tags="${entry.tags.join('|')}">
+                            <h2 class="thumb-title">${entry.title}</h2>
+                            <p class="thumb-tags">${entry.tags.map((t) => `<span class="tag-pill">${t}</span>`).join('')}</p>
+                            <p class="thumb-preview">${entry.preview}</p>
+                        </a>
+                    </li>
+                `).join('');
+
+                return `
+                    <article class="tag-stack">
+                        <h3>#${tag}</h3>
+                        <ul class="thumb-grid" style="--card-count: ${entries.length};">${markup}</ul>
+                    </article>
+                `;
+            }).join('');
+
+            tagStacks.querySelectorAll('.thumb-card').forEach((card) => {
+                hydrateCardPreview(card);
+            });
+        }
+
+        function renderTagToolbar() {
+            const tags = allTags();
+
+            if (!tags.length) {
+                toolbar.innerHTML = '';
+                return;
+            }
+
+            toolbar.innerHTML = tags.map((tag) => {
+                const activeClass = activeTags.has(tag) ? ' is-active' : '';
+                return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">#${tag}</button>`;
+            }).join('');
+
+            toolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const tag = button.getAttribute('data-tag');
+                    if (!tag) {
+                        return;
+                    }
+
+                    if (activeTags.has(tag)) {
+                        activeTags.delete(tag);
+                    } else {
+                        activeTags.add(tag);
+                    }
+
+                    renderTagToolbar();
+                    renderTagStacks();
+                });
+            });
+        }
+
         cards.forEach((card) => {
             hydrateCardPreview(card);
         });
+
+        renderTagToolbar();
+        renderTagStacks();
     </script>
 </body>
 </html>
