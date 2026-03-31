@@ -4,15 +4,19 @@
     <title>Writings Archive</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Bagel+Fat+One&family=Dokdo&family=Dongle&family=East+Sea+Dokdo&family=Gaegu&family=Gamja+Flower&family=Gasoek+One&family=Gothic+A1&family=Gowun+Batang&family=Grandiflora+One&family=Gugi&family=Hahmlet:wght@100..900&family=Jua&family=Kirang+Haerang&family=Moirai+One&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Gothic+Coding&family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Song+Myung&family=Sunflower:wght@300&family=Yeon+Sung&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
     <style>
         :root {
             --bg: #ffffff;
             --paper: #ffffff;
             --ink: #292929;
-            --shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             --edge: rgba(0, 0, 0, 0.08);
-            --card-width: 188px;
-            --card-height: 266px;
+            --card-width: 164px;
+            --card-height: 236px;
             --card-count: 7;
             --collapsed-step: 28px;
             --expanded-step: 28px;
@@ -44,7 +48,14 @@
             display: flex;
             gap: 0.45rem;
             flex-wrap: wrap;
+            align-items: center;
             margin: 0 0 1.2rem;
+        }
+
+        .toolbar-right {
+            margin-left: auto;
+            display: inline-flex;
+            gap: 0.45rem;
         }
 
         .tag-filter-btn {
@@ -68,12 +79,47 @@
             color: #fff;
         }
 
+        .tag-filter-btn.is-ant-hill {
+            background: #fbfbfa;
+            border-color: rgba(0, 0, 0, 0.2);
+            color: var(--ink);
+        }
+
+        .tag-filter-btn.is-ant-hill.is-active {
+            background: #1f3d2f;
+            border-color: #1f3d2f;
+            color: #fff;
+        }
+
+        #tunnel-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: visible;
+        }
+
+        #tunnel-svg path {
+            fill: none;
+            stroke: #c0c0c0;
+            stroke-width: 0.5;
+            stroke-linecap: round;
+        }
+
+        #tunnel-svg .ant-dot {
+            fill: #000;
+            shape-rendering: crispEdges;
+        }
+
         .thumb-grid {
             list-style: none;
             margin: 0;
             padding: 0;
             width: min(1200px, 100%);
-            min-height: 72vh;
+            min-height: 115vh;
             position: relative;
             margin-left: auto;
             margin-right: auto;
@@ -89,6 +135,12 @@
             list-style: none;
             transform: translate3d(var(--x, 0px), var(--y, 0px), 0) rotate(var(--r, 0deg));
             transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms), z-index 120ms linear;
+            cursor: grab;
+        }
+
+        .thumb-item.is-dragging {
+            cursor: grabbing;
+            transition: none;
         }
 
         .thumb-item.is-stacked {
@@ -96,15 +148,15 @@
         }
 
         .thumb-card {
-            display: block;
+            display: flex;
+            flex-direction: column;
             width: var(--card-width);
             min-height: var(--card-height);
             text-decoration: none;
             color: inherit;
             background: var(--paper);
-            border: 1px solid var(--edge);
             box-shadow: var(--shadow);
-            padding: 1rem 0.95rem 1.05rem;
+            padding: 0.72rem 0.68rem 0.74rem;
             transition: transform 260ms ease, box-shadow 260ms ease;
             will-change: transform;
         }
@@ -112,36 +164,47 @@
         .thumb-card:hover,
         .thumb-card:focus-visible {
             transform: translateY(-18px);
-            box-shadow: 0 20px 34px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
             outline: none;
         }
 
         .thumb-title {
             margin: 0 0 0.55rem;
-            font-size: 0.88rem;
+            font-size: 0.76rem;
             line-height: 1.25;
             font-weight: 600;
             letter-spacing: 0.01em;
+            order: 1;
+        }
+
+        .thumb-byline {
+            margin: 0 0 0.42rem;
+            font-size: 0.62rem;
+            line-height: 1.25;
+            color: rgba(0, 0, 0, 0.64);
+            order: 2;
         }
 
         .thumb-tags {
             display: flex;
             gap: 0.28rem;
             flex-wrap: wrap;
-            margin: 0 0 0.45rem;
+            margin: 0;
+            margin-top: auto;
+            order: 4;
         }
 
         .tag-pill {
             border: 1px solid rgba(0, 0, 0, 0.2);
             padding: 0.08rem 0.34rem;
-            font-size: 0.67rem;
+            font-size: 0.6rem;
             line-height: 1.2;
             background: rgba(255, 255, 255, 0.85);
         }
 
         .thumb-preview {
             margin: 0;
-            font-size: 0.76rem;
+            font-size: 0.67rem;
             line-height: 1.45;
             color: rgba(0, 0, 0, 0.84);
             display: -webkit-box;
@@ -149,7 +212,8 @@
             -webkit-line-clamp: 9;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            min-height: 10.8em;
+            min-height: 8.4em;
+            order: 3;
         }
 
         .stack-label {
@@ -170,50 +234,57 @@
         <div id="tag-toolbar" class="tag-toolbar"></div>
         <ul class="thumb-grid">
             <li class="thumb-item" style="--index: 0; z-index: 1;">
-                <a class="thumb-card" href="writings/writing-1.html" data-source="writings/writing-1.html" data-tags="에세이" data-id="1">
+                <a class="thumb-card" href="writings/writing-1.html" data-source="writings/writing-1.html" data-tags="에세이" data-author="Unknown" data-id="1">
                     <h2 class="thumb-title">Writing Title 1</h2>
+                    <p class="thumb-byline">by Unknown</p>
                     <p class="thumb-tags"><span class="tag-pill">에세이</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 1; z-index: 2;">
-                <a class="thumb-card" href="writings/writing-2.html" data-source="writings/writing-2.html" data-tags="에세이" data-id="2">
+                <a class="thumb-card" href="writings/writing-2.html" data-source="writings/writing-2.html" data-tags="에세이" data-author="Unknown" data-id="2">
                     <h2 class="thumb-title">Writing Title 2</h2>
+                    <p class="thumb-byline">by Unknown</p>
                     <p class="thumb-tags"><span class="tag-pill">에세이</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 2; z-index: 3;">
-                <a class="thumb-card" href="writings/writing-3.html" data-source="writings/writing-3.html" data-tags="진" data-id="3">
+                <a class="thumb-card" href="writings/writing-3.html" data-source="writings/writing-3.html" data-tags="진" data-author="Unknown" data-id="3">
                     <h2 class="thumb-title">Writing Title 3</h2>
+                    <p class="thumb-byline">by Unknown</p>
                     <p class="thumb-tags"><span class="tag-pill">진</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 3; z-index: 4;">
-                <a class="thumb-card" href="writings/writing-4.html" data-source="writings/writing-4.html" data-tags="" data-id="4">
+                <a class="thumb-card" href="writings/writing-4.html" data-source="writings/writing-4.html" data-tags="" data-author="Unknown" data-id="4">
                     <h2 class="thumb-title">Writing Title 4</h2>
+                    <p class="thumb-byline">by Unknown</p>
                     
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 4; z-index: 5;">
-                <a class="thumb-card" href="writings/writing-5.html" data-source="writings/writing-5.html" data-tags="poetry" data-id="5">
+                <a class="thumb-card" href="writings/writing-5.html" data-source="writings/writing-5.html" data-tags="poetry" data-author="Unknown" data-id="5">
                     <h2 class="thumb-title">Writing Title 5</h2>
+                    <p class="thumb-byline">by Unknown</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 5; z-index: 6;">
-                <a class="thumb-card" href="writings/writing-6.html" data-source="writings/writing-6.html" data-tags="진" data-id="6">
+                <a class="thumb-card" href="writings/writing-6.html" data-source="writings/writing-6.html" data-tags="진" data-author="Unknown" data-id="6">
                     <h2 class="thumb-title">Writing Title 5</h2>
+                    <p class="thumb-byline">by Unknown</p>
                     <p class="thumb-tags"><span class="tag-pill">진</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 6; z-index: 7;">
-                <a class="thumb-card" href="writings/writing-7.html" data-source="writings/writing-7.html" data-tags="poetry" data-id="7">
+                <a class="thumb-card" href="writings/writing-7.html" data-source="writings/writing-7.html" data-tags="poetry" data-author="Unknown" data-id="7">
                     <h2 class="thumb-title">testing backend 1</h2>
+                    <p class="thumb-byline">by Unknown</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
@@ -229,6 +300,258 @@
         const activeTags = new Set();
         const randomPositions = new Map();
         const LAYOUT_STORAGE_KEY = 'writings-random-layout-v2';
+        let antHillActive = false;
+        let tunnelRafId = null;
+        let dragState = null;
+        let suppressClickUntil = 0;
+
+        function startTunnelLoop() {
+            clearTunnels();
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.id = 'tunnel-svg';
+            rootGrid.insertBefore(svg, rootGrid.firstChild);
+
+            const visible = cardItems.filter((item) => item.style.display !== 'none');
+            const pairs = [];
+            for (let i = 0; i < visible.length - 1; i++) {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                svg.appendChild(path);
+                pairs.push({ path, a: visible[i], b: visible[i + 1] });
+            }
+
+            const ants = [];
+            pairs.forEach(({ path }) => {
+                const antCount = 1 + Math.floor(Math.random() * 4);
+                for (let i = 0; i < antCount; i += 1) {
+                    const ant = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    ant.setAttribute('class', 'ant-dot');
+                    ant.setAttribute('width', '2');
+                    ant.setAttribute('height', '2');
+                    svg.appendChild(ant);
+                    ants.push({
+                        node: ant,
+                        path,
+                        travel: Math.random(),
+                        speed: 13 + Math.random() * 18,
+                        direction: Math.random() < 0.35 ? -1 : 1,
+                        moveRemaining: 0.8 + Math.random() * 1.6,
+                        pauseRemaining: 0,
+                        pauseChance: 0.12 + Math.random() * 0.16,
+                        turnRemaining: 0.7 + Math.random() * 2.3,
+                        turnChance: 0.06 + Math.random() * 0.14,
+                        jitterPhase: Math.random() * Math.PI * 2,
+                        jitterSpeed: 6 + Math.random() * 5,
+                        jitterAmp: 0.25 + Math.random() * 0.65
+                    });
+                }
+            });
+
+            let lastTime = null;
+
+            function frame(timestamp) {
+                if (lastTime === null) {
+                    lastTime = timestamp;
+                }
+                const dt = Math.max(0, (timestamp - lastTime) / 1000);
+                lastTime = timestamp;
+
+                const gridRect = rootGrid.getBoundingClientRect();
+                svg.setAttribute('viewBox', `0 0 ${gridRect.width} ${gridRect.height}`);
+                svg.style.width = gridRect.width + 'px';
+                svg.style.height = gridRect.height + 'px';
+
+                pairs.forEach(({ path, a, b }) => {
+                    const ra = a.getBoundingClientRect();
+                    const rb = b.getBoundingClientRect();
+                    const ax = ra.left - gridRect.left + ra.width / 2;
+                    const ay = ra.top - gridRect.top + ra.height / 2;
+                    const bx = rb.left - gridRect.left + rb.width / 2;
+                    const by = rb.top - gridRect.top + rb.height / 2;
+                    const midX = (ax + bx) / 2;
+                    const dist = Math.hypot(bx - ax, by - ay);
+                    const sag = dist * 0.38;
+                    const cpY = Math.max(ay, by) + sag;
+                    path.setAttribute('d', `M ${ax} ${ay} Q ${midX} ${cpY} ${bx} ${by}`);
+                });
+
+                ants.forEach((antData) => {
+                    const pathLength = antData.path.getTotalLength();
+                    if (!Number.isFinite(pathLength) || pathLength < 1) {
+                        antData.node.setAttribute('visibility', 'hidden');
+                        return;
+                    }
+
+                    antData.node.setAttribute('visibility', 'visible');
+                    if (antData.pauseRemaining > 0) {
+                        antData.pauseRemaining -= dt;
+                        if (antData.pauseRemaining <= 0) {
+                            antData.moveRemaining = 0.7 + Math.random() * 1.7;
+                            antData.turnRemaining = Math.min(antData.turnRemaining, 0.35 + Math.random() * 0.75);
+                        }
+                    } else {
+                        antData.turnRemaining -= dt;
+                        if (antData.turnRemaining <= 0) {
+                            if (Math.random() < antData.turnChance) {
+                                antData.direction *= -1;
+                            }
+                            antData.turnRemaining = 0.7 + Math.random() * 2.3;
+                        }
+
+                        const delta = ((antData.speed * dt) / pathLength) * antData.direction;
+                        antData.travel = (antData.travel + delta + 1) % 1;
+                        antData.moveRemaining -= dt;
+                        if (antData.moveRemaining <= 0) {
+                            if (Math.random() < antData.pauseChance) {
+                                antData.pauseRemaining = 0.15 + Math.random() * 0.55;
+                            } else {
+                                antData.moveRemaining = 0.9 + Math.random() * 1.9;
+                            }
+                        }
+                    }
+
+                    const point = antData.path.getPointAtLength(antData.travel * pathLength);
+                    antData.jitterPhase += dt * antData.jitterSpeed;
+                    const jitter = Math.sin(antData.jitterPhase) * antData.jitterAmp;
+                    antData.node.setAttribute('x', String(Math.round(point.x + jitter)));
+                    antData.node.setAttribute('y', String(Math.round(point.y - jitter)));
+                });
+
+                tunnelRafId = requestAnimationFrame(frame);
+            }
+
+            tunnelRafId = requestAnimationFrame(frame);
+        }
+
+        function clearTunnels() {
+            if (tunnelRafId !== null) {
+                cancelAnimationFrame(tunnelRafId);
+                tunnelRafId = null;
+            }
+            const existing = document.getElementById('tunnel-svg');
+            if (existing) existing.remove();
+        }
+
+        function getCurrentItemPosition(item) {
+            const x = parseFloat(item.style.getPropertyValue('--x')) || 0;
+            const y = parseFloat(item.style.getPropertyValue('--y')) || 0;
+            return { x, y };
+        }
+
+        function beginDrag(event, item) {
+            if (activeTags.size > 0) {
+                return;
+            }
+
+            if (event.pointerType === 'mouse' && event.button !== 0) {
+                return;
+            }
+
+            const pos = getCurrentItemPosition(item);
+            const gridRect = rootGrid.getBoundingClientRect();
+            const startX = event.clientX - gridRect.left;
+            const startY = event.clientY - gridRect.top;
+
+            dragState = {
+                item,
+                pointerId: event.pointerId,
+                startX,
+                startY,
+                offsetX: startX - pos.x,
+                offsetY: startY - pos.y,
+                moved: false
+            };
+
+            item.classList.add('is-dragging');
+            item.style.zIndex = '7000';
+
+            if (item.setPointerCapture) {
+                try {
+                    item.setPointerCapture(event.pointerId);
+                } catch (error) {
+                    // Ignore capture errors on unsupported browsers.
+                }
+            }
+
+            event.preventDefault();
+        }
+
+        function onDragMove(event) {
+            if (!dragState || event.pointerId !== dragState.pointerId) {
+                return;
+            }
+
+            const gridRect = rootGrid.getBoundingClientRect();
+            const cardWidth = 164;
+            const cardHeight = 236;
+            const maxX = Math.max(10, gridRect.width - cardWidth - 10);
+            const maxY = Math.max(10, gridRect.height - cardHeight - 10);
+
+            const rawX = event.clientX - gridRect.left - dragState.offsetX;
+            const rawY = event.clientY - gridRect.top - dragState.offsetY;
+            const x = clamp(Math.round(rawX), 10, maxX);
+            const y = clamp(Math.round(rawY), 10, maxY);
+
+            const movedDistance = Math.hypot(event.clientX - (dragState.startX + gridRect.left), event.clientY - (dragState.startY + gridRect.top));
+            if (movedDistance > 3) {
+                dragState.moved = true;
+            }
+
+            dragState.item.style.setProperty('--x', `${x}px`);
+            dragState.item.style.setProperty('--y', `${y}px`);
+            dragState.item.style.setProperty('--r', '0deg');
+
+            const existing = randomPositions.get(dragState.item) || {};
+            randomPositions.set(dragState.item, {
+                ...existing,
+                x,
+                y,
+                r: '0deg'
+            });
+
+            event.preventDefault();
+        }
+
+        function endDrag(event) {
+            if (!dragState || event.pointerId !== dragState.pointerId) {
+                return;
+            }
+
+            const item = dragState.item;
+            item.classList.remove('is-dragging');
+
+            if (item.releasePointerCapture) {
+                try {
+                    item.releasePointerCapture(event.pointerId);
+                } catch (error) {
+                    // Ignore release errors on unsupported browsers.
+                }
+            }
+
+            if (dragState.moved) {
+                suppressClickUntil = Date.now() + 220;
+            }
+
+            persistLayout(rootGrid.clientWidth, parseFloat(rootGrid.style.minHeight) || rootGrid.clientHeight);
+            dragState = null;
+            event.preventDefault();
+        }
+
+        function setupDragging() {
+            cardItems.forEach((item) => {
+                item.addEventListener('pointerdown', (event) => beginDrag(event, item));
+            });
+
+            window.addEventListener('pointermove', onDragMove);
+            window.addEventListener('pointerup', endDrag);
+            window.addEventListener('pointercancel', endDrag);
+
+            rootGrid.addEventListener('click', (event) => {
+                if (Date.now() < suppressClickUntil) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }, true);
+        }
 
         function cleanPreviewText(rawText) {
             return rawText
@@ -290,10 +613,17 @@
         }
 
         function parseTags(card) {
-            return (card.dataset.tags || '')
+            const tags = (card.dataset.tags || '')
                 .split('|')
                 .map((tag) => tag.trim())
                 .filter(Boolean);
+
+            const author = (card.dataset.author || '').trim();
+            if (author) {
+                tags.push(`by:${author}`);
+            }
+
+            return Array.from(new Set(tags));
         }
 
         function allTags() {
@@ -302,6 +632,15 @@
                 parseTags(card).forEach((tag) => set.add(tag));
             });
             return Array.from(set).sort((a, b) => a.localeCompare(b));
+        }
+
+        function formatTagLabel(tag) {
+            if (typeof tag === 'string' && tag.toLowerCase().startsWith('by:')) {
+                const author = tag.slice(3).trim();
+                return author ? `@${author}` : '@author';
+            }
+
+            return `#${tag}`;
         }
 
         function clearStackLabels() {
@@ -345,7 +684,7 @@
                     return {
                         x,
                         y,
-                        r: (randomBetween(-8, 8)).toFixed(2) + 'deg'
+                        r: '0deg'
                     };
                 }
             }
@@ -353,7 +692,7 @@
             return {
                 x: Math.round(randomBetween(10, maxX)),
                 y: Math.round(randomBetween(10, maxY)),
-                r: (randomBetween(-8, 8)).toFixed(2) + 'deg'
+                r: '0deg'
             };
         }
 
@@ -404,9 +743,9 @@
 
         function buildRandomLayout() {
             const width = rootGrid.clientWidth;
-            const height = Math.max(window.innerHeight * 0.72, 560);
-            const cardWidth = 188;
-            const cardHeight = 266;
+            const height = Math.max(window.innerHeight * 1.15, 920);
+            const cardWidth = 164;
+            const cardHeight = 236;
             const stored = loadStoredLayout(width, height);
             const existingRects = [];
 
@@ -422,7 +761,7 @@
                     position = {
                         x: clamp(Math.round(fromStorage.x), 10, maxX),
                         y: clamp(Math.round(fromStorage.y), 10, maxY),
-                        r: typeof fromStorage.r === 'string' ? fromStorage.r : (randomBetween(-8, 8)).toFixed(2) + 'deg'
+                        r: '0deg'
                     };
                 } else {
                     position = createCollisionAwarePosition(existingRects, width, height, cardWidth, cardHeight);
@@ -439,7 +778,7 @@
         function createStackLabel(tag, x, y) {
             const label = document.createElement('div');
             label.className = 'stack-label';
-            label.textContent = `#${tag}`;
+            label.textContent = formatTagLabel(tag);
             label.style.setProperty('--label-x', `${x}px`);
             label.style.setProperty('--label-y', `${Math.max(y - 26, 4)}px`);
             rootGrid.appendChild(label);
@@ -488,7 +827,7 @@
 
             selectedTags.forEach((tag, stackIndex) => {
                 const members = stackMembersByTag.get(tag) || [];
-                const anchorX = 20 + stackIndex * stackBandWidth + Math.max(0, Math.floor((stackBandWidth - 188) / 2));
+                const anchorX = 20 + stackIndex * stackBandWidth + Math.max(0, Math.floor((stackBandWidth - 164) / 2));
                 createStackLabel(tag, anchorX, stackStartY);
 
                 members.forEach((item, memberIndex) => {
@@ -524,7 +863,16 @@
             const tags = allTags();
 
             if (!tags.length) {
-                toolbar.innerHTML = '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee dance</button>';
+                toolbar.innerHTML =
+                    '<span class="toolbar-right">' +
+                    `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill">ant hill</button>` +
+                    '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee dance</button>' +
+                    '</span>';
+                toolbar.querySelector('[data-action="ant-hill"]').addEventListener('click', () => {
+                    antHillActive = !antHillActive;
+                    if (antHillActive) { startTunnelLoop(); } else { clearTunnels(); }
+                    renderTagToolbar();
+                });
                 toolbar.querySelector('[data-action="reshuffle"]').addEventListener('click', () => {
                     localStorage.removeItem(LAYOUT_STORAGE_KEY);
                     randomPositions.clear();
@@ -536,11 +884,23 @@
 
             toolbar.innerHTML = tags.map((tag) => {
                 const activeClass = activeTags.has(tag) ? ' is-active' : '';
-                return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">#${tag}</button>`;
-            }).join('') + '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee dance</button>';
+                return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">${formatTagLabel(tag)}</button>`;
+            }).join('') +
+                '<span class="toolbar-right">' +
+                `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill">ant hill</button>` +
+                '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee dance</button>' +
+                '</span>';
 
             toolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
                 const action = button.getAttribute('data-action');
+                if (action === 'ant-hill') {
+                    button.addEventListener('click', () => {
+                        antHillActive = !antHillActive;
+                        if (antHillActive) { startTunnelLoop(); } else { clearTunnels(); }
+                        renderTagToolbar();
+                    });
+                    return;
+                }
                 if (action === 'reshuffle') {
                     button.addEventListener('click', () => {
                         localStorage.removeItem(LAYOUT_STORAGE_KEY);
@@ -577,6 +937,7 @@
 
         renderTagToolbar();
         applyLayout();
+        setupDragging();
 
         window.addEventListener('resize', () => {
             buildRandomLayout();

@@ -5,6 +5,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const TRUST_PROXY = process.env.TRUST_PROXY === '1' || process.env.TRUST_PROXY === 'true';
 
 const ROOT = __dirname;
 const WRITINGS_DIR = path.join(ROOT, 'writings');
@@ -15,6 +16,15 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-this-password';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'change-this-secret';
 const SESSION_COOKIE_NAME = 'admin_session';
 const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
+const SESSION_SECURE_COOKIES = process.env.SESSION_SECURE_COOKIES === '1' || process.env.SESSION_SECURE_COOKIES === 'true';
+
+const LOGIN_RATE_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_RATE_MAX_ATTEMPTS = 7;
+const loginAttempts = new Map();
+
+if (TRUST_PROXY) {
+  app.set('trust proxy', 1);
+}
 
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
@@ -103,15 +113,70 @@ function verifySessionToken(token) {
   }
 }
 
-function setSessionCookie(res, token) {
+function isSecureRequest(req) {
+  if (SESSION_SECURE_COOKIES) {
+    return true;
+  }
+
+  const forwardedProto = (req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+  if (forwardedProto === 'https') {
+    return true;
+  }
+
+  return Boolean(req.secure);
+}
+
+function setSessionCookie(req, res, token) {
+  const securePart = isSecureRequest(req) ? '; Secure' : '';
   res.setHeader(
     'Set-Cookie',
-    `${SESSION_COOKIE_NAME}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}`
+    `${SESSION_COOKIE_NAME}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}${securePart}`
   );
 }
 
-function clearSessionCookie(res) {
-  res.setHeader('Set-Cookie', `${SESSION_COOKIE_NAME}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`);
+function clearSessionCookie(req, res) {
+  const securePart = isSecureRequest(req) ? '; Secure' : '';
+  res.setHeader('Set-Cookie', `${SESSION_COOKIE_NAME}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0${securePart}`);
+}
+
+function getClientIp(req) {
+  const forwardedFor = req.headers['x-forwarded-for'];
+  if (typeof forwardedFor === 'string' && forwardedFor.trim()) {
+    return forwardedFor.split(',')[0].trim();
+  }
+
+  return req.ip || req.socket?.remoteAddress || 'unknown';
+}
+
+function getRateBucket(ip) {
+  const now = Date.now();
+  const existing = loginAttempts.get(ip);
+
+  if (!existing || now >= existing.resetAt) {
+    const fresh = { count: 0, resetAt: now + LOGIN_RATE_WINDOW_MS };
+    loginAttempts.set(ip, fresh);
+    return fresh;
+  }
+
+  return existing;
+}
+
+function isLoginRateLimited(req) {
+  const ip = getClientIp(req);
+  const bucket = getRateBucket(ip);
+  return bucket.count >= LOGIN_RATE_MAX_ATTEMPTS;
+}
+
+function markLoginFailure(req) {
+  const ip = getClientIp(req);
+  const bucket = getRateBucket(ip);
+  bucket.count += 1;
+  loginAttempts.set(ip, bucket);
+}
+
+function clearLoginFailures(req) {
+  const ip = getClientIp(req);
+  loginAttempts.delete(ip);
 }
 
 function getAuthenticatedUser(req) {
@@ -177,6 +242,10 @@ function parseImage(input) {
   return String(input || '').trim();
 }
 
+function parseAuthor(input) {
+  return String(input || '').trim();
+}
+
 function sanitizeBodyText(input) {
   return String(input || '').replace(/\r\n/g, '\n').trim();
 }
@@ -200,9 +269,9 @@ function tagsHtml(tags) {
     .join('')}</ul>`;
 }
 
-function writingHtmlTemplate({ title, content, tags, image }) {
+function writingHtmlTemplate({ title, content, tags, image, author }) {
   const contentHtml = toParagraphs(content);
-  const encodedMeta = escapeHtml(JSON.stringify({ tags, image }));
+  const encodedMeta = escapeHtml(JSON.stringify({ tags, image, author }));
   const encodedRaw = escapeHtml(JSON.stringify({ content }));
 
   return `<!DOCTYPE html>
@@ -211,6 +280,10 @@ function writingHtmlTemplate({ title, content, tags, image }) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${escapeHtml(title)}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Bagel+Fat+One&family=Dokdo&family=Dongle&family=East+Sea+Dokdo&family=Gaegu&family=Gamja+Flower&family=Gasoek+One&family=Gothic+A1&family=Gowun+Batang&family=Grandiflora+One&family=Gugi&family=Hahmlet:wght@100..900&family=Jua&family=Kirang+Haerang&family=Moirai+One&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Gothic+Coding&family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Song+Myung&family=Sunflower:wght@300&family=Yeon+Sung&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
     <style>
         body {
             margin: 0;
@@ -234,6 +307,12 @@ function writingHtmlTemplate({ title, content, tags, image }) {
             margin-top: 0;
             font-size: 1.7rem;
             line-height: 1.3;
+        }
+
+        .byline {
+          margin: 0 0 0.8rem;
+          color: #5c5852;
+          font-size: 0.92rem;
         }
 
         p {
@@ -271,6 +350,7 @@ function writingHtmlTemplate({ title, content, tags, image }) {
 <body>
     <main>
         <h1>${escapeHtml(title)}</h1>
+    ${author ? `<p class="byline">by ${escapeHtml(author)}</p>` : ''}
         ${image ? `<img class="hero-image" src="${escapeHtml(image)}" alt="${escapeHtml(title)}" />` : ''}
         ${tagsHtml(tags)}
         ${contentHtml || '<p></p>'}
@@ -286,6 +366,7 @@ function parseWritingFile(html, number) {
 
   let tags = [];
   let image = '';
+  let author = '';
   let content = '';
 
   const metaMatch = html.match(/<script id="writing-meta" type="application\/json">([\s\S]*?)<\/script>/i);
@@ -294,9 +375,11 @@ function parseWritingFile(html, number) {
       const parsedMeta = JSON.parse(decodeHtml(metaMatch[1]));
       tags = normalizeTags(parsedMeta.tags || []);
       image = parseImage(parsedMeta.image || '');
+      author = parseAuthor(parsedMeta.author || '');
     } catch (error) {
       tags = [];
       image = '';
+      author = '';
     }
   }
 
@@ -317,21 +400,26 @@ function parseWritingFile(html, number) {
     title,
     tags,
     image,
+    author,
     content
   };
 }
 
 function buildCard(entry, index) {
   const safeTitle = escapeHtml(entry.title || `Writing ${entry.number}`);
+  const author = parseAuthor(entry.author || '');
+  const safeAuthor = escapeHtml(author || 'Unknown');
   const tags = normalizeTags(entry.tags || []);
-  const encodedTags = tags.join('|');
+  const stackTags = [...tags, ...(author ? [`by:${author}`] : [])];
+  const encodedTags = stackTags.join('|');
   const tagsMarkup = tags.length
     ? `<p class="thumb-tags">${tags.map((tag) => `<span class="tag-pill">${escapeHtml(tag)}</span>`).join('')}</p>`
     : '';
 
   return `            <li class="thumb-item" style="--index: ${index}; z-index: ${index + 1};">
-                <a class="thumb-card" href="${entry.href}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-id="${entry.number}">
+                <a class="thumb-card" href="${entry.href}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-author="${safeAuthor}" data-id="${entry.number}">
                     <h2 class="thumb-title">${safeTitle}</h2>
+                    <p class="thumb-byline">by ${safeAuthor}</p>
                     ${tagsMarkup}
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
@@ -403,13 +491,14 @@ async function saveWriting(number, payload) {
   const content = sanitizeBodyText(payload.content || '');
   const tags = normalizeTags(payload.tags || '');
   const image = parseImage(payload.image || '');
+  const author = parseAuthor(payload.author || '');
 
   if (!title || !content) {
     throw new Error('Title and content are required.');
   }
 
   const filePath = path.join(WRITINGS_DIR, `writing-${number}.html`);
-  const html = writingHtmlTemplate({ title, content, tags, image });
+  const html = writingHtmlTemplate({ title, content, tags, image, author });
   await fs.writeFile(filePath, html, 'utf8');
 
   return {
@@ -419,12 +508,14 @@ async function saveWriting(number, payload) {
     title,
     content,
     tags,
-    image
+    image,
+    author
   };
 }
 
 app.get('/admin/login', (req, res) => {
   const hasError = req.query.error === '1';
+  const isRateLimited = req.query.error === 'rate';
 
   res.send(`<!DOCTYPE html>
 <html lang="en">
@@ -518,7 +609,7 @@ app.get('/admin/login', (req, res) => {
     <main class="panel">
         <h1>Admin Login</h1>
         <p>Sign in to create and manage writings.</p>
-        <div class="error">${hasError ? 'Invalid username or password.' : ''}</div>
+        <div class="error">${isRateLimited ? 'Too many attempts. Please wait and try again.' : (hasError ? 'Invalid username or password.' : '')}</div>
         <form method="post" action="/admin/login">
             <label for="username">Username</label>
             <input id="username" name="username" type="text" required autocomplete="username" />
@@ -534,20 +625,26 @@ app.get('/admin/login', (req, res) => {
 });
 
 app.post('/admin/login', (req, res) => {
+  if (isLoginRateLimited(req)) {
+    return res.redirect('/admin/login?error=rate');
+  }
+
   const username = String(req.body.username || '').trim();
   const password = String(req.body.password || '');
 
   if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+    markLoginFailure(req);
     return res.redirect('/admin/login?error=1');
   }
 
+  clearLoginFailures(req);
   const token = createSessionToken(username);
-  setSessionCookie(res, token);
+  setSessionCookie(req, res, token);
   return res.redirect('/admin');
 });
 
 app.post('/admin/logout', (req, res) => {
-  clearSessionCookie(res);
+  clearSessionCookie(req, res);
   return res.redirect('/admin/login');
 });
 
@@ -752,7 +849,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             </form>
         </div>
 
-        <p class="meta">Create, edit, delete entries. Tags and image URL are stored per writing and used by your archive page.</p>
+        <p class="meta">Create, edit, delete entries. Author, tags, and image URL are stored per writing and used by your archive page.</p>
 
         <div class="grid">
             <section class="panel-block">
@@ -763,6 +860,9 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
 
                     <label for="title">제목</label>
                     <input id="title" name="title" type="text" required placeholder="Enter writing title" />
+
+                    <label for="author">작성자</label>
+                    <input id="author" name="author" type="text" placeholder="Who wrote this?" />
 
                     <label for="tags">태그 (쉼표로 구분)</label>
                     <input id="tags" name="tags" type="text" placeholder="essay, poetry, memory" />
@@ -792,6 +892,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                         return `<li class="entry-row" data-number="${entry.number}">
                             <h3>#${entry.number} ${escapeHtml(entry.title)}</h3>
                             <p>${escapeHtml(entry.fileName)}</p>
+                          <p>by ${escapeHtml(entry.author || 'Unknown')}</p>
                             ${tagsText ? `<div class="entry-tags">${tagsText}</div>` : ''}
                             <div class="entry-actions">
                                 <button type="button" data-action="edit" data-number="${entry.number}">Edit</button>
@@ -810,6 +911,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
         const modeInput = document.getElementById('mode');
         const numberInput = document.getElementById('writing-number');
         const titleInput = document.getElementById('title');
+        const authorInput = document.getElementById('author');
         const tagsInput = document.getElementById('tags');
         const imageInput = document.getElementById('image');
         const contentInput = document.getElementById('content');
@@ -883,6 +985,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     saveBtn.textContent = 'Update writing';
                     deleteBtn.hidden = false;
                     titleInput.value = data.title || '';
+                    authorInput.value = data.author || '';
                     tagsInput.value = (data.tags || []).join(', ');
                     imageInput.value = data.image || '';
                     contentInput.value = data.content || '';
@@ -939,6 +1042,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
 
             const payload = {
                 title: titleInput.value.trim(),
+              author: authorInput.value.trim(),
                 content: contentInput.value,
                 tags: tagsInput.value,
                 image: imageInput.value.trim()
