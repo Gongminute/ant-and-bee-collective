@@ -17,7 +17,7 @@
             --edge: rgba(0, 0, 0, 0.08);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 7;
+            --card-count: 9;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -161,6 +161,20 @@
             will-change: transform;
         }
 
+        .thumb-card.is-image-only {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .thumb-cover {
+            display: block;
+            width: 100%;
+            height: var(--card-height);
+            object-fit: cover;
+            object-position: center;
+            border: 0;
+        }
+
         .thumb-card:hover,
         .thumb-card:focus-visible {
             transform: translateY(-18px);
@@ -287,6 +301,16 @@
                     <p class="thumb-byline">by Unknown</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span></p>
                     <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 7; z-index: 8;">
+                <a class="thumb-card is-image-only" href="writings/writing-8.html" data-source="writings/writing-8.html" data-tags="" data-author="Unknown" data-id="8" data-image-only="1">
+                    <img class="thumb-cover" src="/images/082fd5e7ee1dca9e.webp" alt="Image 8" loading="lazy" />
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 8; z-index: 9;">
+                <a class="thumb-card is-image-only" href="writings/writing-9.html" data-source="writings/writing-9.html" data-tags="" data-author="Unknown" data-id="9" data-image-only="1">
+                    <img class="thumb-cover" src="/images/521f3ed6c2d00c43.PNG" alt="Image 9" loading="lazy" />
                 </a>
             </li>
         </ul>
@@ -588,6 +612,10 @@
             const preview = card.querySelector('.thumb-preview');
             const title = card.querySelector('.thumb-title');
             const source = card.getAttribute('data-source');
+
+            if (card.classList.contains('is-image-only') || card.dataset.imageOnly === '1' || !preview) {
+                return;
+            }
 
             try {
                 const response = await fetch(source);

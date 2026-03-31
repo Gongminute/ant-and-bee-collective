@@ -2,6 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs/promises');
 const path = require('path');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,14 +10,41 @@ const TRUST_PROXY = process.env.TRUST_PROXY === '1' || process.env.TRUST_PROXY =
 
 const ROOT = __dirname;
 const WRITINGS_DIR = path.join(ROOT, 'writings');
+const IMAGES_DIR = path.join(ROOT, 'images');
 const ARCHIVE_FILES = [path.join(ROOT, 'Writings.html')];
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-this-password';
+// Setup multer for image uploads
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, IMAGES_DIR);
+    },
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      const name = crypto.randomBytes(8).toString('hex');
+      cb(null, name + ext);
+    }
+  }),
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      cb(new Error('Only image files are allowed'));
+      return;
+    }
+    cb(null, true);
+  }
+});
+
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'antandbee';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Katniss0305!';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'change-this-secret';
 const SESSION_COOKIE_NAME = 'admin_session';
 const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
 const SESSION_SECURE_COOKIES = process.env.SESSION_SECURE_COOKIES === '1' || process.env.SESSION_SECURE_COOKIES === 'true';
+
+// Dynamic credentials that can be changed at runtime
+let dynamicAdminUsername = ADMIN_USERNAME;
+let dynamicAdminPassword = ADMIN_PASSWORD;
 
 const LOGIN_RATE_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_RATE_MAX_ATTEMPTS = 7;
@@ -410,11 +438,22 @@ function buildCard(entry, index) {
   const author = parseAuthor(entry.author || '');
   const safeAuthor = escapeHtml(author || 'Unknown');
   const tags = normalizeTags(entry.tags || []);
+  const content = sanitizeBodyText(entry.content || '');
+  const isImageOnly = Boolean(entry.image && !content);
   const stackTags = [...tags, ...(author ? [`by:${author}`] : [])];
   const encodedTags = stackTags.join('|');
   const tagsMarkup = tags.length
     ? `<p class="thumb-tags">${tags.map((tag) => `<span class="tag-pill">${escapeHtml(tag)}</span>`).join('')}</p>`
     : '';
+
+  if (isImageOnly) {
+    const safeImage = escapeHtml(entry.image);
+    return `            <li class="thumb-item" style="--index: ${index}; z-index: ${index + 1};">
+                <a class="thumb-card is-image-only" href="${entry.href}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-author="${safeAuthor}" data-id="${entry.number}" data-image-only="1">
+                    <img class="thumb-cover" src="${safeImage}" alt="${safeTitle}" loading="lazy" />
+                </a>
+            </li>`;
+  }
 
   return `            <li class="thumb-item" style="--index: ${index}; z-index: ${index + 1};">
                 <a class="thumb-card" href="${entry.href}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-author="${safeAuthor}" data-id="${entry.number}">
@@ -492,20 +531,21 @@ async function saveWriting(number, payload) {
   const tags = normalizeTags(payload.tags || '');
   const image = parseImage(payload.image || '');
   const author = parseAuthor(payload.author || '');
+  const resolvedTitle = title || (image ? `Image ${number}` : '');
 
-  if (!title || !content) {
-    throw new Error('Title and content are required.');
+  if (!image && (!resolvedTitle || !content)) {
+    throw new Error('Add an image, or provide both title and content.');
   }
 
   const filePath = path.join(WRITINGS_DIR, `writing-${number}.html`);
-  const html = writingHtmlTemplate({ title, content, tags, image, author });
+  const html = writingHtmlTemplate({ title: resolvedTitle, content, tags, image, author });
   await fs.writeFile(filePath, html, 'utf8');
 
   return {
     number,
     fileName: `writing-${number}.html`,
     href: `writings/writing-${number}.html`,
-    title,
+    title: resolvedTitle,
     content,
     tags,
     image,
@@ -632,7 +672,7 @@ app.post('/admin/login', (req, res) => {
   const username = String(req.body.username || '').trim();
   const password = String(req.body.password || '');
 
-  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+  if (username !== dynamicAdminUsername || password !== dynamicAdminPassword) {
     markLoginFailure(req);
     return res.redirect('/admin/login?error=1');
   }
@@ -648,6 +688,19 @@ app.post('/admin/logout', (req, res) => {
   return res.redirect('/admin/login');
 });
 
+app.post('/admin/upload-image', requireAdminAuth, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    
+    const imageUrl = '/images/' + req.file.filename;
+    res.json({ url: imageUrl });
+  } catch (error) {
+    res.status(500).json({ error: error.message || 'Upload failed' });
+  }
+});
+
 app.get('/admin', requireAdminAuth, async (req, res) => {
   const entries = await getWritingEntries();
 
@@ -656,7 +709,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>꿀벌이 만든 관리자 서버/title>
+    <title>꿀벌이 만든 관리자 서버</title>
     <style>
         :root {
             --bg: #f4f2ec;
@@ -747,6 +800,45 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             min-height: 260px;
             resize: vertical;
             line-height: 1.5;
+        }
+
+        #image-drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            background: #f9f8f5;
+            cursor: pointer;
+            transition: all 200ms ease;
+            margin: 0.5rem 0;
+        }
+
+        #image-drop-zone.drag-over {
+            border-color: #1f1f1f;
+            background: #f0ede5;
+        }
+
+        #image-drop-zone.has-image {
+            border-color: #0f5132;
+            background: #d1e7dd;
+        }
+
+        .drop-zone-text {
+            margin: 0;
+            font-size: 0.92rem;
+            color: #666;
+        }
+
+        .drop-zone-image-preview {
+            margin-top: 1rem;
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .drop-zone-image-preview.show {
+            display: block;
         }
 
         .actions {
@@ -859,7 +951,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     <input id="writing-number" type="hidden" />
 
                     <label for="title">제목</label>
-                    <input id="title" name="title" type="text" required placeholder="Enter writing title" />
+                    <input id="title" name="title" type="text" placeholder="Enter writing title" />
 
                     <label for="author">작성자</label>
                     <input id="author" name="author" type="text" placeholder="Who wrote this?" />
@@ -867,11 +959,16 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     <label for="tags">태그 (쉼표로 구분)</label>
                     <input id="tags" name="tags" type="text" placeholder="essay, poetry, memory" />
 
-                    <label for="image">이미지 URL (선택 사항)</label>
-                    <input id="image" name="image" type="text" placeholder="https://... or /images/photo.jpg" />
+                    <label>이미지 업로드 (선택 사항)</label>
+                    <div id="image-drop-zone">
+                        <p class="drop-zone-text">Drag and drop an image here, or click to select</p>
+                        <img id="image-preview" class="drop-zone-image-preview" alt="Preview" />
+                    </div>
+                    <input id="image" name="image" type="hidden" />
+                    <input id="image-file" type="file" accept="image/*" style="display: none;" />
 
                     <label for="content">본문</label>
-                    <textarea id="content" name="content" required placeholder="여기에 글을 작성하세요. 단락은 엔터로 구분합니다."></textarea>
+                    <textarea id="content" name="content" placeholder="여기에 글을 작성하세요. 단락은 엔터로 구분합니다."></textarea>
 
                     <div class="actions">
                         <button type="submit" id="save-btn">글 작성</button>
@@ -904,6 +1001,28 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                 </ul>
             </section>
         </div>
+
+        <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid rgba(0, 0, 0, 0.12);">
+
+        <section class="panel-block" style="max-width: 400px;">
+            <h2>관리자 설정</h2>
+            <form id="credentials-form">
+                <label for="new-username">새 사용자명</label>
+                <input id="new-username" name="username" type="text" placeholder="Enter new username" />
+
+                <label for="new-password">새 비밀번호</label>
+                <input id="new-password" name="password" type="password" placeholder="Enter new password" />
+
+                <label for="confirm-password">비밀번호 확인</label>
+                <input id="confirm-password" name="confirm-password" type="password" placeholder="Confirm new password" />
+
+                <div class="actions">
+                    <button type="submit" id="update-credentials-btn">설정 저장</button>
+                </div>
+
+                <p class="status" id="credentials-status"></p>
+            </form>
+        </section>
     </main>
 
     <script>
@@ -921,10 +1040,77 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
         const statusEl = document.getElementById('status');
         const formHeading = document.getElementById('form-heading');
         const entryList = document.getElementById('entry-list');
+        const imageDropZone = document.getElementById('image-drop-zone');
+        const imageFileInput = document.getElementById('image-file');
+        const imagePreview = document.getElementById('image-preview');
+        const credentialsForm = document.getElementById('credentials-form');
+        const newUsernameInput = document.getElementById('new-username');
+        const newPasswordInput = document.getElementById('new-password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const updateCredentialsBtn = document.getElementById('update-credentials-btn');
+        const credentialsStatusEl = document.getElementById('credentials-status');
 
-        function setStatus(message, isError) {
-            statusEl.textContent = message;
-            statusEl.classList.toggle('error', Boolean(isError));
+        // Drag-and-drop image handling
+        imageDropZone.addEventListener('click', () => imageFileInput.click());
+        
+        imageDropZone.addEventListener('dragenter', (e) => {
+          e.preventDefault();
+          imageDropZone.classList.add('drag-over');
+        });
+
+        imageDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageDropZone.classList.add('drag-over');
+        });
+
+        imageDropZone.addEventListener('dragleave', () => {
+            imageDropZone.classList.remove('drag-over');
+        });
+
+        imageDropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            imageDropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                await handleImageUpload(files[0]);
+            }
+        });
+
+        imageFileInput.addEventListener('change', async (e) => {
+            if (e.target.files.length > 0) {
+                await handleImageUpload(e.target.files[0]);
+            }
+        });
+
+        async function handleImageUpload(file) {
+            if (!file.type.startsWith('image/')) {
+                setStatus('Please select an image file', true);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/admin/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Upload failed');
+                }
+
+                const data = await response.json();
+                imageInput.value = data.url;
+                imagePreview.src = data.url;
+                imagePreview.classList.add('show');
+                imageDropZone.classList.add('has-image');
+                setStatus('Image uploaded successfully', false);
+            } catch (error) {
+                setStatus('Image upload failed: ' + error.message, true);
+            }
         }
 
         function setCreateMode() {
@@ -934,6 +1120,8 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             saveBtn.textContent = 'Create writing';
             deleteBtn.hidden = true;
             form.reset();
+            imagePreview.classList.remove('show');
+            imageDropZone.classList.remove('has-image');
         }
 
         async function loadEntry(number) {
@@ -1037,6 +1225,61 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             setStatus('', false);
         });
 
+        credentialsForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const username = newUsernameInput.value.trim();
+            const password = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (!username || !password) {
+                credentialsStatusEl.textContent = 'Username and password are required.';
+                credentialsStatusEl.classList.add('error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                credentialsStatusEl.textContent = 'Passwords do not match.';
+                credentialsStatusEl.classList.add('error');
+                return;
+            }
+
+            if (password.length < 8) {
+                credentialsStatusEl.textContent = 'Password must be at least 8 characters long.';
+                credentialsStatusEl.classList.add('error');
+                return;
+            }
+
+            try {
+                credentialsStatusEl.textContent = 'Updating credentials...';
+                credentialsStatusEl.classList.remove('error');
+
+                const response = await fetch('/admin/change-credentials', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to update credentials');
+                }
+
+                credentialsStatusEl.textContent = 'Credentials updated successfully! Please log in again.';
+                credentialsStatusEl.classList.remove('error');
+                credentialsForm.reset();
+                window.setTimeout(() => window.location.href = '/admin/login', 2000);
+            } catch (error) {
+                credentialsStatusEl.textContent = error.message;
+                credentialsStatusEl.classList.add('error');
+            }
+        });
+
+        function setStatus(message, isError) {
+            statusEl.textContent = message;
+            statusEl.classList.toggle('error', Boolean(isError));
+        }
+
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
 
@@ -1047,6 +1290,15 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                 tags: tagsInput.value,
                 image: imageInput.value.trim()
             };
+
+          const hasImage = Boolean(payload.image);
+          const hasTitle = Boolean(payload.title);
+          const hasContent = Boolean(String(payload.content || '').trim());
+
+          if (!hasImage && (!hasTitle || !hasContent)) {
+            setStatus('이미지만 올리거나, 제목과 본문을 함께 입력하세요.', true);
+            return;
+          }
 
             const isEdit = modeInput.value === 'edit';
             const number = numberInput.value;
@@ -1093,6 +1345,34 @@ app.get('/admin/writing/:number', requireAdminAuth, async (req, res) => {
     }
 
     return res.status(500).json({ error: error.message || 'Unexpected server error.' });
+  }
+});
+
+app.post('/admin/change-credentials', requireAdminAuth, (req, res) => {
+  try {
+    const newUsername = String(req.body.username || '').trim();
+    const newPassword = String(req.body.password || '');
+
+    if (!newUsername || !newPassword) {
+      return res.status(400).json({ error: 'Username and password are required.' });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
+    }
+
+    // Update the in-memory credentials
+    dynamicAdminUsername = newUsername;
+    dynamicAdminPassword = newPassword;
+
+    // Invalidate the current session by clearing the cookie
+    clearSessionCookie(req, res);
+
+    return res.status(200).json({
+      message: 'Credentials updated successfully. Please log in with your new credentials.'
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message || 'Failed to update credentials.' });
   }
 });
 
@@ -1173,6 +1453,14 @@ app.post('/admin/rebuild-archive', requireAdminAuth, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Admin backend running at http://localhost:${PORT}/admin`);
-});
+(async () => {
+  try {
+    await fs.mkdir(IMAGES_DIR, { recursive: true });
+  } catch (error) {
+    console.error('Failed to create images directory:', error);
+  }
+  
+  app.listen(PORT, () => {
+    console.log(`Admin backend running at http://localhost:${PORT}/admin`);
+  });
+})();
