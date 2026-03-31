@@ -56,6 +56,12 @@
             cursor: pointer;
         }
 
+        .tag-filter-btn.is-utility {
+            background: #1f1f1f;
+            border-color: #1f1f1f;
+            color: #fff;
+        }
+
         .tag-filter-btn.is-active {
             background: #1f3d2f;
             border-color: #1f3d2f;
@@ -66,11 +72,13 @@
             list-style: none;
             margin: 0;
             padding: 0;
-            width: calc(var(--card-width) + (var(--slant-step) * (var(--card-count) - 1)));
-            min-height: calc(var(--card-height) + (var(--expanded-step) * (var(--card-count) - 1)));
+            width: min(1200px, 100%);
+            min-height: 72vh;
             position: relative;
             margin-left: auto;
-            margin-right: 4vw;
+            margin-right: auto;
+            background: rgba(255, 255, 255, 0.35);
+            overflow: hidden;
         }
 
         .thumb-item {
@@ -79,43 +87,12 @@
             left: 0;
             width: var(--card-width);
             list-style: none;
-            transform: translateX(calc(var(--slant-step) * var(--index))) translateY(calc(var(--collapsed-step) * var(--index)));
-            transition: transform 320ms ease;
+            transform: translate3d(var(--x, 0px), var(--y, 0px), 0) rotate(var(--r, 0deg));
+            transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms), z-index 120ms linear;
         }
 
-        .thumb-item:nth-child(1) {
-            --index: 0;
-            z-index: 1;
-        }
-
-        .thumb-item:nth-child(2) {
-            --index: 1;
-            z-index: 2;
-        }
-
-        .thumb-item:nth-child(3) {
-            --index: 2;
-            z-index: 3;
-        }
-
-        .thumb-item:nth-child(4) {
-            --index: 3;
-            z-index: 4;
-        }
-
-        .thumb-item:nth-child(5) {
-            --index: 4;
-            z-index: 5;
-        }
-
-        .thumb-item:nth-child(6) {
-            --index: 5;
-            z-index: 6;
-        }
-
-        .thumb-grid:hover .thumb-item,
-        .thumb-grid:focus-within .thumb-item {
-            transform: translateX(calc(var(--slant-step) * var(--index))) translateY(calc(var(--expanded-step) * var(--index)));
+        .thumb-item.is-stacked {
+            transform: translate3d(var(--stack-x, 0px), var(--stack-y, 0px), 0) rotate(0deg);
         }
 
         .thumb-card {
@@ -134,7 +111,7 @@
 
         .thumb-card:hover,
         .thumb-card:focus-visible {
-            transform: translateY(-30px);
+            transform: translateY(-18px);
             box-shadow: 0 20px 34px rgba(0, 0, 0, 0.2);
             outline: none;
         }
@@ -175,33 +152,16 @@
             min-height: 10.8em;
         }
 
-        .tag-stacks {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-top: 0.7rem;
-        }
-
-        .tag-stack {
-            border: 1px solid rgba(0, 0, 0, 0.12);
-            background: #fafaf9;
-            padding: 0.7rem;
-        }
-
-        .tag-stack h3 {
-            margin: 0 0 0.55rem;
-            font-size: 0.84rem;
-            font-weight: 600;
-        }
-
-        .tag-stack .thumb-grid {
-            margin-right: 0;
-            margin-left: 0;
-        }
-
-        .tag-stack .thumb-card:hover,
-        .tag-stack .thumb-card:focus-visible {
-            transform: translateY(-12px);
+        .stack-label {
+            position: absolute;
+            transform: translate3d(var(--label-x, 0px), var(--label-y, 0px), 0);
+            background: #1f3d2f;
+            color: #fff;
+            border: 1px solid #1f3d2f;
+            padding: 0.14rem 0.48rem;
+            font-size: 0.72rem;
+            line-height: 1.2;
+            z-index: 5000;
         }
     </style>
 </head>
@@ -210,23 +170,23 @@
         <div id="tag-toolbar" class="tag-toolbar"></div>
         <ul class="thumb-grid">
             <li class="thumb-item" style="--index: 0; z-index: 1;">
-                <a class="thumb-card" href="writings/writing-1.html" data-source="writings/writing-1.html" data-tags="" data-id="1">
+                <a class="thumb-card" href="writings/writing-1.html" data-source="writings/writing-1.html" data-tags="에세이" data-id="1">
                     <h2 class="thumb-title">Writing Title 1</h2>
-                    
+                    <p class="thumb-tags"><span class="tag-pill">에세이</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 1; z-index: 2;">
-                <a class="thumb-card" href="writings/writing-2.html" data-source="writings/writing-2.html" data-tags="" data-id="2">
+                <a class="thumb-card" href="writings/writing-2.html" data-source="writings/writing-2.html" data-tags="에세이" data-id="2">
                     <h2 class="thumb-title">Writing Title 2</h2>
-                    
+                    <p class="thumb-tags"><span class="tag-pill">에세이</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 2; z-index: 3;">
-                <a class="thumb-card" href="writings/writing-3.html" data-source="writings/writing-3.html" data-tags="" data-id="3">
+                <a class="thumb-card" href="writings/writing-3.html" data-source="writings/writing-3.html" data-tags="진" data-id="3">
                     <h2 class="thumb-title">Writing Title 3</h2>
-                    
+                    <p class="thumb-tags"><span class="tag-pill">진</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
@@ -245,9 +205,9 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 5; z-index: 6;">
-                <a class="thumb-card" href="writings/writing-6.html" data-source="writings/writing-6.html" data-tags="" data-id="6">
+                <a class="thumb-card" href="writings/writing-6.html" data-source="writings/writing-6.html" data-tags="진" data-id="6">
                     <h2 class="thumb-title">Writing Title 5</h2>
-                    
+                    <p class="thumb-tags"><span class="tag-pill">진</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
@@ -259,15 +219,16 @@
                 </a>
             </li>
         </ul>
-        <section id="tag-stacks" class="tag-stacks" hidden></section>
     </main>
 
     <script>
         const cards = Array.from(document.querySelectorAll('.thumb-card'));
+        const cardItems = Array.from(document.querySelectorAll('.thumb-item'));
         const toolbar = document.getElementById('tag-toolbar');
         const rootGrid = document.querySelector('.thumb-grid');
-        const tagStacks = document.getElementById('tag-stacks');
         const activeTags = new Set();
+        const randomPositions = new Map();
+        const LAYOUT_STORAGE_KEY = 'writings-random-layout-v2';
 
         function cleanPreviewText(rawText) {
             return rawText
@@ -343,75 +304,253 @@
             return Array.from(set).sort((a, b) => a.localeCompare(b));
         }
 
-        function cardRecord(card) {
-            const titleEl = card.querySelector('.thumb-title');
-            const previewEl = card.querySelector('.thumb-preview');
+        function clearStackLabels() {
+            rootGrid.querySelectorAll('.stack-label').forEach((node) => node.remove());
+        }
+
+        function randomBetween(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function getCardId(item, index) {
+            const card = item.querySelector('.thumb-card');
+            return card && card.dataset.id ? card.dataset.id : String(index + 1);
+        }
+
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function isOverlapping(rect, existingRects, spacing) {
+            return existingRects.some((other) => {
+                const separated =
+                    rect.x + rect.width + spacing <= other.x ||
+                    other.x + other.width + spacing <= rect.x ||
+                    rect.y + rect.height + spacing <= other.y ||
+                    other.y + other.height + spacing <= rect.y;
+                return !separated;
+            });
+        }
+
+        function createCollisionAwarePosition(existingRects, width, height, cardWidth, cardHeight) {
+            const maxX = Math.max(10, width - cardWidth - 10);
+            const maxY = Math.max(10, height - cardHeight - 10);
+            const spacing = 22;
+
+            for (let attempt = 0; attempt < 160; attempt += 1) {
+                const x = Math.round(randomBetween(10, maxX));
+                const y = Math.round(randomBetween(10, maxY));
+                const candidate = { x, y, width: cardWidth, height: cardHeight };
+                if (!isOverlapping(candidate, existingRects, spacing)) {
+                    return {
+                        x,
+                        y,
+                        r: (randomBetween(-8, 8)).toFixed(2) + 'deg'
+                    };
+                }
+            }
+
             return {
-                title: titleEl ? titleEl.textContent : '',
-                href: card.getAttribute('href') || '',
-                source: card.getAttribute('data-source') || '',
-                tags: parseTags(card),
-                preview: previewEl ? previewEl.textContent : 'Loading preview...'
+                x: Math.round(randomBetween(10, maxX)),
+                y: Math.round(randomBetween(10, maxY)),
+                r: (randomBetween(-8, 8)).toFixed(2) + 'deg'
             };
         }
 
-        function renderTagStacks() {
-            if (activeTags.size === 0) {
-                rootGrid.hidden = false;
-                tagStacks.hidden = true;
-                tagStacks.innerHTML = '';
-                return;
-            }
-
-            rootGrid.hidden = true;
-            tagStacks.hidden = false;
-
-            const records = cards.map((card) => cardRecord(card));
-
-            tagStacks.innerHTML = Array.from(activeTags).map((tag) => {
-                const entries = records.filter((record) => record.tags.includes(tag));
-
-                if (!entries.length) {
-                    return `<article class="tag-stack"><h3>#${tag}</h3><p>No entries yet.</p></article>`;
+        function loadStoredLayout(width, height) {
+            try {
+                const raw = localStorage.getItem(LAYOUT_STORAGE_KEY);
+                if (!raw) {
+                    return null;
                 }
 
-                const markup = entries.map((entry, index) => `
-                    <li class="thumb-item" style="--index: ${index}; z-index: ${index + 1};">
-                        <a class="thumb-card" href="${entry.href}" data-source="${entry.source}" data-tags="${entry.tags.join('|')}">
-                            <h2 class="thumb-title">${entry.title}</h2>
-                            <p class="thumb-tags">${entry.tags.map((t) => `<span class="tag-pill">${t}</span>`).join('')}</p>
-                            <p class="thumb-preview">${entry.preview}</p>
-                        </a>
-                    </li>
-                `).join('');
+                const parsed = JSON.parse(raw);
+                if (!parsed || typeof parsed !== 'object' || !parsed.items) {
+                    return null;
+                }
 
-                return `
-                    <article class="tag-stack">
-                        <h3>#${tag}</h3>
-                        <ul class="thumb-grid" style="--card-count: ${entries.length};">${markup}</ul>
-                    </article>
-                `;
-            }).join('');
+                const widthDelta = Math.abs((parsed.width || 0) - width);
+                const heightDelta = Math.abs((parsed.height || 0) - height);
+                if (widthDelta > 160 || heightDelta > 160) {
+                    return null;
+                }
 
-            tagStacks.querySelectorAll('.thumb-card').forEach((card) => {
-                hydrateCardPreview(card);
+                return parsed.items;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function persistLayout(width, height) {
+            const items = {};
+            randomPositions.forEach((value) => {
+                items[value.id] = {
+                    x: value.x,
+                    y: value.y,
+                    r: value.r
+                };
             });
+
+            try {
+                localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
+                    width,
+                    height,
+                    items
+                }));
+            } catch (error) {
+                // Ignore storage errors in private browsing or locked storage contexts.
+            }
+        }
+
+        function buildRandomLayout() {
+            const width = rootGrid.clientWidth;
+            const height = Math.max(window.innerHeight * 0.72, 560);
+            const cardWidth = 188;
+            const cardHeight = 266;
+            const stored = loadStoredLayout(width, height);
+            const existingRects = [];
+
+            cardItems.forEach((item, index) => {
+                const id = getCardId(item, index);
+                const maxX = Math.max(10, width - cardWidth - 10);
+                const maxY = Math.max(10, height - cardHeight - 10);
+                const fromStorage = stored && stored[id] ? stored[id] : null;
+
+                let position;
+
+                if (fromStorage && Number.isFinite(fromStorage.x) && Number.isFinite(fromStorage.y)) {
+                    position = {
+                        x: clamp(Math.round(fromStorage.x), 10, maxX),
+                        y: clamp(Math.round(fromStorage.y), 10, maxY),
+                        r: typeof fromStorage.r === 'string' ? fromStorage.r : (randomBetween(-8, 8)).toFixed(2) + 'deg'
+                    };
+                } else {
+                    position = createCollisionAwarePosition(existingRects, width, height, cardWidth, cardHeight);
+                }
+
+                existingRects.push({ x: position.x, y: position.y, width: cardWidth, height: cardHeight });
+                randomPositions.set(item, { ...position, id, index });
+            });
+
+            rootGrid.style.minHeight = `${Math.round(height)}px`;
+            persistLayout(width, height);
+        }
+
+        function createStackLabel(tag, x, y) {
+            const label = document.createElement('div');
+            label.className = 'stack-label';
+            label.textContent = `#${tag}`;
+            label.style.setProperty('--label-x', `${x}px`);
+            label.style.setProperty('--label-y', `${Math.max(y - 26, 4)}px`);
+            rootGrid.appendChild(label);
+        }
+
+        function applyLayout() {
+            clearStackLabels();
+
+            const selectedTags = Array.from(activeTags);
+            const width = rootGrid.clientWidth;
+            const stackCount = Math.max(selectedTags.length, 1);
+            const stackBandWidth = Math.max(220, Math.floor((width - 40) / stackCount));
+            const stackStartY = 48;
+
+            const stackMembersByTag = new Map();
+            selectedTags.forEach((tag) => stackMembersByTag.set(tag, []));
+
+            cardItems.forEach((item) => {
+                const card = item.querySelector('.thumb-card');
+                if (!card) {
+                    return;
+                }
+
+                const tags = parseTags(card);
+                const stackTag = selectedTags.find((tag) => tags.includes(tag));
+                if (!stackTag) {
+                    return;
+                }
+
+                stackMembersByTag.get(stackTag).push(item);
+            });
+
+            cardItems.forEach((item) => {
+                const randomData = randomPositions.get(item);
+                if (!randomData) {
+                    return;
+                }
+
+                item.classList.remove('is-stacked');
+                item.style.setProperty('--delay', '0ms');
+                item.style.zIndex = String(100 + randomData.index);
+                item.style.setProperty('--x', `${randomData.x}px`);
+                item.style.setProperty('--y', `${randomData.y}px`);
+                item.style.setProperty('--r', randomData.r);
+            });
+
+            selectedTags.forEach((tag, stackIndex) => {
+                const members = stackMembersByTag.get(tag) || [];
+                const anchorX = 20 + stackIndex * stackBandWidth + Math.max(0, Math.floor((stackBandWidth - 188) / 2));
+                createStackLabel(tag, anchorX, stackStartY);
+
+                members.forEach((item, memberIndex) => {
+                    item.classList.add('is-stacked');
+                    item.style.setProperty('--delay', `${memberIndex * 60}ms`);
+                    item.style.setProperty('--stack-x', `${anchorX}px`);
+                    item.style.setProperty('--stack-y', `${stackStartY + (memberIndex * 18)}px`);
+                    item.style.zIndex = String(3000 + memberIndex + (stackIndex * 50));
+                });
+            });
+
+            if (selectedTags.length > 0) {
+                const groupedSet = new Set();
+                selectedTags.forEach((tag) => {
+                    (stackMembersByTag.get(tag) || []).forEach((item) => groupedSet.add(item));
+                });
+
+                const ungrouped = cardItems.filter((item) => !groupedSet.has(item));
+                const belowY = stackStartY + 360;
+
+                ungrouped.forEach((item, index) => {
+                    const x = 26 + (index * 34);
+                    item.classList.add('is-stacked');
+                    item.style.setProperty('--delay', `${index * 40}ms`);
+                    item.style.setProperty('--stack-x', `${x}px`);
+                    item.style.setProperty('--stack-y', `${belowY}px`);
+                    item.style.zIndex = String(2200 + index);
+                });
+            }
         }
 
         function renderTagToolbar() {
             const tags = allTags();
 
             if (!tags.length) {
-                toolbar.innerHTML = '';
+                toolbar.innerHTML = '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee dance</button>';
+                toolbar.querySelector('[data-action="reshuffle"]').addEventListener('click', () => {
+                    localStorage.removeItem(LAYOUT_STORAGE_KEY);
+                    randomPositions.clear();
+                    buildRandomLayout();
+                    applyLayout();
+                });
                 return;
             }
 
             toolbar.innerHTML = tags.map((tag) => {
                 const activeClass = activeTags.has(tag) ? ' is-active' : '';
                 return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">#${tag}</button>`;
-            }).join('');
+            }).join('') + '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee dance</button>';
 
             toolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
+                const action = button.getAttribute('data-action');
+                if (action === 'reshuffle') {
+                    button.addEventListener('click', () => {
+                        localStorage.removeItem(LAYOUT_STORAGE_KEY);
+                        randomPositions.clear();
+                        buildRandomLayout();
+                        applyLayout();
+                    });
+                    return;
+                }
+
                 button.addEventListener('click', () => {
                     const tag = button.getAttribute('data-tag');
                     if (!tag) {
@@ -425,17 +564,24 @@
                     }
 
                     renderTagToolbar();
-                    renderTagStacks();
+                    applyLayout();
                 });
             });
         }
+
+        buildRandomLayout();
 
         cards.forEach((card) => {
             hydrateCardPreview(card);
         });
 
         renderTagToolbar();
-        renderTagStacks();
+        applyLayout();
+
+        window.addEventListener('resize', () => {
+            buildRandomLayout();
+            applyLayout();
+        });
     </script>
 </body>
 </html>

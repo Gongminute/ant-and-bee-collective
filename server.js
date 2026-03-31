@@ -559,7 +559,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Writing Admin</title>
+    <title>꿀벌이 만든 관리자 서버/title>
     <style>
         :root {
             --bg: #f4f2ec;
@@ -746,7 +746,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
 <body>
     <main class="panel">
         <div class="topbar">
-            <h1>Writing Admin</h1>
+            <h1>개미와 꿀벌 글 등록하기</h1>
             <form method="post" action="/admin/logout">
                 <button class="secondary" type="submit">Log out</button>
             </form>
@@ -756,27 +756,27 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
 
         <div class="grid">
             <section class="panel-block">
-                <h2 id="form-heading">Create new writing</h2>
+                <h2 id="form-heading">새 글 작성하기</h2>
                 <form id="writing-form">
                     <input id="mode" type="hidden" value="create" />
                     <input id="writing-number" type="hidden" />
 
-                    <label for="title">Title</label>
+                    <label for="title">제목</label>
                     <input id="title" name="title" type="text" required placeholder="Enter writing title" />
 
-                    <label for="tags">Tags (comma separated)</label>
+                    <label for="tags">태그 (쉼표로 구분)</label>
                     <input id="tags" name="tags" type="text" placeholder="essay, poetry, memory" />
 
-                    <label for="image">Image URL (optional)</label>
+                    <label for="image">이미지 URL (선택 사항)</label>
                     <input id="image" name="image" type="text" placeholder="https://... or /images/photo.jpg" />
 
-                    <label for="content">Body text</label>
-                    <textarea id="content" name="content" required placeholder="Write text here. Separate paragraphs with a blank line."></textarea>
+                    <label for="content">본문</label>
+                    <textarea id="content" name="content" required placeholder="여기에 글을 작성하세요. 단락은 엔터로 구분합니다."></textarea>
 
                     <div class="actions">
-                        <button type="submit" id="save-btn">Create writing</button>
-                        <button type="button" class="secondary" id="reset-btn">Clear</button>
-                        <button type="button" class="danger" id="delete-btn" hidden>Delete this writing</button>
+                        <button type="submit" id="save-btn">글 작성</button>
+                        <button type="button" class="secondary" id="reset-btn">초기화</button>
+                        <button type="button" class="danger" id="delete-btn" hidden>글 삭제</button>
                     </div>
 
                     <p class="status" id="status"></p>
@@ -784,7 +784,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             </section>
 
             <section class="panel-block">
-                <h2>Existing entries (${entries.length})</h2>
+                <h2>기존 글 (${entries.length})</h2>
                 <ul class="entry-list" id="entry-list">
                     ${entries
                       .map((entry) => {
