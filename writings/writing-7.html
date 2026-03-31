@@ -33,12 +33,40 @@
             margin: 0 0 1rem;
             white-space: normal;
         }
+
+        .hero-image {
+            width: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            margin: 0 0 1.1rem;
+            display: block;
+        }
+
+        .tag-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            padding: 0;
+            margin: 0 0 1rem;
+        }
+
+        .tag-list li {
+            border: 1px solid rgba(0, 0, 0, 0.18);
+            background: #f5f4ef;
+            padding: 0.18rem 0.48rem;
+            font-size: 0.78rem;
+            line-height: 1.25;
+        }
     </style>
+    <script id="writing-meta" type="application/json">{&quot;tags&quot;:[&quot;poetry&quot;],&quot;image&quot;:&quot;&quot;}</script>
+    <script id="writing-raw" type="application/json">{&quot;content&quot;:&quot;sss&quot;}</script>
 </head>
 <body>
     <main>
         <h1>testing backend 1</h1>
-        <p>testing backend 1 to see if it creates a new html</p>
+        
+        <ul class="tag-list"><li>poetry</li></ul>
+        <p>sss</p>
     </main>
 </body>
 </html>
