@@ -4,7 +4,8 @@
     <title>Writings Archive</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="icon" type="image/png" href="/images/signature_gongmin.png?v=2?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Bagel+Fat+One&family=Dokdo&family=Dongle&family=East+Sea+Dokdo&family=Gaegu&family=Gamja+Flower&family=Gasoek+One&family=Gothic+A1&family=Gowun+Batang&family=Grandiflora+One&family=Gugi&family=Hahmlet:wght@100..900&family=Jua&family=Kirang+Haerang&family=Moirai+One&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Gothic+Coding&family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Song+Myung&family=Sunflower:wght@300&family=Yeon+Sung&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
@@ -17,7 +18,7 @@
             --edge: rgba(0, 0, 0, 0.08);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 9;
+            --card-count: 10;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -161,6 +162,14 @@
             will-change: transform;
         }
 
+        .thumb-card[data-tags*="poetry" i] {
+            font-family: "Nanum Myeongjo", "Century", serif;
+        }
+
+        .thumb-card[data-tags*="translation notes" i] {
+            font-family: "Noto Sans KR", "Noto Sans Korean", sans-serif;
+        }
+
         .thumb-card.is-image-only {
             padding: 0;
             overflow: hidden;
@@ -175,8 +184,8 @@
             border: 0;
         }
 
-        .thumb-card:hover,
-        .thumb-card:focus-visible {
+        .thumb-grid.is-grouped .thumb-card:hover,
+        .thumb-grid.is-grouped .thumb-card:focus-visible {
             transform: translateY(-18px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
             outline: none;
@@ -191,12 +200,20 @@
             order: 1;
         }
 
+        .thumb-title.is-hidden {
+            display: none;
+        }
+
         .thumb-byline {
             margin: 0 0 0.42rem;
             font-size: 0.62rem;
             line-height: 1.25;
             color: rgba(0, 0, 0, 0.64);
             order: 2;
+        }
+
+        .thumb-byline.is-hidden {
+            display: none;
         }
 
         .thumb-tags {
@@ -305,12 +322,20 @@
             </li>
             <li class="thumb-item" style="--index: 7; z-index: 8;">
                 <a class="thumb-card is-image-only" href="writings/writing-8.html" data-source="writings/writing-8.html" data-tags="" data-author="Unknown" data-id="8" data-image-only="1">
-                    <img class="thumb-cover" src="images/082fd5e7ee1dca9e.webp" alt="Image 8" loading="lazy" />
+                    <img class="thumb-cover" src="/images/082fd5e7ee1dca9e.webp" alt="Image 8" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 8; z-index: 9;">
                 <a class="thumb-card is-image-only" href="writings/writing-9.html" data-source="writings/writing-9.html" data-tags="" data-author="Unknown" data-id="9" data-image-only="1">
-                    <img class="thumb-cover" src="images/521f3ed6c2d00c43.PNG" alt="Image 9" loading="lazy" />
+                    <img class="thumb-cover" src="/images/521f3ed6c2d00c43.PNG" alt="Image 9" loading="lazy" />
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 9; z-index: 10;">
+                <a class="thumb-card" href="writings/writing-10.html" data-source="writings/writing-10.html" data-tags="translation notes|by:Gongmin" data-author="Gongmin" data-id="10">
+                    <h2 class="thumb-title">4/2</h2>
+                    <p class="thumb-byline">by Gongmin</p>
+                    <p class="thumb-tags"><span class="tag-pill">translation notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
         </ul>
@@ -325,9 +350,25 @@
         const randomPositions = new Map();
         const LAYOUT_STORAGE_KEY = 'writings-random-layout-v2';
         let antHillActive = false;
+        let showTitles = false;
         let tunnelRafId = null;
         let dragState = null;
         let suppressClickUntil = 0;
+
+        function applyCardMetaVisibility() {
+            cards.forEach((card) => {
+                const title = card.querySelector('.thumb-title');
+                const byline = card.querySelector('.thumb-byline');
+
+                if (title) {
+                    title.classList.toggle('is-hidden', !showTitles);
+                }
+
+                if (byline) {
+                    byline.classList.add('is-hidden');
+                }
+            });
+        }
 
         function startTunnelLoop() {
             clearTunnels();
@@ -541,6 +582,7 @@
             }
 
             const item = dragState.item;
+            const moved = dragState.moved;
             item.classList.remove('is-dragging');
 
             if (item.releasePointerCapture) {
@@ -551,8 +593,17 @@
                 }
             }
 
-            if (dragState.moved) {
+            if (moved) {
                 suppressClickUntil = Date.now() + 220;
+            } else {
+                const link = item.querySelector('.thumb-card[href]');
+                if (link && link.getAttribute('href')) {
+                    if (event.metaKey || event.ctrlKey) {
+                        window.open(link.href, '_blank', 'noopener');
+                    } else {
+                        window.location.href = link.href;
+                    }
+                }
             }
 
             persistLayout(rootGrid.clientWidth, parseFloat(rootGrid.style.minHeight) || rootGrid.clientHeight);
@@ -668,7 +719,7 @@
                 return author ? `@${author}` : '@author';
             }
 
-            return `#${tag}`;
+            return `${tag}`;
         }
 
         function clearStackLabels() {
@@ -771,9 +822,13 @@
 
         function buildRandomLayout() {
             const width = rootGrid.clientWidth;
-            const height = Math.max(window.innerHeight * 1.15, 920);
             const cardWidth = 164;
             const cardHeight = 236;
+            const estimatedColumns = Math.max(1, Math.floor(width / (cardWidth + 52)));
+            const estimatedRows = Math.max(1, Math.ceil(cardItems.length / estimatedColumns));
+            const rowStride = cardHeight + 120;
+            const contentHeight = (estimatedRows * rowStride) + 260;
+            const height = Math.max(window.innerHeight * 1.8, contentHeight, 1200);
             const stored = loadStoredLayout(width, height);
             const existingRects = [];
 
@@ -816,6 +871,7 @@
             clearStackLabels();
 
             const selectedTags = Array.from(activeTags);
+            rootGrid.classList.toggle('is-grouped', selectedTags.length > 0);
             const width = rootGrid.clientWidth;
             const stackCount = Math.max(selectedTags.length, 1);
             const stackBandWidth = Math.max(220, Math.floor((width - 40) / stackCount));
@@ -963,6 +1019,7 @@
             hydrateCardPreview(card);
         });
 
+        applyCardMetaVisibility();
         renderTagToolbar();
         applyLayout();
         setupDragging();

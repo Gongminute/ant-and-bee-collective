@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ant and bee collective</title>
+        <link rel="icon" type="image/png" href="/images/signature_gongmin.png?v=2?v=2">
+<title>〇놀이</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Bagel+Fat+One&family=Dokdo&family=Dongle&family=East+Sea+Dokdo&family=Gaegu&family=Gamja+Flower&family=Gasoek+One&family=Gothic+A1&family=Gowun+Batang&family=Grandiflora+One&family=Gugi&family=Hahmlet:wght@100..900&family=Jua&family=Kirang+Haerang&family=Moirai+One&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Gothic+Coding&family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Song+Myung&family=Sunflower:wght@300&family=Yeon+Sung&display=swap" rel="stylesheet">
@@ -136,7 +137,7 @@
 </head>
 <body>
     <div class="title-container">
-        <a id="title" href="https://www.instagram.com/antbeecollective/?hl=en" target="_blank" rel="noreferrer">ant and bee collective</a>
+        <a id="title" href="https://www.instagram.com/gongminute/?hl=en" target="_blank" rel="noreferrer">〇놀이</a>
         <hr class="fixed-line">
     </div>
 
@@ -146,6 +147,7 @@
                 <li><a id="about" href="about.html" target="content-frame">about</a></li>
                 <li><a id="writings" href="Writings.html" target="content-frame">writings</a>
                 </li>
+                <li><a id="collective-home" href="index.html" target="content-frame">ant and bee collective</a></li>
             </ul>
         </div>
         <div class="drag-divider" id="drag-divider" aria-label="Resize panels" role="separator"></div>
@@ -160,9 +162,7 @@
     </div>
 
     <script>
-        const textElement = document.getElementById('title');
-        const originalText = 'ant and bee collective';
-        const translations = [
+        const collectiveHomeTranslations = [
             '창작집단 개미와 꿀벌', // Korean
             'Colectivo de Hormiga y Abeja', // Spanish
             'Collectif Fourmi et Abeille', // French
@@ -191,89 +191,6 @@
             }
         }
 
-        let intervalId;
-
-        textElement.addEventListener('mouseenter', function() {
-            shuffleArray(translations);
-            let index = 0;
-            textElement.textContent = translations[index];
-            intervalId = setInterval(() => {
-                index = (index + 1) % translations.length;
-                textElement.textContent = translations[index];
-            }, 800);
-        });
-
-        textElement.addEventListener('mouseleave', function() {
-            clearInterval(intervalId);
-            textElement.textContent = originalText;
-        });
-
-        const navTranslations = {
-            about: [
-                '소개', // Korean
-                'acerca de', // Spanish
-                'a propos', // French
-                'uber uns', // German
-                '概要', // Japanese
-                '关于', // Chinese
-                'informazioni', // Italian
-                'sobre', // Portuguese
-                'о нас', // Russian
-                'حول', // Arabic
-                'परिचय', // Hindi
-                'om', // Norwegian
-                'درباره', // Farsi
-                'เกี่ยวกับ', // Thai
-                'тухай', // Mongolian
-                'परिचय', // Nepali
-                'အကြောင်း', // Burmese
-                'អំពី', // Khmer
-                'gioi thieu' // Vietnamese
-            ],
-            archive: [
-                '아카이브', // Korean
-                'archivo', // Spanish
-                'archive', // French
-                'archiv', // German
-                'アーカイブ', // Japanese
-                '档案', // Chinese
-                'archivio', // Italian
-                'arquivo', // Portuguese
-                'архив', // Russian
-                'أرشيف', // Arabic
-                'संग्रह', // Hindi
-                'arkiv', // Norwegian
-                'آرشیو', // Farsi
-                'คลังเก็บ', // Thai
-                'архив', // Mongolian
-                'अभिलेख', // Nepali
-                'မှတ်တမ်းတိုက်', // Burmese
-                'បណ្ណសារ', // Khmer
-                'luu tru' // Vietnamese
-            ],
-            writings: [
-                '글', // Korean
-                'escritos', // Spanish
-                'ecrits', // French
-                'schriften', // German
-                '執筆', // Japanese
-                '写作', // Chinese
-                'scritti', // Italian
-                'escritos', // Portuguese
-                'тексты', // Russian
-                'كتابات', // Arabic
-                'लेखन', // Hindi
-                'skrifter', // Norwegian
-                'نوشته‌ها', // Farsi
-                'งานเขียน', // Thai
-                'бичвэрүүд', // Mongolian
-                'लेखनहरू', // Nepali
-                'ရေးသားချက်များ', // Burmese
-                'អត្ថបទ', // Khmer
-                'bai viet' // Vietnamese
-            ]
-        };
-
         function attachCyclingTranslations(id, originalText, translationList) {
             const element = document.getElementById(id);
             if (!element) {
@@ -300,9 +217,8 @@
             });
         }
 
-        attachCyclingTranslations('about', 'about', navTranslations.about);
-        attachCyclingTranslations('archive', 'archive', navTranslations.archive);
-        attachCyclingTranslations('writings', 'writings', navTranslations.writings);
+        // Hover translation remains enabled only for the collective home category.
+        attachCyclingTranslations('collective-home', 'ant and bee collective', collectiveHomeTranslations);
 
         const sectionContainer = document.querySelector('.section-container');
         const leftPanel = document.querySelector('.section-left');
