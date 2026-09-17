@@ -1216,12 +1216,8 @@
             const tags = (card.dataset.tags || '')
                 .split('|')
                 .map((tag) => tag.trim())
-                .filter(Boolean);
-
-            const author = (card.dataset.author || '').trim();
-            if (author) {
-                tags.push(`by:${author}`);
-            }
+                .filter(Boolean)
+                .filter((tag) => !tag.toLowerCase().startsWith('by:'));
 
             return Array.from(new Set(tags));
         }
@@ -1375,7 +1371,7 @@
         function applyLayout() {
             clearStackLabels();
 
-            const featuredOrder = ['translation', 'novel', 'poetry', 'about'];
+            const featuredOrder = ['translation', 'poetry', 'about'];
             const featuredTags = featuredOrder.filter((tag) => featuredActiveTags.has(tag) || activeTags.has(tag));
             const selectedTags = featuredTags.length > 0 ? featuredTags : Array.from(activeTags);
             rootGrid.classList.toggle('is-grouped', selectedTags.length > 0);
@@ -1507,7 +1503,7 @@
 
         function renderFeaturedTagToolbar() {
             const tags = allTags();
-            const featuredTags = ['translation', 'novel', 'poetry', 'about'];
+            const featuredTags = ['translation', 'poetry', 'about'];
             const featured = featuredTags.filter((tag) => tags.includes(tag));
 
             if (!featured.length) {
@@ -1542,7 +1538,7 @@
 
         function renderTagToolbar() {
             const tags = allTags();
-            const remainingTags = tags.filter((tag) => !['translation', 'novel', 'poetry'].includes(tag));
+            const remainingTags = tags.filter((tag) => !['translation', 'poetry', 'about'].includes(tag));
 
             if (!remainingTags.length) {
                 toolbar.innerHTML = '';
