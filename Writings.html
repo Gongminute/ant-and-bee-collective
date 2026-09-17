@@ -11,11 +11,11 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
     <style>
         :root {
-            --bg: #ffffff;
-            --paper: #ffffff;
-            --ink: #292929;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            --edge: rgba(0, 0, 0, 0.08);
+            --bg: #00441B;
+            --paper: #f7f3ee;
+            --ink: #1b1b1b;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+            --edge: rgba(255, 255, 255, 0.12);
             --card-width: 164px;
             --card-height: 236px;
             --card-count: 10;
@@ -32,8 +32,8 @@
             margin: 0;
             min-height: 100vh;
             background:
-                radial-gradient(circle at 15% 12%, rgba(255, 255, 255, 0.35), transparent 28%),
-                radial-gradient(circle at 88% 80%, rgba(255, 255, 255, 0.28), transparent 32%),
+                radial-gradient(circle at 15% 12%, rgba(255, 255, 255, 0.08), transparent 28%),
+                radial-gradient(circle at 88% 80%, rgba(255, 255, 255, 0.06), transparent 32%),
                 var(--bg);
             color: var(--ink);
             font-family: "Noto Serif KR", "Iowan Old Style", "Century", serif;
@@ -42,54 +42,49 @@
         main {
             width: 100%;
             margin: 0 auto;
-            padding: 4rem 1.5rem 6rem;
+            padding: 2rem 1.5rem 6rem;
+            position: relative;
         }
 
         .tag-toolbar {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
             display: flex;
-            gap: 0.45rem;
-            flex-wrap: wrap;
-            align-items: center;
-            margin: 0 0 1.2rem;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-end;
+            gap: 0.2rem;
+            z-index: 40;
         }
 
         .toolbar-right {
-            margin-left: auto;
-            display: inline-flex;
-            gap: 0.45rem;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.2rem;
         }
 
         .tag-filter-btn {
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            background: #fbfbfa;
-            color: var(--ink);
-            padding: 0.26rem 0.56rem;
-            font-size: 0.76rem;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.82);
+            padding: 0;
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+            text-transform: lowercase;
             cursor: pointer;
+            line-height: 1.2;
         }
 
-        .tag-filter-btn.is-utility {
-            background: #1f1f1f;
-            border-color: #1f1f1f;
-            color: #fff;
-        }
-
-        .tag-filter-btn.is-active {
-            background: #1f3d2f;
-            border-color: #1f3d2f;
-            color: #fff;
-        }
-
-        .tag-filter-btn.is-ant-hill {
-            background: #fbfbfa;
-            border-color: rgba(0, 0, 0, 0.2);
-            color: var(--ink);
-        }
-
+        .tag-filter-btn.is-utility,
+        .tag-filter-btn.is-active,
+        .tag-filter-btn.is-ant-hill,
         .tag-filter-btn.is-ant-hill.is-active {
-            background: #1f3d2f;
-            border-color: #1f3d2f;
-            color: #fff;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.92);
         }
 
         #tunnel-svg {
@@ -124,8 +119,8 @@
             position: relative;
             margin-left: auto;
             margin-right: auto;
-            background: rgba(255, 255, 255, 0.35);
-            overflow: hidden;
+            background: transparent;
+            overflow: visible;
         }
 
         .thumb-item {
