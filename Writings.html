@@ -184,6 +184,77 @@
             overflow: hidden;
         }
 
+        .thumb-card-shell {
+            position: relative;
+            width: var(--card-width);
+            height: var(--card-height);
+            perspective: 1200px;
+        }
+
+        .thumb-card-shell.is-flipped .thumb-card-front {
+            transform: rotateY(180deg);
+        }
+
+        .thumb-card-shell.is-flipped .thumb-card-back {
+            transform: rotateY(360deg);
+        }
+
+        .thumb-card-front,
+        .thumb-card-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 260ms ease;
+            transform-style: preserve-3d;
+        }
+
+        .thumb-card-front {
+            z-index: 2;
+        }
+
+        .thumb-card-back {
+            z-index: 1;
+            transform: rotateY(180deg);
+            border: 1px solid rgba(86, 69, 45, 0.10);
+            box-shadow: 0 2px 6px rgba(38, 29, 20, 0.08);
+            padding: 0.8rem 0.72rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: "Noto Sans KR", "Noto Sans Korean", sans-serif;
+            background: var(--flip-bg, #f0eadf);
+            color: var(--flip-ink, #1d1d1d);
+        }
+
+        .flip-back-title {
+            margin: 0;
+            font-size: 0.78rem;
+            line-height: 1.25;
+            font-weight: 700;
+        }
+
+        .flip-back-meta,
+        .flip-back-tags,
+        .flip-back-preview {
+            margin: 0;
+            font-size: 0.62rem;
+            line-height: 1.45;
+            color: rgba(0, 0, 0, 0.75);
+        }
+
+        .flip-back-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.22rem;
+        }
+
+        .flip-back-tag {
+            border: 1px solid rgba(0, 0, 0, 0.18);
+            background: rgba(255, 255, 255, 0.75);
+            padding: 0.08rem 0.28rem;
+        }
+
         .thumb-cover {
             display: block;
             width: 100%;
@@ -364,7 +435,7 @@
     </div>
 
     <script>
-        const cards = Array.from(document.querySelectorAll('.thumb-card'));
+        let cards = Array.from(document.querySelectorAll('.thumb-card'));
         const cardItems = Array.from(document.querySelectorAll('.thumb-item'));
         const modal = document.getElementById('content-modal');
         const modalFrame = document.getElementById('content-modal-frame');
@@ -621,11 +692,11 @@
             if (moved) {
                 suppressClickUntil = Date.now() + 220;
             } else {
-                const link = item.querySelector('.thumb-card[href]');
-                if (link && link.getAttribute('href')) {
+                const card = item.querySelector('.thumb-card-front, .thumb-card');
+                if (card) {
                     if (!(event.metaKey || event.ctrlKey)) {
                         event.preventDefault();
-                        openWritingInModal(link.href);
+                        toggleCardFlip(card);
                     }
                 }
             }
@@ -635,24 +706,115 @@
             event.preventDefault();
         }
 
-        function openWritingInModal(url) {
-            if (!modal || !modalFrame) {
-                return;
-            }
+        function randomFlipPalette() {
+            const palettes = [
+                ['#f3d9d9', '#261d1d'],
+                ['#dfeecf', '#1d2a1e'],
+                ['#dfe8ff', '#1b2332'],
+                ['#f7e7bf', '#2d2513'],
+                ['#ead8f8', '#2c1d34'],
+                ['#d7efe7', '#162d29'],
+                ['#f9d8c7', '#2b1b18'],
+                ['#d9edf5', '#182d35']
+            ];
 
-            modal.classList.add('is-open');
-            modal.setAttribute('aria-hidden', 'false');
-            modalFrame.src = url;
+            const palette = palettes[Math.floor(Math.random() * palettes.length)];
+            return {
+                background: palette[0],
+                color: palette[1]
+            };
         }
 
-        function closeWritingModal() {
-            if (!modal || !modalFrame) {
+        function buildFlipBack(card) {
+            const title = card.querySelector('.thumb-title')?.textContent?.trim() || 'Untitled';
+            const author = card.dataset.author || 'Unknown';
+            const year = card.dataset.year || '';
+            const tags = Array.from(card.querySelectorAll('.tag-pill'))
+                .map((tag) => tag.textContent.trim())
+                .filter(Boolean);
+            const previewValue = card.dataset.previewText || card.querySelector('.thumb-preview')?.textContent || '';
+            let preview = previewValue.trim();
+            const placeholderText = ['Loading preview...', 'Preview unavailable in this browser context. Click to open the writing.', 'Preview will appear once this page has text content.'];
+            if (placeholderText.includes(preview)) {
+                preview = '';
+            }
+            const palette = randomFlipPalette();
+
+            const back = document.createElement('div');
+            back.className = 'thumb-card thumb-card-back';
+            back.style.setProperty('--flip-bg', palette.background);
+            back.style.setProperty('--flip-ink', palette.color);
+
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'flip-back-title';
+            titleEl.textContent = title;
+            titleEl.style.color = palette.color;
+
+            const metaEl = document.createElement('p');
+            metaEl.className = 'flip-back-meta';
+            metaEl.textContent = year ? `${author} · ${year}` : author;
+            metaEl.style.color = palette.color;
+
+            const tagsWrap = document.createElement('div');
+            tagsWrap.className = 'flip-back-tags';
+            tags.forEach((tag) => {
+                const pill = document.createElement('span');
+                pill.className = 'flip-back-tag';
+                pill.textContent = tag;
+                tagsWrap.appendChild(pill);
+            });
+
+            if (preview) {
+                const previewEl = document.createElement('p');
+                previewEl.className = 'flip-back-preview';
+                previewEl.textContent = preview.length > 160 ? `${preview.slice(0, 160)}…` : preview;
+                previewEl.style.color = palette.color;
+                back.appendChild(previewEl);
+            }
+
+            back.appendChild(titleEl);
+            back.appendChild(metaEl);
+            if (tags.length) {
+                back.appendChild(tagsWrap);
+            }
+            return back;
+        }
+
+        function prepareFlipCards() {
+            const existingShells = document.querySelectorAll('.thumb-card-shell');
+            existingShells.forEach((shell) => shell.remove());
+
+            cards = Array.from(document.querySelectorAll('.thumb-card'));
+            cards.forEach((card) => {
+                const shell = document.createElement('div');
+                shell.className = 'thumb-card-shell';
+
+                const front = document.createElement('div');
+                front.className = 'thumb-card thumb-card-front';
+                front.innerHTML = card.innerHTML;
+                front.dataset.source = card.dataset.source || '';
+                front.dataset.author = card.dataset.author || '';
+                front.dataset.year = card.dataset.year || '';
+                front.dataset.tags = card.dataset.tags || '';
+                front.dataset.id = card.dataset.id || '';
+                front.classList.toggle('is-image-only', card.classList.contains('is-image-only'));
+
+                const back = buildFlipBack(card);
+                shell.appendChild(front);
+                shell.appendChild(back);
+                card.replaceWith(shell);
+            });
+
+            cards = Array.from(document.querySelectorAll('.thumb-card-front'));
+        }
+
+        function toggleCardFlip(card) {
+            const shell = card.closest('.thumb-card-shell');
+            if (!shell) {
                 return;
             }
 
-            modal.classList.remove('is-open');
-            modal.setAttribute('aria-hidden', 'true');
-            modalFrame.removeAttribute('src');
+            shell.classList.toggle('is-flipped');
         }
 
         function setupDragging() {
@@ -662,33 +824,25 @@
 
             cards.forEach((card) => {
                 card.addEventListener('click', (event) => {
-                    const link = card.getAttribute('href');
-                    if (!link) {
-                        return;
-                    }
-
                     if (event.metaKey || event.ctrlKey) {
                         return;
                     }
 
                     event.preventDefault();
-                    openWritingInModal(link);
+                    toggleCardFlip(card);
                 });
             });
 
             document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape' && modal && modal.classList.contains('is-open')) {
-                    closeWritingModal();
+                if (event.key === 'Escape') {
+                    cards.forEach((card) => {
+                        const shell = card.closest('.thumb-card-shell');
+                        if (shell && shell.classList.contains('is-flipped')) {
+                            shell.classList.remove('is-flipped');
+                        }
+                    });
                 }
             });
-
-            if (modal) {
-                modal.addEventListener('click', (event) => {
-                    if (event.target instanceof HTMLElement && event.target.dataset.close === 'true') {
-                        closeWritingModal();
-                    }
-                });
-            }
 
             window.addEventListener('pointermove', onDragMove);
             window.addEventListener('pointerup', endDrag);
@@ -802,9 +956,13 @@
                     title.textContent = pageTitle;
                 }
 
-                preview.textContent = bodyText || 'Preview will appear once this page has text content.';
+                const resolvedPreview = bodyText || 'Preview will appear once this page has text content.';
+                preview.textContent = resolvedPreview;
+                card.dataset.previewText = resolvedPreview;
             } catch (error) {
-                preview.textContent = 'Preview unavailable in this browser context. Click to open the writing.';
+                const fallback = 'Preview unavailable in this browser context. Click to open the writing.';
+                preview.textContent = fallback;
+                card.dataset.previewText = fallback;
             }
         }
 
@@ -1136,6 +1294,7 @@
             });
         }
 
+        prepareFlipCards();
         buildRandomLayout();
 
         cards.forEach((card) => {

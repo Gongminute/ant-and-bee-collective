@@ -310,10 +310,25 @@ function tagsHtml(tags) {
     .join('')}</ul>`;
 }
 
-function writingHtmlTemplate({ title, content, tags, image, author }) {
+function parseYear(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) {
+    return '';
+  }
+
+  const match = raw.match(/\d{4}/);
+  if (match) {
+    return match[0];
+  }
+
+  return raw;
+}
+
+function writingHtmlTemplate({ title, content, tags, image, author, year }) {
   const contentHtml = toParagraphs(content);
-  const encodedMeta = escapeHtml(JSON.stringify({ tags, image, author }));
+  const encodedMeta = escapeHtml(JSON.stringify({ tags, image, author, year }));
   const encodedRaw = escapeHtml(JSON.stringify({ content }));
+  const byline = [author ? `by ${author}` : '', year].filter(Boolean).join(' · ');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -391,7 +406,7 @@ function writingHtmlTemplate({ title, content, tags, image, author }) {
 <body>
     <main>
         <h1>${escapeHtml(title)}</h1>
-    ${author ? `<p class="byline">by ${escapeHtml(author)}</p>` : ''}
+    ${byline ? `<p class="byline">${escapeHtml(byline)}</p>` : ''}
         ${image ? `<img class="hero-image" src="${escapeHtml(image)}" alt="${escapeHtml(title)}" />` : ''}
         ${tagsHtml(tags)}
         ${contentHtml || '<p></p>'}
@@ -408,6 +423,7 @@ function parseWritingFile(html, number) {
   let tags = [];
   let image = '';
   let author = '';
+  let year = '';
   let content = '';
 
   const metaMatch = html.match(/<script id="writing-meta" type="application\/json">([\s\S]*?)<\/script>/i);
@@ -417,10 +433,12 @@ function parseWritingFile(html, number) {
       tags = normalizeTags(parsedMeta.tags || []);
       image = parseImage(parsedMeta.image || '');
       author = parseAuthor(parsedMeta.author || '');
+      year = parseYear(parsedMeta.year || '');
     } catch (error) {
       tags = [];
       image = '';
       author = '';
+      year = '';
     }
   }
 
@@ -442,6 +460,7 @@ function parseWritingFile(html, number) {
     tags,
     image,
     author,
+    year,
     content
   };
 }
@@ -450,6 +469,7 @@ function buildCard(entry, index) {
   const safeTitle = escapeHtml(entry.title || `Writing ${entry.number}`);
   const author = parseAuthor(entry.author || '');
   const safeAuthor = escapeHtml(author || 'Unknown');
+  const year = parseYear(entry.year || '');
   const tags = normalizeTags(entry.tags || []);
   const content = sanitizeBodyText(entry.content || '');
   const isImageOnly = Boolean(entry.image && !content);
@@ -458,6 +478,8 @@ function buildCard(entry, index) {
   const tagsMarkup = tags.length
     ? `<p class="thumb-tags">${tags.map((tag) => `<span class="tag-pill">${escapeHtml(tag)}</span>`).join('')}</p>`
     : '';
+
+  const byline = [author || 'Unknown', year].filter(Boolean).join(' · ');
 
   if (isImageOnly) {
     const safeImage = escapeHtml(entry.image);
@@ -471,7 +493,7 @@ function buildCard(entry, index) {
   return `            <li class="thumb-item" style="--index: ${index}; z-index: ${index + 1};">
                 <a class="thumb-card" href="${entry.href}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-author="${safeAuthor}" data-id="${entry.number}">
                     <h2 class="thumb-title">${safeTitle}</h2>
-                    <p class="thumb-byline">by ${safeAuthor}</p>
+                    <p class="thumb-byline">${escapeHtml(byline)}</p>
                     ${tagsMarkup}
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
@@ -544,6 +566,7 @@ async function saveWriting(number, payload) {
   const tags = normalizeTags(payload.tags || '');
   const image = parseImage(payload.image || '');
   const author = parseAuthor(payload.author || '');
+  const year = parseYear(payload.year || '');
   const resolvedTitle = title || (image ? `Image ${number}` : '');
 
   if (!image && (!resolvedTitle || !content)) {
@@ -551,7 +574,7 @@ async function saveWriting(number, payload) {
   }
 
   const filePath = path.join(WRITINGS_DIR, `writing-${number}.html`);
-  const html = writingHtmlTemplate({ title: resolvedTitle, content, tags, image, author });
+  const html = writingHtmlTemplate({ title: resolvedTitle, content, tags, image, author, year });
   await fs.writeFile(filePath, html, 'utf8');
 
   return {
@@ -562,7 +585,8 @@ async function saveWriting(number, payload) {
     content,
     tags,
     image,
-    author
+    author,
+    year
   };
 }
 
@@ -969,6 +993,9 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     <label for="author">작성자</label>
                     <input id="author" name="author" type="text" placeholder="Who wrote this?" />
 
+                    <label for="year">연도</label>
+                    <input id="year" name="year" type="text" placeholder="2024" />
+
                     <label for="tags">태그 (쉼표로 구분)</label>
                     <input id="tags" name="tags" type="text" placeholder="essay, poetry, memory" />
 
@@ -1044,6 +1071,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
         const numberInput = document.getElementById('writing-number');
         const titleInput = document.getElementById('title');
         const authorInput = document.getElementById('author');
+        const yearInput = document.getElementById('year');
         const tagsInput = document.getElementById('tags');
         const imageInput = document.getElementById('image');
         const contentInput = document.getElementById('content');
@@ -1187,6 +1215,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     deleteBtn.hidden = false;
                     titleInput.value = data.title || '';
                     authorInput.value = data.author || '';
+                    yearInput.value = data.year || '';
                     tagsInput.value = (data.tags || []).join(', ');
                     imageInput.value = data.image || '';
                     contentInput.value = data.content || '';
@@ -1298,7 +1327,8 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
 
             const payload = {
                 title: titleInput.value.trim(),
-              author: authorInput.value.trim(),
+                author: authorInput.value.trim(),
+                year: yearInput.value.trim(),
                 content: contentInput.value,
                 tags: tagsInput.value,
                 image: imageInput.value.trim()
