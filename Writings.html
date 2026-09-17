@@ -19,7 +19,7 @@
             --edge: rgba(255, 255, 255, 0.12);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 12;
+            --card-count: 16;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -193,10 +193,13 @@
 
         .thumb-card-shell.is-flipped .thumb-card-front {
             transform: rotateY(180deg);
+            opacity: 0;
         }
 
         .thumb-card-shell.is-flipped .thumb-card-back {
             transform: rotateY(360deg);
+            opacity: 1;
+            z-index: 3;
         }
 
         .thumb-card-front,
@@ -204,8 +207,9 @@
             position: absolute;
             inset: 0;
             backface-visibility: hidden;
-            transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 260ms ease;
+            transition: transform 520ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 200ms ease, box-shadow 260ms ease;
             transform-style: preserve-3d;
+            opacity: 1;
         }
 
         .thumb-card-front {
@@ -215,6 +219,7 @@
         .thumb-card-back {
             z-index: 1;
             transform: rotateY(180deg);
+            opacity: 0;
             border: 1px solid rgba(86, 69, 45, 0.10);
             box-shadow: 0 2px 6px rgba(38, 29, 20, 0.08);
             padding: 0.8rem 0.72rem;
@@ -476,7 +481,7 @@
             </li>
             <li class="thumb-item" style="--index: 10; z-index: 11;">
                 <a class="thumb-card" href="writings/writing-18.html" data-source="writings/writing-18.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="18">
-                    <h2 class="thumb-title">#13 IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. August</h2>
+                    <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. August</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
                     <p class="thumb-preview">Loading preview...</p>
@@ -487,6 +492,29 @@
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. September</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 12; z-index: 13;">
+                <a class="thumb-card is-image-only" href="writings/writing-20.html" data-source="writings/writing-20.html" data-tags="essay|about|by:Gongmin" data-author="Gongmin" data-id="20" data-image-only="1">
+                    <img class="thumb-cover" src="/images/51653538ef1e8bda.png" alt="New England Review Translator&#39;s Notebook" loading="lazy" />
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 13; z-index: 14;">
+                <a class="thumb-card is-image-only" href="writings/writing-21.html" data-source="writings/writing-21.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="21" data-image-only="1">
+                    <img class="thumb-cover" src="/images/96ba4da7a12193be.jpeg" alt="Photo by Junyesl" loading="lazy" />
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 14; z-index: 15;">
+                <a class="thumb-card is-image-only" href="writings/writing-23.html" data-source="writings/writing-23.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="23" data-image-only="1">
+                    <img class="thumb-cover" src="/images/8b8b1dc9d93edb1d.JPG" alt="Photo by Tai" loading="lazy" />
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 15; z-index: 16;">
+                <a class="thumb-card" href="writings/writing-24.html" data-source="writings/writing-24.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="24">
+                    <h2 class="thumb-title">About</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">about</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
@@ -510,9 +538,10 @@
         const toolbar = document.getElementById('tag-toolbar');
         const rootGrid = document.querySelector('.thumb-grid');
         const activeTags = new Set();
+        const featuredActiveTags = new Set();
         const randomPositions = new Map();
         const LAYOUT_STORAGE_KEY = 'writings-random-layout-v2';
-        let antHillActive = false;
+        let antHillActive = true;
         let showTitles = false;
         let tunnelRafId = null;
         let dragState = null;
@@ -793,14 +822,13 @@
         }
 
         function buildFlipBack(card) {
-            const title = card.querySelector('.thumb-title')?.textContent?.trim() || 'Untitled';
-            const author = card.dataset.author || 'Unknown';
+            const title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || 'Untitled';
             const year = card.dataset.year || '';
             const tags = Array.from(card.querySelectorAll('.tag-pill'))
                 .map((tag) => tag.textContent.trim())
                 .filter(Boolean);
             const previewValue = card.dataset.previewText || card.querySelector('.thumb-preview')?.textContent || '';
-            let preview = previewValue.trim();
+            let preview = sanitizePreviewText(previewValue, card);
             const placeholderText = ['Loading preview...', 'Preview unavailable in this browser context. Click to open the writing.', 'Preview will appear once this page has text content.'];
             if (placeholderText.includes(preview)) {
                 preview = '';
@@ -819,8 +847,11 @@
 
             const metaEl = document.createElement('p');
             metaEl.className = 'flip-back-meta';
-            metaEl.textContent = year ? `${author} · ${year}` : author;
+            metaEl.textContent = year || '';
             metaEl.style.color = palette.color;
+            if (!year) {
+                metaEl.remove();
+            }
 
             const tagsWrap = document.createElement('div');
             tagsWrap.className = 'flip-back-tags';
@@ -834,17 +865,99 @@
             if (preview) {
                 const previewEl = document.createElement('p');
                 previewEl.className = 'flip-back-preview';
-                previewEl.textContent = preview.length > 160 ? `${preview.slice(0, 160)}…` : preview;
+                previewEl.textContent = preview.length > 180 ? `${preview.slice(0, 180)}…` : preview;
                 previewEl.style.color = palette.color;
                 back.appendChild(previewEl);
             }
 
             back.appendChild(titleEl);
-            back.appendChild(metaEl);
+            if (year) {
+                back.appendChild(metaEl);
+            }
             if (tags.length) {
                 back.appendChild(tagsWrap);
             }
             return back;
+        }
+
+        function refreshFlipBack(card) {
+            const shell = card.closest('.thumb-card-shell');
+            if (!shell) {
+                return;
+            }
+
+            const back = shell.querySelector('.thumb-card-back');
+            if (!back) {
+                return;
+            }
+
+            const title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || 'Untitled';
+            const year = card.dataset.year || '';
+            const tags = Array.from(card.querySelectorAll('.tag-pill'))
+                .map((tag) => tag.textContent.trim())
+                .filter(Boolean);
+            const previewValue = card.dataset.previewText || card.querySelector('.thumb-preview')?.textContent || '';
+            let preview = sanitizePreviewText(previewValue, card);
+            const placeholderText = ['Loading preview...', 'Preview unavailable in this browser context. Click to open the writing.', 'Preview will appear once this page has text content.'];
+            if (placeholderText.includes(preview)) {
+                preview = '';
+            }
+
+            const titleEl = back.querySelector('.flip-back-title');
+            if (titleEl) {
+                titleEl.textContent = title;
+            }
+
+            const metaEl = back.querySelector('.flip-back-meta');
+            if (metaEl) {
+                if (year) {
+                    metaEl.textContent = year;
+                } else {
+                    metaEl.remove();
+                }
+            } else if (year) {
+                const nextMeta = document.createElement('p');
+                nextMeta.className = 'flip-back-meta';
+                nextMeta.textContent = year;
+                nextMeta.style.color = getComputedStyle(back).getPropertyValue('--flip-ink') || '#1d1d1d';
+                back.appendChild(nextMeta);
+            }
+
+            const tagsWrap = back.querySelector('.flip-back-tags');
+            if (tagsWrap) {
+                tagsWrap.innerHTML = '';
+                tags.forEach((tag) => {
+                    const pill = document.createElement('span');
+                    pill.className = 'flip-back-tag';
+                    pill.textContent = tag;
+                    tagsWrap.appendChild(pill);
+                });
+            }
+
+            const previewEl = back.querySelector('.flip-back-preview');
+            if (preview) {
+                if (!previewEl) {
+                    const nextPreview = document.createElement('p');
+                    nextPreview.className = 'flip-back-preview';
+                    nextPreview.style.color = getComputedStyle(back).getPropertyValue('--flip-ink') || '#1d1d1d';
+                    back.appendChild(nextPreview);
+                }
+                back.querySelector('.flip-back-preview').textContent = preview.length > 180 ? `${preview.slice(0, 180)}…` : preview;
+            } else if (previewEl) {
+                previewEl.remove();
+            }
+        }
+
+        function syncPreviewToFlip(card) {
+            const rawPreview = (card.querySelector('.thumb-preview')?.textContent || '').trim();
+            const placeholderText = ['Loading preview...', 'Preview unavailable in this browser context. Click to open the writing.', 'Preview will appear once this page has text content.'];
+            const preview = sanitizePreviewText(rawPreview, card);
+            if (!preview || placeholderText.includes(preview)) {
+                return;
+            }
+
+            card.dataset.previewText = preview;
+            refreshFlipBack(card);
         }
 
         function prepareFlipCards() {
@@ -864,6 +977,8 @@
                 front.dataset.year = card.dataset.year || '';
                 front.dataset.tags = card.dataset.tags || '';
                 front.dataset.id = card.dataset.id || '';
+                front.dataset.title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || '';
+                card.dataset.title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || '';
                 front.classList.toggle('is-image-only', card.classList.contains('is-image-only'));
 
                 const back = buildFlipBack(card);
@@ -873,6 +988,7 @@
             });
 
             cards = Array.from(document.querySelectorAll('.thumb-card-front'));
+            cards.forEach((card) => syncPreviewToFlip(card));
         }
 
         function toggleCardFlip(card) {
@@ -932,6 +1048,50 @@
                 .trim();
         }
 
+        function escapeForRegex(value) {
+            return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function sanitizePreviewText(preview, card) {
+            let next = cleanPreviewText(preview || '');
+            if (!next) {
+                return '';
+            }
+
+            const title = (card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || '').trim();
+            const bylineText = card.querySelector('.thumb-byline')?.textContent || '';
+            const author = bylineText.replace(/^by\s+/i, '').replace(/[\s·•:,.-]+$/g, '').trim();
+            const tags = Array.from(card.querySelectorAll('.tag-pill'))
+                .map((tag) => tag.textContent.trim())
+                .filter(Boolean);
+
+            const metadata = Array.from(new Set([title, author, ...tags].filter(Boolean)));
+
+            let changed = true;
+            while (changed) {
+                changed = false;
+                for (const entry of metadata) {
+                    if (!entry) {
+                        continue;
+                    }
+                    const escaped = escapeForRegex(entry);
+                    const leadingPattern = new RegExp(`^\\s*(?:by\\s+)?${escaped}\\s*`, 'i');
+                    if (leadingPattern.test(next)) {
+                        next = next.replace(leadingPattern, '');
+                        changed = true;
+                    }
+                }
+            }
+
+            next = next
+                .replace(/^(?:\s|[•·,;:—–-])+/, '')
+                .replace(/\s{2,}/g, ' ')
+                .replace(/[\s•·,;:—–-]+$/, '')
+                .trim();
+
+            return next;
+        }
+
         function extractPreviewText(doc) {
             const bodyClone = doc.body ? doc.body.cloneNode(true) : null;
 
@@ -939,11 +1099,11 @@
                 return '';
             }
 
-            bodyClone.querySelectorAll('script, style, noscript, template, svg').forEach((node) => {
+            bodyClone.querySelectorAll('script, style, noscript, template, svg, h1, h2, h3, .byline, .tag-list, .tags, [class*="tag-list"], [class*="tags"], [class*="meta"], [id="writing-meta"], [id="writing-raw"]').forEach((node) => {
                 node.remove();
             });
 
-            const textChunks = Array.from(bodyClone.querySelectorAll('h1, h2, h3, p, li, blockquote'))
+            const textChunks = Array.from(bodyClone.querySelectorAll('p, li, blockquote'))
                 .map((node) => cleanPreviewText(node.textContent || ''))
                 .filter(Boolean);
 
@@ -974,6 +1134,11 @@
         function setCardToImageOnly(card, imageSrc) {
             if (!imageSrc) {
                 return;
+            }
+
+            const titleText = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || '';
+            if (titleText) {
+                card.dataset.title = titleText;
             }
 
             card.classList.add('is-image-only');
@@ -1013,9 +1178,12 @@
                 const bodyText = extractPreviewText(doc);
                 const pageTitle = cleanPreviewText(doc.title || '');
                 const imageSrc = extractImageSource(doc);
+                const sanitizedBodyText = sanitizePreviewText(bodyText, card);
 
-                if (imageSrc && bodyText) {
+                if (imageSrc && sanitizedBodyText) {
+                    card.dataset.previewText = sanitizedBodyText;
                     setCardToImageOnly(card, imageSrc);
+                    refreshFlipBack(card);
                     return;
                 }
 
@@ -1023,13 +1191,15 @@
                     title.textContent = pageTitle;
                 }
 
-                const resolvedPreview = bodyText || 'Preview will appear once this page has text content.';
+                const resolvedPreview = sanitizedBodyText || 'Preview will appear once this page has text content.';
                 preview.textContent = resolvedPreview;
                 card.dataset.previewText = resolvedPreview;
+                refreshFlipBack(card);
             } catch (error) {
                 const fallback = 'Preview unavailable in this browser context. Click to open the writing.';
                 preview.textContent = fallback;
                 card.dataset.previewText = fallback;
+                refreshFlipBack(card);
             }
         }
 
@@ -1196,7 +1366,9 @@
         function applyLayout() {
             clearStackLabels();
 
-            const selectedTags = Array.from(activeTags);
+            const featuredOrder = ['translation', 'novel', 'poetry', 'about'];
+            const featuredTags = featuredOrder.filter((tag) => featuredActiveTags.has(tag) || activeTags.has(tag));
+            const selectedTags = featuredTags.length > 0 ? featuredTags : Array.from(activeTags);
             rootGrid.classList.toggle('is-grouped', selectedTags.length > 0);
             const width = rootGrid.clientWidth;
             const stackCount = Math.max(selectedTags.length, 1);
@@ -1235,6 +1407,61 @@
                 item.style.setProperty('--r', randomData.r);
             });
 
+            if (featuredTags.length > 0) {
+                const topRowY = 120;
+                const maxPerRow = 6;
+                const cardWidth = 164;
+                const cardSpacing = 24;
+                const rowHeight = 236 + 46;
+                let currentX = 22;
+                let currentY = topRowY;
+                const groupedSet = new Set();
+                let firstGroupLabelX = 22;
+                let firstGroupLabelY = topRowY - 26;
+
+                selectedTags.forEach((tag, tagIndex) => {
+                    const members = stackMembersByTag.get(tag) || [];
+                    const rowsForTag = Math.max(1, Math.ceil(members.length / maxPerRow));
+                    const labelX = tagIndex === 0 ? firstGroupLabelX : currentX;
+                    const labelY = tagIndex === 0 ? firstGroupLabelY : currentY - 26;
+                    createStackLabel(tag, labelX, labelY);
+
+                    members.forEach((item, memberIndex) => {
+                        const rowIndex = Math.floor(memberIndex / maxPerRow);
+                        const colIndex = memberIndex % maxPerRow;
+                        const x = currentX + (colIndex * (cardWidth + cardSpacing));
+                        const y = currentY + (rowIndex * rowHeight);
+
+                        groupedSet.add(item);
+                        item.classList.add('is-stacked');
+                        item.style.setProperty('--delay', `${memberIndex * 60}ms`);
+                        item.style.setProperty('--stack-x', `${x}px`);
+                        item.style.setProperty('--stack-y', `${y}px`);
+                        item.style.zIndex = String(3000 + memberIndex + 50);
+                    });
+
+                    if (tagIndex === 0) {
+                        currentX = currentX + Math.max(200, ((Math.min(members.length, maxPerRow) * (cardWidth + cardSpacing)) + 42));
+                    }
+                    currentY += rowsForTag * rowHeight + 62;
+                });
+
+                const ungrouped = cardItems.filter((item) => !groupedSet.has(item));
+                const belowY = currentY + 70;
+
+                ungrouped.forEach((item, index) => {
+                    const x = 26 + (index % 5) * 34;
+                    const y = belowY + (Math.floor(index / 5) * 22);
+                    item.classList.add('is-stacked');
+                    item.style.setProperty('--delay', `${index * 40}ms`);
+                    item.style.setProperty('--stack-x', `${x}px`);
+                    item.style.setProperty('--stack-y', `${y}px`);
+                    item.style.zIndex = String(2100 + index);
+                });
+
+                return;
+            }
+
             selectedTags.forEach((tag, stackIndex) => {
                 const members = stackMembersByTag.get(tag) || [];
                 const anchorX = 20 + stackIndex * stackBandWidth + Math.max(0, Math.floor((stackBandWidth - 164) / 2));
@@ -1271,7 +1498,7 @@
 
         function renderFeaturedTagToolbar() {
             const tags = allTags();
-            const featuredTags = ['translation', 'novel', 'poetry'];
+            const featuredTags = ['translation', 'novel', 'poetry', 'about'];
             const featured = featuredTags.filter((tag) => tags.includes(tag));
 
             if (!featured.length) {
@@ -1280,7 +1507,7 @@
             }
 
             featuredToolbar.innerHTML = featured.map((tag) => {
-                const activeClass = activeTags.has(tag) ? ' is-active' : '';
+                const activeClass = featuredActiveTags.has(tag) || activeTags.has(tag) ? ' is-active' : '';
                 return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">${formatTagLabel(tag)}</button>`;
             }).join('');
 
@@ -1291,10 +1518,10 @@
                         return;
                     }
 
-                    if (activeTags.has(tag)) {
-                        activeTags.delete(tag);
+                    if (featuredActiveTags.has(tag)) {
+                        featuredActiveTags.delete(tag);
                     } else {
-                        activeTags.add(tag);
+                        featuredActiveTags.add(tag);
                     }
 
                     renderTagToolbar();
@@ -1318,8 +1545,8 @@
                 return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">${formatTagLabel(tag)}</button>`;
             }).join('') +
                 '<span class="toolbar-right">' +
-                `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill">ant hill</button>` +
-                '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee dance</button>' +
+                `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill">ant</button>` +
+                '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee</button>' +
                 '</span>';
 
             toolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
@@ -1364,6 +1591,7 @@
         prepareFlipCards();
         buildRandomLayout();
 
+        cards = Array.from(document.querySelectorAll('.thumb-card-front'));
         cards.forEach((card) => {
             hydrateCardPreview(card);
         });
@@ -1371,6 +1599,7 @@
         applyCardMetaVisibility();
         renderFeaturedTagToolbar();
         renderTagToolbar();
+        startTunnelLoop();
         applyLayout();
         setupDragging();
 
