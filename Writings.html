@@ -113,7 +113,7 @@
         #tunnel-svg path {
             fill: none;
             stroke: #c0c0c0;
-            stroke-width: 0.5;
+            stroke-width: 0.8;
             stroke-linecap: round;
         }
 
@@ -587,12 +587,12 @@
 
             const ants = [];
             pairs.forEach(({ path }) => {
-                const antCount = 1 + Math.floor(Math.random() * 4);
+                const antCount = 2 + Math.floor(Math.random() * 5);
                 for (let i = 0; i < antCount; i += 1) {
                     const ant = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                     ant.setAttribute('class', 'ant-dot');
-                    ant.setAttribute('width', '2');
-                    ant.setAttribute('height', '2');
+                    ant.setAttribute('width', '3');
+                    ant.setAttribute('height', '3');
                     svg.appendChild(ant);
                     ants.push({
                         node: ant,
