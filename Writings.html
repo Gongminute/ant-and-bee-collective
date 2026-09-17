@@ -19,7 +19,7 @@
             --edge: rgba(255, 255, 255, 0.12);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 18;
+            --card-count: 21;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -163,7 +163,7 @@
             text-decoration: none;
             color: inherit;
             background: #f9f7f3;
-            border: 1px solid rgba(86, 69, 45, 0.10);
+            border: none;
             box-shadow: 0 2px 6px rgba(38, 29, 20, 0.08);
             padding: 0.72rem 0.68rem 0.74rem;
             transition: transform 260ms ease, box-shadow 260ms ease;
@@ -220,7 +220,7 @@
             z-index: 1;
             transform: rotateY(180deg);
             opacity: 0;
-            border: 1px solid rgba(86, 69, 45, 0.10);
+            border: none;
             box-shadow: 0 2px 6px rgba(38, 29, 20, 0.08);
             padding: 0.8rem 0.72rem;
             display: flex;
@@ -529,6 +529,30 @@
             <li class="thumb-item" style="--index: 17; z-index: 18;">
                 <a class="thumb-card" href="writings/writing-26.html" data-source="writings/writing-26.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="26">
                     <h2 class="thumb-title">Jaeum &amp; Moeum Quarterly Issue 55</h2>
+                    <p class="thumb-byline">Gongmin · 2022</p>
+                    <p class="thumb-tags"><span class="tag-pill">novel</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 18; z-index: 19;">
+                <a class="thumb-card" href="writings/writing-27.html" data-source="writings/writing-27.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="27">
+                    <h2 class="thumb-title">소개</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">about</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 19; z-index: 20;">
+                <a class="thumb-card" href="writings/writing-28.html" data-source="writings/writing-28.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="28">
+                    <h2 class="thumb-title">계간 물결 2022년 가을호</h2>
+                    <p class="thumb-byline">Gongmin · 2022</p>
+                    <p class="thumb-tags"><span class="tag-pill">novel</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 20; z-index: 21;">
+                <a class="thumb-card" href="writings/writing-29.html" data-source="writings/writing-29.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="29">
+                    <h2 class="thumb-title">계간 물결 2022년 겨울호</h2>
                     <p class="thumb-byline">Gongmin · 2022</p>
                     <p class="thumb-tags"><span class="tag-pill">novel</span></p>
                     <p class="thumb-preview">Loading preview...</p>
@@ -847,7 +871,8 @@
         }
 
         function buildFlipBack(card) {
-            const title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || 'Untitled';
+            const hasImage = !!(card.querySelector('img.thumb-cover') || card.querySelector('img') || card.classList.contains('is-image-only'));
+            const title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || card.querySelector('img.thumb-cover')?.getAttribute('alt')?.trim() || card.querySelector('img')?.getAttribute('alt')?.trim() || 'Untitled';
             const year = card.dataset.year || '';
             const tags = Array.from(card.querySelectorAll('.tag-pill'))
                 .map((tag) => tag.textContent.trim())
@@ -864,6 +889,13 @@
             back.className = 'thumb-card thumb-card-back';
             back.style.setProperty('--flip-bg', palette.background);
             back.style.setProperty('--flip-ink', palette.color);
+
+            if (!hasImage) {
+                back.style.background = '#f5f1ea';
+                back.style.border = '1px solid rgba(86, 69, 45, 0.10)';
+                back.style.boxShadow = '0 2px 6px rgba(38, 29, 20, 0.08)';
+                return back;
+            }
 
             const titleEl = document.createElement('h3');
             titleEl.className = 'flip-back-title';
@@ -916,7 +948,8 @@
                 return;
             }
 
-            const title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || 'Untitled';
+            const hasImage = !!(card.querySelector('img.thumb-cover') || card.querySelector('img') || card.classList.contains('is-image-only'));
+            const title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || card.querySelector('img.thumb-cover')?.getAttribute('alt')?.trim() || card.querySelector('img')?.getAttribute('alt')?.trim() || 'Untitled';
             const year = card.dataset.year || '';
             const tags = Array.from(card.querySelectorAll('.tag-pill'))
                 .map((tag) => tag.textContent.trim())
@@ -926,6 +959,14 @@
             const placeholderText = ['Loading preview...', 'Preview unavailable in this browser context. Click to open the writing.', 'Preview will appear once this page has text content.'];
             if (placeholderText.includes(preview)) {
                 preview = '';
+            }
+
+            if (!hasImage) {
+                back.innerHTML = '';
+                back.style.background = '#f5f1ea';
+                back.style.border = '1px solid rgba(86, 69, 45, 0.10)';
+                back.style.boxShadow = '0 2px 6px rgba(38, 29, 20, 0.08)';
+                return;
             }
 
             const titleEl = back.querySelector('.flip-back-title');
@@ -1002,8 +1043,9 @@
                 front.dataset.year = card.dataset.year || '';
                 front.dataset.tags = card.dataset.tags || '';
                 front.dataset.id = card.dataset.id || '';
-                front.dataset.title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || '';
-                card.dataset.title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || '';
+                const inferredTitle = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || card.querySelector('img.thumb-cover')?.getAttribute('alt')?.trim() || card.querySelector('img')?.getAttribute('alt')?.trim() || '';
+                front.dataset.title = inferredTitle;
+                card.dataset.title = inferredTitle;
                 front.classList.toggle('is-image-only', card.classList.contains('is-image-only'));
 
                 const back = buildFlipBack(card);
