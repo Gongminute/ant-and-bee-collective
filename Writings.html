@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
     <style>
         :root {
-            --bg: #00441B;
+            --bg: #f9c7d8;
             --paper: #f8f6f2;
             --paper-deep: #efeae0;
             --ink: #1b1b1b;
@@ -81,9 +81,9 @@
         .tag-filter-btn {
             border: none;
             background: transparent;
-            color: rgba(255, 255, 255, 0.82);
+            color: #1d4ed8;
             padding: 0;
-            font-size: 0.72rem;
+            font-size: 0.82rem;
             letter-spacing: 0.04em;
             text-transform: lowercase;
             cursor: pointer;
@@ -96,7 +96,7 @@
         .tag-filter-btn.is-ant-hill.is-active {
             background: transparent;
             border: none;
-            color: rgba(255, 255, 255, 0.92);
+            color: #1d4ed8;
         }
 
         #tunnel-svg {
@@ -112,7 +112,7 @@
 
         #tunnel-svg path {
             fill: none;
-            stroke: #c0c0c0;
+            stroke: #1d4ed8;
             stroke-width: 0.8;
             stroke-linecap: round;
         }
@@ -631,8 +631,8 @@
                 for (let i = 0; i < antCount; i += 1) {
                     const ant = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                     ant.setAttribute('class', 'ant-dot');
-                    ant.setAttribute('width', '3');
-                    ant.setAttribute('height', '3');
+                    ant.setAttribute('width', '2');
+                    ant.setAttribute('height', '2');
                     svg.appendChild(ant);
                     ants.push({
                         node: ant,
