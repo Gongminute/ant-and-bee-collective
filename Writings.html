@@ -12,13 +12,14 @@
     <style>
         :root {
             --bg: #00441B;
-            --paper: #f7f3ee;
+            --paper: #f8f6f2;
+            --paper-deep: #efeae0;
             --ink: #1b1b1b;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+            --shadow: 0 2px 7px rgba(38, 29, 20, 0.10);
             --edge: rgba(255, 255, 255, 0.12);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 10;
+            --card-count: 4;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -56,6 +57,17 @@
             justify-content: flex-end;
             gap: 0.2rem;
             z-index: 40;
+        }
+
+        .featured-tag-toolbar {
+            left: 1rem;
+            right: auto;
+            top: 1rem;
+            bottom: auto;
+            align-items: flex-start;
+            flex-direction: row;
+            justify-content: flex-start;
+            gap: 0.55rem;
         }
 
         .toolbar-right {
@@ -150,8 +162,9 @@
             min-height: var(--card-height);
             text-decoration: none;
             color: inherit;
-            background: var(--paper);
-            box-shadow: var(--shadow);
+            background: #f9f7f3;
+            border: 1px solid rgba(86, 69, 45, 0.10);
+            box-shadow: 0 2px 6px rgba(38, 29, 20, 0.08);
             padding: 0.72rem 0.68rem 0.74rem;
             transition: transform 260ms ease, box-shadow 260ms ease;
             will-change: transform;
@@ -161,7 +174,8 @@
             font-family: "Nanum Myeongjo", "Century", serif;
         }
 
-        .thumb-card[data-tags*="translation notes" i] {
+        .thumb-card[data-tags*="notes" i],
+        .thumb-card[data-tags*="translation" i] {
             font-family: "Noto Sans KR", "Noto Sans Korean", sans-serif;
         }
 
@@ -253,92 +267,108 @@
             line-height: 1.2;
             z-index: 5000;
         }
+
+        .content-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            z-index: 9999;
+        }
+
+        .content-modal.is-open {
+            display: block;
+        }
+
+        .content-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .content-modal-panel {
+            position: relative;
+            z-index: 1;
+            width: min(92vw, 980px);
+            height: min(88vh, 780px);
+            margin: 4vh auto;
+            background: #f8f6f2;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .content-modal-close {
+            position: absolute;
+            top: 0.7rem;
+            right: 0.8rem;
+            z-index: 2;
+            border: none;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .content-modal-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #fff;
+        }
     </style>
 </head>
 <body>
     <main>
+        <div id="featured-tag-toolbar" class="tag-toolbar featured-tag-toolbar"></div>
         <div id="tag-toolbar" class="tag-toolbar"></div>
         <ul class="thumb-grid">
             <li class="thumb-item" style="--index: 0; z-index: 1;">
-                <a class="thumb-card" href="writings/writing-1.html" data-source="writings/writing-1.html" data-tags="에세이" data-author="Unknown" data-id="1">
-                    <h2 class="thumb-title">Writing Title 1</h2>
-                    <p class="thumb-byline">by Unknown</p>
-                    <p class="thumb-tags"><span class="tag-pill">에세이</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 1; z-index: 2;">
-                <a class="thumb-card" href="writings/writing-2.html" data-source="writings/writing-2.html" data-tags="에세이" data-author="Unknown" data-id="2">
-                    <h2 class="thumb-title">Writing Title 2</h2>
-                    <p class="thumb-byline">by Unknown</p>
-                    <p class="thumb-tags"><span class="tag-pill">에세이</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 2; z-index: 3;">
-                <a class="thumb-card" href="writings/writing-3.html" data-source="writings/writing-3.html" data-tags="진" data-author="Unknown" data-id="3">
-                    <h2 class="thumb-title">Writing Title 3</h2>
-                    <p class="thumb-byline">by Unknown</p>
-                    <p class="thumb-tags"><span class="tag-pill">진</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 3; z-index: 4;">
-                <a class="thumb-card" href="writings/writing-4.html" data-source="writings/writing-4.html" data-tags="" data-author="Unknown" data-id="4">
-                    <h2 class="thumb-title">Writing Title 4</h2>
-                    <p class="thumb-byline">by Unknown</p>
-                    
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 4; z-index: 5;">
-                <a class="thumb-card" href="writings/writing-5.html" data-source="writings/writing-5.html" data-tags="poetry" data-author="Unknown" data-id="5">
-                    <h2 class="thumb-title">Writing Title 5</h2>
-                    <p class="thumb-byline">by Unknown</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 5; z-index: 6;">
-                <a class="thumb-card" href="writings/writing-6.html" data-source="writings/writing-6.html" data-tags="진" data-author="Unknown" data-id="6">
-                    <h2 class="thumb-title">Writing Title 5</h2>
-                    <p class="thumb-byline">by Unknown</p>
-                    <p class="thumb-tags"><span class="tag-pill">진</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 6; z-index: 7;">
-                <a class="thumb-card" href="writings/writing-7.html" data-source="writings/writing-7.html" data-tags="poetry" data-author="Unknown" data-id="7">
-                    <h2 class="thumb-title">testing backend 1</h2>
-                    <p class="thumb-byline">by Unknown</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 7; z-index: 8;">
                 <a class="thumb-card is-image-only" href="writings/writing-8.html" data-source="writings/writing-8.html" data-tags="" data-author="Unknown" data-id="8" data-image-only="1">
                     <img class="thumb-cover" src="/images/082fd5e7ee1dca9e.webp" alt="Image 8" loading="lazy" />
                 </a>
             </li>
-            <li class="thumb-item" style="--index: 8; z-index: 9;">
-                <a class="thumb-card is-image-only" href="writings/writing-9.html" data-source="writings/writing-9.html" data-tags="" data-author="Unknown" data-id="9" data-image-only="1">
+            <li class="thumb-item" style="--index: 1; z-index: 2;">
+                <a class="thumb-card is-image-only" href="writings/writing-9.html" data-source="writings/writing-9.html" data-tags="poetry" data-author="Unknown" data-id="9" data-image-only="1">
                     <img class="thumb-cover" src="/images/521f3ed6c2d00c43.PNG" alt="Image 9" loading="lazy" />
                 </a>
             </li>
-            <li class="thumb-item" style="--index: 9; z-index: 10;">
-                <a class="thumb-card" href="writings/writing-10.html" data-source="writings/writing-10.html" data-tags="translation notes|by:Gongmin" data-author="Gongmin" data-id="10">
+            <li class="thumb-item" style="--index: 2; z-index: 3;">
+                <a class="thumb-card" href="writings/writing-10.html" data-source="writings/writing-10.html" data-tags="notes|translation|by:Gongmin" data-author="Gongmin" data-id="10">
                     <h2 class="thumb-title">4/2</h2>
                     <p class="thumb-byline">by Gongmin</p>
-                    <p class="thumb-tags"><span class="tag-pill">translation notes</span></p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span><span class="tag-pill">translation</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 3; z-index: 4;">
+                <a class="thumb-card" href="writings/writing-11.html" data-source="writings/writing-11.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="11">
+                    <h2 class="thumb-title">Korean Literature Now Vol.73</h2>
+                    <p class="thumb-byline">by Gongmin</p>
+                    <p class="thumb-tags"><span class="tag-pill">translation</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
         </ul>
     </main>
 
+    <div id="content-modal" class="content-modal" aria-hidden="true">
+        <div class="content-modal-backdrop" data-close="true"></div>
+        <div class="content-modal-panel">
+            <button type="button" class="content-modal-close" aria-label="Close writing" data-close="true">×</button>
+            <iframe id="content-modal-frame" class="content-modal-frame" title="Writing content"></iframe>
+        </div>
+    </div>
+
     <script>
         const cards = Array.from(document.querySelectorAll('.thumb-card'));
         const cardItems = Array.from(document.querySelectorAll('.thumb-item'));
+        const modal = document.getElementById('content-modal');
+        const modalFrame = document.getElementById('content-modal-frame');
+        const featuredToolbar = document.getElementById('featured-tag-toolbar');
         const toolbar = document.getElementById('tag-toolbar');
         const rootGrid = document.querySelector('.thumb-grid');
         const activeTags = new Set();
@@ -593,10 +623,9 @@
             } else {
                 const link = item.querySelector('.thumb-card[href]');
                 if (link && link.getAttribute('href')) {
-                    if (event.metaKey || event.ctrlKey) {
-                        window.open(link.href, '_blank', 'noopener');
-                    } else {
-                        window.location.href = link.href;
+                    if (!(event.metaKey || event.ctrlKey)) {
+                        event.preventDefault();
+                        openWritingInModal(link.href);
                     }
                 }
             }
@@ -606,10 +635,60 @@
             event.preventDefault();
         }
 
+        function openWritingInModal(url) {
+            if (!modal || !modalFrame) {
+                return;
+            }
+
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
+            modalFrame.src = url;
+        }
+
+        function closeWritingModal() {
+            if (!modal || !modalFrame) {
+                return;
+            }
+
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            modalFrame.removeAttribute('src');
+        }
+
         function setupDragging() {
             cardItems.forEach((item) => {
                 item.addEventListener('pointerdown', (event) => beginDrag(event, item));
             });
+
+            cards.forEach((card) => {
+                card.addEventListener('click', (event) => {
+                    const link = card.getAttribute('href');
+                    if (!link) {
+                        return;
+                    }
+
+                    if (event.metaKey || event.ctrlKey) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    openWritingInModal(link);
+                });
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && modal && modal.classList.contains('is-open')) {
+                    closeWritingModal();
+                }
+            });
+
+            if (modal) {
+                modal.addEventListener('click', (event) => {
+                    if (event.target instanceof HTMLElement && event.target.dataset.close === 'true') {
+                        closeWritingModal();
+                    }
+                });
+            }
 
             window.addEventListener('pointermove', onDragMove);
             window.addEventListener('pointerup', endDrag);
@@ -654,12 +733,49 @@
             return cleanPreviewText(bodyClone.textContent || '');
         }
 
+        function extractImageSource(doc) {
+            const meta = doc.getElementById('writing-meta');
+            if (meta) {
+                try {
+                    const payload = JSON.parse(meta.textContent || '{}');
+                    if (payload && typeof payload.image === 'string' && payload.image.trim()) {
+                        return payload.image.trim();
+                    }
+                } catch (error) {
+                    // Ignore malformed JSON and fall through to DOM probing.
+                }
+            }
+
+            const heroImage = doc.querySelector('img.hero-image, img[alt], main img');
+            return heroImage ? heroImage.getAttribute('src') || '' : '';
+        }
+
+        function setCardToImageOnly(card, imageSrc) {
+            if (!imageSrc) {
+                return;
+            }
+
+            card.classList.add('is-image-only');
+            card.dataset.imageOnly = '1';
+            card.innerHTML = `<img class="thumb-cover" src="${imageSrc}" alt="${card.getAttribute('data-source') || 'Writing cover'}" loading="lazy" />`;
+        }
+
         async function hydrateCardPreview(card) {
             const preview = card.querySelector('.thumb-preview');
             const title = card.querySelector('.thumb-title');
             const source = card.getAttribute('data-source');
 
-            if (card.classList.contains('is-image-only') || card.dataset.imageOnly === '1' || !preview) {
+            if (card.classList.contains('is-image-only') || card.dataset.imageOnly === '1') {
+                if (!card.querySelector('.thumb-cover')) {
+                    const existingImage = card.querySelector('img');
+                    if (existingImage) {
+                        existingImage.classList.add('thumb-cover');
+                    }
+                }
+                return;
+            }
+
+            if (!preview) {
                 return;
             }
 
@@ -675,6 +791,12 @@
 
                 const bodyText = extractPreviewText(doc);
                 const pageTitle = cleanPreviewText(doc.title || '');
+                const imageSrc = extractImageSource(doc);
+
+                if (imageSrc && bodyText) {
+                    setCardToImageOnly(card, imageSrc);
+                    return;
+                }
 
                 if (pageTitle && title && title.textContent.startsWith('Writing Title')) {
                     title.textContent = pageTitle;
@@ -824,33 +946,17 @@
             const rowStride = cardHeight + 120;
             const contentHeight = (estimatedRows * rowStride) + 260;
             const height = Math.max(window.innerHeight * 1.8, contentHeight, 1200);
-            const stored = loadStoredLayout(width, height);
             const existingRects = [];
 
             cardItems.forEach((item, index) => {
                 const id = getCardId(item, index);
-                const maxX = Math.max(10, width - cardWidth - 10);
-                const maxY = Math.max(10, height - cardHeight - 10);
-                const fromStorage = stored && stored[id] ? stored[id] : null;
-
-                let position;
-
-                if (fromStorage && Number.isFinite(fromStorage.x) && Number.isFinite(fromStorage.y)) {
-                    position = {
-                        x: clamp(Math.round(fromStorage.x), 10, maxX),
-                        y: clamp(Math.round(fromStorage.y), 10, maxY),
-                        r: '0deg'
-                    };
-                } else {
-                    position = createCollisionAwarePosition(existingRects, width, height, cardWidth, cardHeight);
-                }
+                const position = createCollisionAwarePosition(existingRects, width, height, cardWidth, cardHeight);
 
                 existingRects.push({ x: position.x, y: position.y, width: cardWidth, height: cardHeight });
                 randomPositions.set(item, { ...position, id, index });
             });
 
             rootGrid.style.minHeight = `${Math.round(height)}px`;
-            persistLayout(width, height);
         }
 
         function createStackLabel(tag, x, y) {
@@ -938,30 +1044,51 @@
             }
         }
 
-        function renderTagToolbar() {
+        function renderFeaturedTagToolbar() {
             const tags = allTags();
+            const featuredTags = ['translation', 'novel', 'poetry'];
+            const featured = featuredTags.filter((tag) => tags.includes(tag));
 
-            if (!tags.length) {
-                toolbar.innerHTML =
-                    '<span class="toolbar-right">' +
-                    `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill">ant hill</button>` +
-                    '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee dance</button>' +
-                    '</span>';
-                toolbar.querySelector('[data-action="ant-hill"]').addEventListener('click', () => {
-                    antHillActive = !antHillActive;
-                    if (antHillActive) { startTunnelLoop(); } else { clearTunnels(); }
-                    renderTagToolbar();
-                });
-                toolbar.querySelector('[data-action="reshuffle"]').addEventListener('click', () => {
-                    localStorage.removeItem(LAYOUT_STORAGE_KEY);
-                    randomPositions.clear();
-                    buildRandomLayout();
-                    applyLayout();
-                });
+            if (!featured.length) {
+                featuredToolbar.innerHTML = '';
                 return;
             }
 
-            toolbar.innerHTML = tags.map((tag) => {
+            featuredToolbar.innerHTML = featured.map((tag) => {
+                const activeClass = activeTags.has(tag) ? ' is-active' : '';
+                return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">${formatTagLabel(tag)}</button>`;
+            }).join('');
+
+            featuredToolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const tag = button.getAttribute('data-tag');
+                    if (!tag) {
+                        return;
+                    }
+
+                    if (activeTags.has(tag)) {
+                        activeTags.delete(tag);
+                    } else {
+                        activeTags.add(tag);
+                    }
+
+                    renderTagToolbar();
+                    renderFeaturedTagToolbar();
+                    applyLayout();
+                });
+            });
+        }
+
+        function renderTagToolbar() {
+            const tags = allTags();
+            const remainingTags = tags.filter((tag) => !['translation', 'novel', 'poetry'].includes(tag));
+
+            if (!remainingTags.length) {
+                toolbar.innerHTML = '';
+                return;
+            }
+
+            toolbar.innerHTML = remainingTags.map((tag) => {
                 const activeClass = activeTags.has(tag) ? ' is-active' : '';
                 return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">${formatTagLabel(tag)}</button>`;
             }).join('') +
@@ -1003,6 +1130,7 @@
                     }
 
                     renderTagToolbar();
+                    renderFeaturedTagToolbar();
                     applyLayout();
                 });
             });
@@ -1015,6 +1143,7 @@
         });
 
         applyCardMetaVisibility();
+        renderFeaturedTagToolbar();
         renderTagToolbar();
         applyLayout();
         setupDragging();

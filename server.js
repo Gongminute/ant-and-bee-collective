@@ -56,6 +56,19 @@ if (TRUST_PROXY) {
 
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(ROOT, 'NewIndex.html'));
+});
+
+app.get('/index.html', (req, res) => {
+  res.redirect('/');
+});
+
+app.get('/index', (req, res) => {
+  res.redirect('/');
+});
+
 app.use(express.static(ROOT));
 
 if (!process.env.ADMIN_PASSWORD || !process.env.SESSION_SECRET) {
