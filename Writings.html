@@ -19,7 +19,7 @@
             --edge: rgba(255, 255, 255, 0.12);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 16;
+            --card-count: 18;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -404,7 +404,7 @@
         <ul class="thumb-grid">
             <li class="thumb-item" style="--index: 0; z-index: 1;">
                 <a class="thumb-card is-image-only" href="writings/writing-8.html" data-source="writings/writing-8.html" data-tags="" data-author="Unknown" data-id="8" data-image-only="1">
-                    <img class="thumb-cover" src="images/082fd5e7ee1dca9e.webp" alt="Image 8" loading="lazy" />
+                    <img class="thumb-cover" src="/images/082fd5e7ee1dca9e.webp" alt="Image 8" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 1; z-index: 2;">
@@ -497,17 +497,17 @@
             </li>
             <li class="thumb-item" style="--index: 12; z-index: 13;">
                 <a class="thumb-card is-image-only" href="writings/writing-20.html" data-source="writings/writing-20.html" data-tags="essay|about|by:Gongmin" data-author="Gongmin" data-id="20" data-image-only="1">
-                    <img class="thumb-cover" src="images/51653538ef1e8bda.png" alt="New England Review Translator&#39;s Notebook" loading="lazy" />
+                    <img class="thumb-cover" src="/images/51653538ef1e8bda.png" alt="New England Review Translator&#39;s Notebook" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 13; z-index: 14;">
                 <a class="thumb-card is-image-only" href="writings/writing-21.html" data-source="writings/writing-21.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="21" data-image-only="1">
-                    <img class="thumb-cover" src="images/96ba4da7a12193be.jpeg" alt="Photo by Junyesl" loading="lazy" />
+                    <img class="thumb-cover" src="/images/96ba4da7a12193be.jpeg" alt="Photo by Junyesl" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 14; z-index: 15;">
                 <a class="thumb-card is-image-only" href="writings/writing-23.html" data-source="writings/writing-23.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="23" data-image-only="1">
-                    <img class="thumb-cover" src="images/8b8b1dc9d93edb1d.JPG" alt="Photo by Tai" loading="lazy" />
+                    <img class="thumb-cover" src="/images/8b8b1dc9d93edb1d.JPG" alt="Photo by Tai" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 15; z-index: 16;">
@@ -515,6 +515,22 @@
                     <h2 class="thumb-title">About</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">about</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 16; z-index: 17;">
+                <a class="thumb-card" href="writings/writing-25.html" data-source="writings/writing-25.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="25">
+                    <h2 class="thumb-title">New England Review 45.2</h2>
+                    <p class="thumb-byline">Gongmin · 2024</p>
+                    <p class="thumb-tags"><span class="tag-pill">translation</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 17; z-index: 18;">
+                <a class="thumb-card" href="writings/writing-26.html" data-source="writings/writing-26.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="26">
+                    <h2 class="thumb-title">Jaeum &amp; Moeum Quarterly Issue 55</h2>
+                    <p class="thumb-byline">Gongmin · 2022</p>
+                    <p class="thumb-tags"><span class="tag-pill">novel</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
@@ -1371,7 +1387,7 @@
         function applyLayout() {
             clearStackLabels();
 
-            const featuredOrder = ['translation', 'poetry', 'about'];
+            const featuredOrder = ['translation', 'poetry', 'novel', 'essay', 'about'];
             const featuredTags = featuredOrder.filter((tag) => featuredActiveTags.has(tag) || activeTags.has(tag));
             const selectedTags = featuredTags.length > 0 ? featuredTags : Array.from(activeTags);
             rootGrid.classList.toggle('is-grouped', selectedTags.length > 0);
@@ -1503,7 +1519,7 @@
 
         function renderFeaturedTagToolbar() {
             const tags = allTags();
-            const featuredTags = ['translation', 'poetry', 'about'];
+            const featuredTags = ['translation', 'poetry', 'novel', 'essay', 'about'];
             const featured = featuredTags.filter((tag) => tags.includes(tag));
 
             if (!featured.length) {
@@ -1538,7 +1554,7 @@
 
         function renderTagToolbar() {
             const tags = allTags();
-            const remainingTags = tags.filter((tag) => !['translation', 'poetry', 'about'].includes(tag));
+            const remainingTags = tags.filter((tag) => !['translation', 'poetry', 'novel', 'essay', 'about'].includes(tag));
 
             if (!remainingTags.length) {
                 toolbar.innerHTML = '';
