@@ -283,6 +283,23 @@ function parseImage(input) {
   return String(input || '').trim();
 }
 
+function parseLink(input) {
+  const raw = String(input || '').trim();
+  if (!raw) {
+    return '';
+  }
+
+  if (/^https?:\/\//i.test(raw) || /^\//.test(raw) || /^\.?\.\//.test(raw) || /^#/.test(raw)) {
+    return raw;
+  }
+
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(?:[/?#].*)?$/i.test(raw)) {
+    return `https://${raw}`;
+  }
+
+  return '';
+}
+
 function parseAuthor(input) {
   return String(input || '').trim();
 }
@@ -292,12 +309,8 @@ function sanitizeBodyText(input) {
 }
 
 function toParagraphs(text) {
-  return text
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean)
-    .map((block) => `<p>${escapeHtml(block).replace(/\n/g, '<br>')}</p>`)
-    .join('\n        ');
+  const content = String(text || '');
+  return content ? `<p>${escapeHtml(content).replace(/\n/g, '<br>')}</p>` : '';
 }
 
 function tagsHtml(tags) {
@@ -324,9 +337,9 @@ function parseYear(value) {
   return raw;
 }
 
-function writingHtmlTemplate({ title, content, tags, image, author, year }) {
+function writingHtmlTemplate({ title, koreanTitle, englishTitle, content, tags, image, author, year, link, koreanTooltip, englishTooltip, popupImage }) {
   const contentHtml = toParagraphs(content);
-  const encodedMeta = escapeHtml(JSON.stringify({ tags, image, author, year }));
+  const encodedMeta = escapeHtml(JSON.stringify({ tags, image, author, year, link, koreanTitle, englishTitle, koreanTooltip, englishTooltip, popupImage }));
   const encodedRaw = escapeHtml(JSON.stringify({ content }));
   const byline = [author ? `by ${author}` : '', year].filter(Boolean).join(' · ');
 
@@ -421,9 +434,15 @@ function parseWritingFile(html, number) {
   const title = titleMatch ? decodeHtml(titleMatch[1]).trim() : `Writing ${number}`;
 
   let tags = [];
+  let koreanTitle = '';
+  let englishTitle = title;
   let image = '';
   let author = '';
   let year = '';
+  let link = '';
+  let koreanTooltip = '';
+  let englishTooltip = '';
+  let popupImage = '';
   let content = '';
 
   const metaMatch = html.match(/<script id="writing-meta" type="application\/json">([\s\S]*?)<\/script>/i);
@@ -431,14 +450,26 @@ function parseWritingFile(html, number) {
     try {
       const parsedMeta = JSON.parse(decodeHtml(metaMatch[1]));
       tags = normalizeTags(parsedMeta.tags || []);
+      koreanTitle = sanitizeBodyText(parsedMeta.koreanTitle || '');
+      englishTitle = sanitizeBodyText(parsedMeta.englishTitle || title);
       image = parseImage(parsedMeta.image || '');
       author = parseAuthor(parsedMeta.author || '');
       year = parseYear(parsedMeta.year || '');
+      link = parseLink(parsedMeta.link || '');
+      koreanTooltip = sanitizeBodyText(parsedMeta.koreanTooltip || parsedMeta.tooltip || '');
+      englishTooltip = sanitizeBodyText(parsedMeta.englishTooltip || '');
+      popupImage = parseImage(parsedMeta.popupImage || '');
     } catch (error) {
       tags = [];
+      koreanTitle = '';
+      englishTitle = title;
       image = '';
       author = '';
       year = '';
+      link = '';
+      koreanTooltip = '';
+      englishTooltip = '';
+      popupImage = '';
     }
   }
 
@@ -457,10 +488,16 @@ function parseWritingFile(html, number) {
     fileName: `writing-${number}.html`,
     href: `writings/writing-${number}.html`,
     title,
+    koreanTitle,
+    englishTitle,
     tags,
     image,
     author,
     year,
+    link,
+    koreanTooltip,
+    englishTooltip,
+    popupImage,
     content
   };
 }
@@ -470,8 +507,15 @@ function buildCard(entry, index) {
   const author = parseAuthor(entry.author || '');
   const safeAuthor = escapeHtml(author || 'Unknown');
   const year = parseYear(entry.year || '');
+  const koreanTitle = sanitizeBodyText(entry.koreanTitle || '');
+  const englishTitle = sanitizeBodyText(entry.englishTitle || entry.title || '');
   const tags = normalizeTags(entry.tags || []);
   const content = sanitizeBodyText(entry.content || '');
+  const link = parseLink(entry.link || '');
+  const koreanTooltip = sanitizeBodyText(entry.koreanTooltip || entry.tooltip || '');
+  const englishTooltip = sanitizeBodyText(entry.englishTooltip || '');
+  const popupImage = parseImage(entry.popupImage || '');
+  const cardHref = link || entry.href;
   const isImageOnly = Boolean(entry.image && !content);
   const stackTags = [...tags, ...(author ? [`by:${author}`] : [])];
   const encodedTags = stackTags.join('|');
@@ -480,18 +524,20 @@ function buildCard(entry, index) {
     : '';
 
   const byline = [author || 'Unknown', year].filter(Boolean).join(' · ');
+  const linkProps = link ? ` data-link="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer"` : '';
+  const cardMetaAttrs = ` data-korean-title="${escapeHtml(koreanTitle)}" data-english-title="${escapeHtml(englishTitle)}" data-korean-tooltip="${escapeHtml(koreanTooltip)}" data-english-tooltip="${escapeHtml(englishTooltip)}" data-popup-image="${escapeHtml(popupImage)}"`;
 
   if (isImageOnly) {
     const safeImage = escapeHtml(entry.image);
     return `            <li class="thumb-item" style="--index: ${index}; z-index: ${index + 1};">
-                <a class="thumb-card is-image-only" href="${entry.href}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-author="${safeAuthor}" data-id="${entry.number}" data-image-only="1">
+                <a class="thumb-card is-image-only" href="${escapeHtml(cardHref)}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-author="${safeAuthor}" data-id="${entry.number}" data-image-only="1"${cardMetaAttrs}${linkProps}>
                     <img class="thumb-cover" src="${safeImage}" alt="${safeTitle}" loading="lazy" />
                 </a>
             </li>`;
   }
 
   return `            <li class="thumb-item" style="--index: ${index}; z-index: ${index + 1};">
-                <a class="thumb-card" href="${entry.href}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-author="${safeAuthor}" data-id="${entry.number}">
+                <a class="thumb-card" href="${escapeHtml(cardHref)}" data-source="${entry.href}" data-tags="${escapeHtml(encodedTags)}" data-author="${safeAuthor}" data-id="${entry.number}"${cardMetaAttrs}${linkProps}>
                     <h2 class="thumb-title">${safeTitle}</h2>
                     <p class="thumb-byline">${escapeHtml(byline)}</p>
                     ${tagsMarkup}
@@ -562,11 +608,17 @@ async function rebuildArchivePages() {
 
 async function saveWriting(number, payload) {
   const title = String(payload.title || '').trim();
+  const koreanTitle = sanitizeBodyText(payload.koreanTitle || '');
+  const englishTitle = sanitizeBodyText(payload.englishTitle || title);
   const content = sanitizeBodyText(payload.content || '');
   const tags = normalizeTags(payload.tags || '');
   const image = parseImage(payload.image || '');
   const author = parseAuthor(payload.author || '');
   const year = parseYear(payload.year || '');
+  const link = parseLink(payload.link || '');
+  const koreanTooltip = sanitizeBodyText(payload.koreanTooltip || payload.tooltip || '');
+  const englishTooltip = sanitizeBodyText(payload.englishTooltip || '');
+  const popupImage = parseImage(payload.popupImage || '');
   const resolvedTitle = title || (image ? `Image ${number}` : '');
 
   if (!image && (!resolvedTitle || !content)) {
@@ -574,7 +626,8 @@ async function saveWriting(number, payload) {
   }
 
   const filePath = path.join(WRITINGS_DIR, `writing-${number}.html`);
-  const html = writingHtmlTemplate({ title: resolvedTitle, content, tags, image, author, year });
+  const resolvedEnglishTitle = englishTitle || resolvedTitle;
+  const html = writingHtmlTemplate({ title: resolvedTitle, koreanTitle, englishTitle: resolvedEnglishTitle, content, tags, image, author, year, link, koreanTooltip, englishTooltip, popupImage });
   await fs.writeFile(filePath, html, 'utf8');
 
   return {
@@ -582,11 +635,17 @@ async function saveWriting(number, payload) {
     fileName: `writing-${number}.html`,
     href: `writings/writing-${number}.html`,
     title: resolvedTitle,
+    koreanTitle,
+    englishTitle: resolvedEnglishTitle,
     content,
     tags,
     image,
     author,
-    year
+    year,
+    link,
+    koreanTooltip,
+    englishTooltip,
+    popupImage
   };
 }
 
@@ -839,7 +898,12 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             line-height: 1.5;
         }
 
-        #image-drop-zone {
+        textarea.short-textarea {
+          min-height: 90px;
+        }
+
+        #image-drop-zone,
+        #popup-image-drop-zone {
             border: 2px dashed #ccc;
             border-radius: 8px;
             padding: 2.5rem 1rem;
@@ -850,12 +914,14 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             margin: 0.5rem 0;
         }
 
-        #image-drop-zone.drag-over {
+        #image-drop-zone.drag-over,
+        #popup-image-drop-zone.drag-over {
             border-color: #1f1f1f;
             background: #f0ede5;
         }
 
-        #image-drop-zone.has-image {
+        #image-drop-zone.has-image,
+        #popup-image-drop-zone.has-image {
             border-color: #0f5132;
             background: #d1e7dd;
         }
@@ -990,6 +1056,12 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     <label for="title">제목</label>
                     <input id="title" name="title" type="text" placeholder="Enter writing title" />
 
+                    <label for="korean-title">Korean card title (한국어)</label>
+                    <input id="korean-title" name="koreanTitle" type="text" placeholder="한국어 제목" />
+
+                    <label for="english-title">English card title</label>
+                    <input id="english-title" name="englishTitle" type="text" placeholder="English title" />
+
                     <label for="author">작성자</label>
                     <input id="author" name="author" type="text" placeholder="Who wrote this?" />
 
@@ -999,6 +1071,15 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     <label for="tags">태그 (쉼표로 구분)</label>
                     <input id="tags" name="tags" type="text" placeholder="essay, poetry, memory" />
 
+                    <label for="link">하이퍼링크 (선택 사항)</label>
+                    <input id="link" name="link" type="url" placeholder="https://example.com" />
+
+                    <label for="korean-tooltip">Korean tooltip (한국어)</label>
+                    <textarea id="korean-tooltip" name="koreanTooltip" class="short-textarea" placeholder="한국어 툴팁"></textarea>
+
+                    <label for="english-tooltip">English tooltip</label>
+                    <textarea id="english-tooltip" name="englishTooltip" class="short-textarea" placeholder="English tooltip text"></textarea>
+
                     <label>이미지 업로드 (선택 사항)</label>
                     <div id="image-drop-zone">
                         <p class="drop-zone-text">Drag and drop an image here, or click to select</p>
@@ -1006,6 +1087,14 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     </div>
                     <input id="image" name="image" type="hidden" />
                     <input id="image-file" type="file" accept="image/*" style="display: none;" />
+
+                    <label for="popup-image-file">Popup image (shown when clicking the flipped card)</label>
+                    <div id="popup-image-drop-zone">
+                      <p class="drop-zone-text">Drag and drop a popup image here, or click to select</p>
+                      <img id="popup-image-preview" class="drop-zone-image-preview" alt="Popup image preview" />
+                    </div>
+                    <input id="popup-image-file" type="file" accept="image/*" style="display: none;" />
+                    <input id="popup-image" name="popupImage" type="hidden" />
 
                     <label for="content">본문</label>
                     <textarea id="content" name="content" placeholder="여기에 글을 작성하세요. 단락은 엔터로 구분합니다."></textarea>
@@ -1070,10 +1159,18 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
         const modeInput = document.getElementById('mode');
         const numberInput = document.getElementById('writing-number');
         const titleInput = document.getElementById('title');
+        const koreanTitleInput = document.getElementById('korean-title');
+        const englishTitleInput = document.getElementById('english-title');
         const authorInput = document.getElementById('author');
         const yearInput = document.getElementById('year');
         const tagsInput = document.getElementById('tags');
+        const linkInput = document.getElementById('link');
+        const koreanTooltipInput = document.getElementById('korean-tooltip');
+        const englishTooltipInput = document.getElementById('english-tooltip');
         const imageInput = document.getElementById('image');
+        const popupImageInput = document.getElementById('popup-image');
+        const popupImageFileInput = document.getElementById('popup-image-file');
+        const popupImagePreview = document.getElementById('popup-image-preview');
         const contentInput = document.getElementById('content');
         const saveBtn = document.getElementById('save-btn');
         const resetBtn = document.getElementById('reset-btn');
@@ -1084,6 +1181,7 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
         const imageDropZone = document.getElementById('image-drop-zone');
         const imageFileInput = document.getElementById('image-file');
         const imagePreview = document.getElementById('image-preview');
+        const popupImageDropZone = document.getElementById('popup-image-drop-zone');
         const credentialsForm = document.getElementById('credentials-form');
         const newUsernameInput = document.getElementById('new-username');
         const newPasswordInput = document.getElementById('new-password');
@@ -1123,7 +1221,37 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             }
         });
 
-        async function handleImageUpload(file) {
+        popupImageDropZone.addEventListener('click', () => popupImageFileInput.click());
+
+        popupImageDropZone.addEventListener('dragenter', (e) => {
+          e.preventDefault();
+          popupImageDropZone.classList.add('drag-over');
+        });
+
+        popupImageDropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          popupImageDropZone.classList.add('drag-over');
+        });
+
+        popupImageDropZone.addEventListener('dragleave', () => {
+          popupImageDropZone.classList.remove('drag-over');
+        });
+
+        popupImageDropZone.addEventListener('drop', async (e) => {
+          e.preventDefault();
+          popupImageDropZone.classList.remove('drag-over');
+          if (e.dataTransfer.files.length > 0) {
+            await handleImageUpload(e.dataTransfer.files[0], popupImageInput, popupImagePreview);
+          }
+        });
+
+        popupImageFileInput.addEventListener('change', async (e) => {
+          if (e.target.files.length > 0) {
+            await handleImageUpload(e.target.files[0], popupImageInput, popupImagePreview);
+          }
+        });
+
+        async function handleImageUpload(file, targetInput = imageInput, targetPreview = imagePreview) {
             if (!file.type.startsWith('image/')) {
                 setStatus('Please select an image file', true);
                 return;
@@ -1144,10 +1272,14 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                 }
 
                 const data = await response.json();
-                imageInput.value = data.url;
-                imagePreview.src = data.url;
-                imagePreview.classList.add('show');
-                imageDropZone.classList.add('has-image');
+                targetInput.value = data.url;
+                targetPreview.src = data.url;
+                targetPreview.classList.add('show');
+                if (targetInput === imageInput) {
+                  imageDropZone.classList.add('has-image');
+                } else if (targetInput === popupImageInput) {
+                  popupImageDropZone.classList.add('has-image');
+                }
                 setStatus('Image uploaded successfully', false);
             } catch (error) {
                 setStatus('Image upload failed: ' + error.message, true);
@@ -1162,7 +1294,9 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             deleteBtn.hidden = true;
             form.reset();
             imagePreview.classList.remove('show');
+            popupImagePreview.classList.remove('show');
             imageDropZone.classList.remove('has-image');
+            popupImageDropZone.classList.remove('has-image');
         }
 
         async function loadEntry(number) {
@@ -1214,10 +1348,24 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     saveBtn.textContent = 'Update writing';
                     deleteBtn.hidden = false;
                     titleInput.value = data.title || '';
+                    koreanTitleInput.value = data.koreanTitle || '';
+                    englishTitleInput.value = data.englishTitle || data.title || '';
                     authorInput.value = data.author || '';
                     yearInput.value = data.year || '';
                     tagsInput.value = (data.tags || []).join(', ');
+                    linkInput.value = data.link || '';
+                    koreanTooltipInput.value = data.koreanTooltip || data.tooltip || '';
+                    englishTooltipInput.value = data.englishTooltip || '';
                     imageInput.value = data.image || '';
+                    popupImageInput.value = data.popupImage || '';
+                    if (data.popupImage) {
+                      popupImagePreview.src = data.popupImage;
+                      popupImagePreview.classList.add('show');
+                      popupImageDropZone.classList.add('has-image');
+                    } else {
+                      popupImagePreview.classList.remove('show');
+                      popupImageDropZone.classList.remove('has-image');
+                    }
                     contentInput.value = data.content || '';
                     setStatus('Loaded writing #' + data.number, false);
                 } catch (error) {
@@ -1327,11 +1475,17 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
 
             const payload = {
                 title: titleInput.value.trim(),
+                koreanTitle: koreanTitleInput.value.trim(),
+                englishTitle: englishTitleInput.value.trim(),
                 author: authorInput.value.trim(),
                 year: yearInput.value.trim(),
                 content: contentInput.value,
                 tags: tagsInput.value,
-                image: imageInput.value.trim()
+                link: linkInput.value.trim(),
+                image: imageInput.value.trim(),
+                koreanTooltip: koreanTooltipInput.value.trim(),
+                englishTooltip: englishTooltipInput.value.trim(),
+                popupImage: popupImageInput.value.trim()
             };
 
           const hasImage = Boolean(payload.image);

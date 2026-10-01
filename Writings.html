@@ -12,6 +12,7 @@
     <style>
         :root {
             --bg: #f9c7d8;
+            --line-color: #1d4ed8;
             --paper: #f8f6f2;
             --paper-deep: #efeae0;
             --ink: #1b1b1b;
@@ -19,7 +20,7 @@
             --edge: rgba(255, 255, 255, 0.12);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 21;
+            --card-count: 22;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -43,7 +44,7 @@
         main {
             width: 100%;
             margin: 0 auto;
-            padding: 2rem 1.5rem 6rem;
+            padding: 0;
             position: relative;
         }
 
@@ -112,7 +113,7 @@
 
         #tunnel-svg path {
             fill: none;
-            stroke: #1d4ed8;
+            stroke: var(--line-color);
             stroke-width: 0.8;
             stroke-linecap: round;
         }
@@ -122,11 +123,26 @@
             shape-rendering: crispEdges;
         }
 
+        #tunnel-svg .archive-ant-link {
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        #tunnel-svg .archive-ant {
+            fill: #fff;
+            filter: drop-shadow(0 0 1px #000);
+        }
+
+        #tunnel-svg .archive-ant-hit {
+            fill: transparent;
+            pointer-events: all;
+        }
+
         .thumb-grid {
             list-style: none;
             margin: 0;
             padding: 0;
-            width: min(1200px, 100%);
+            width: 100%;
             min-height: 115vh;
             position: relative;
             margin-left: auto;
@@ -160,6 +176,7 @@
             flex-direction: column;
             width: var(--card-width);
             min-height: var(--card-height);
+            font-family: "Noto Serif KR", serif;
             text-decoration: none;
             color: inherit;
             background: #f9f7f3;
@@ -168,15 +185,11 @@
             padding: 0.72rem 0.68rem 0.74rem;
             transition: transform 260ms ease, box-shadow 260ms ease;
             will-change: transform;
+            cursor: pointer;
         }
 
-        .thumb-card[data-tags*="poetry" i] {
-            font-family: "Nanum Myeongjo", "Century", serif;
-        }
-
-        .thumb-card[data-tags*="notes" i],
-        .thumb-card[data-tags*="translation" i] {
-            font-family: "Noto Sans KR", "Noto Sans Korean", sans-serif;
+        .thumb-card[title]:hover {
+            filter: none;
         }
 
         .thumb-card.is-image-only {
@@ -227,16 +240,34 @@
             flex-direction: column;
             justify-content: center;
             gap: 0.5rem;
-            font-family: "Noto Sans KR", "Noto Sans Korean", sans-serif;
+            font-family: "Noto Serif KR", serif;
             background: var(--flip-bg, #f0eadf);
             color: var(--flip-ink, #1d1d1d);
         }
 
+        .thumb-card-back.has-popup-image {
+            cursor: zoom-in;
+        }
+
         .flip-back-title {
             margin: 0;
-            font-size: 0.78rem;
-            line-height: 1.25;
+            width: 100%;
+            font-size: 1.08rem;
+            line-height: 1.4;
             font-weight: 700;
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+
+        .flip-back-title-ko,
+        .flip-back-title-en {
+            display: block;
+        }
+
+        .flip-back-title-en {
+            margin-top: 0.45rem;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .flip-back-meta,
@@ -318,6 +349,11 @@
             background: rgba(255, 255, 255, 0.85);
         }
 
+        .tag-pill.is-hidden,
+        .flip-back-tag.is-hidden {
+            display: none;
+        }
+
         .thumb-preview {
             margin: 0;
             font-size: 0.67rem;
@@ -330,6 +366,51 @@
             overflow: hidden;
             min-height: 8.4em;
             order: 3;
+        }
+
+        .card-tooltip {
+            position: fixed;
+            z-index: 10001;
+            max-width: min(320px, calc(100vw - 16px));
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            pointer-events: none;
+        }
+
+        .card-tooltip-box {
+            padding: 0.45rem 0.6rem;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            font-size: 0.75rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .card-tooltip-ko {
+            border-color: rgba(255, 255, 255, 0.22);
+            background: #1d1d1d;
+            color: #fff;
+        }
+
+        .card-tooltip-en {
+            background: #fff;
+            color: #1d1d1d;
+        }
+
+        .card-tooltip[hidden] {
+            display: none;
+        }
+
+        .is-home-theme-active .thumb-byline,
+        .is-home-theme-active .thumb-preview,
+        .is-home-theme-active .tag-pill,
+        .is-home-theme-active .flip-back-tag,
+        .is-home-theme-active .stack-label,
+        .is-home-theme-active .tag-filter-btn,
+        .is-home-theme-active .thumb-card-back,
+        .is-home-theme-active .thumb-card-back * {
+            color: var(--line-color) !important;
         }
 
         .stack-label {
@@ -395,6 +476,81 @@
             display: block;
             background: #fff;
         }
+
+        .popup-image-dialog {
+            position: fixed;
+            inset: 0;
+            box-sizing: border-box;
+            max-width: 96vw;
+            max-height: 96vh;
+            padding: 42px 12px 12px;
+            overflow: visible;
+            border: 0;
+            background: #111;
+            box-shadow: 0 18px 70px rgba(0, 0, 0, 0.45);
+        }
+
+        .popup-image-dialog[open] {
+            animation: popupImageEnter 1400ms cubic-bezier(0.18, 0.72, 0.22, 1) both;
+        }
+
+        .popup-image-dialog::backdrop {
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(3px);
+            animation: popupBackdropEnter 1400ms ease-out both;
+        }
+
+        @keyframes popupImageEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.94) translateY(12px);
+                filter: blur(8px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes popupBackdropEnter {
+            from { background: rgba(0, 0, 0, 0); }
+            to { background: rgba(0, 0, 0, 0.82); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .popup-image-dialog[open],
+            .popup-image-dialog::backdrop {
+                animation-duration: 1ms;
+            }
+        }
+
+        .popup-image-dialog img {
+            display: block;
+            max-width: min(92vw, 1400px);
+            max-height: calc(96vh - 54px);
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .popup-image-close {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            display: grid;
+            place-items: center;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #fff;
+            font: inherit;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -403,12 +559,12 @@
         <div id="tag-toolbar" class="tag-toolbar"></div>
         <ul class="thumb-grid">
             <li class="thumb-item" style="--index: 0; z-index: 1;">
-                <a class="thumb-card is-image-only" href="writings/writing-8.html" data-source="writings/writing-8.html" data-tags="" data-author="Unknown" data-id="8" data-image-only="1">
+                <a class="thumb-card is-image-only" href="writings/writing-8.html" data-source="writings/writing-8.html" data-tags="poetry" data-author="Unknown" data-id="8" data-image-only="1" data-korean-title="츄파카브라" data-english-title="Chupacabra" data-korean-tooltip="츄파카브라의 뼈라고 합니다." data-english-tooltip="Allegedly, a bone of a chupacabra." data-popup-image="/images/110ae60dcf67e379.jpeg">
                     <img class="thumb-cover" src="/images/082fd5e7ee1dca9e.webp" alt="Image 8" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 1; z-index: 2;">
-                <a class="thumb-card" href="writings/writing-9.html" data-source="writings/writing-9.html" data-tags="Illustration|by:Gongmin" data-author="Gongmin" data-id="9">
+                <a class="thumb-card" href="writings/writing-9.html" data-source="writings/writing-9.html" data-tags="Illustration|by:Gongmin" data-author="Gongmin" data-id="9" data-korean-title="팔레스타인의 새 122종 포스터" data-english-title="122 Birds of Palestine 포스터" data-korean-tooltip="계미현 시인의 시에 나오는 새를 계미현 시인과 함께 손으로 그렸습니다. 남선미 디자이너의 손으로 포스터가 탄생했습니다." data-english-tooltip="Drew the birds listed in Gye Mihyun&#39;s poem by hand alongside Gye Mihyun. The drawings were then turned into a poster by Nam Seonmi." data-popup-image="/images/dafca82f62433b29.jpg">
                     <h2 class="thumb-title">122 Birds of Palestine</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">Illustration</span></p>
@@ -416,7 +572,7 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 2; z-index: 3;">
-                <a class="thumb-card" href="writings/writing-10.html" data-source="writings/writing-10.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="10">
+                <a class="thumb-card" href="writings/writing-10.html" data-source="writings/writing-10.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="10" data-korean-title="" data-english-title="4/2" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">4/2</h2>
                     <p class="thumb-byline">Gongmin</p>
                     <p class="thumb-tags"><span class="tag-pill">notes</span></p>
@@ -424,15 +580,12 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 3; z-index: 4;">
-                <a class="thumb-card" href="writings/writing-11.html" data-source="writings/writing-11.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="11">
-                    <h2 class="thumb-title">Korean Literature Now Vol.73</h2>
-                    <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">translation</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
+                <a class="thumb-card is-image-only" href="writings/writing-11.html" data-source="writings/writing-11.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="11" data-image-only="1" data-korean-title="" data-english-title="Korean Literature Now Vol.73" data-korean-tooltip="어른이 오지 않기를 바라며 송진권 시인님의 시 두 편을 번역했습니다." data-english-tooltip="Translated two poems by poet Song Jin Gwon while wishing for the adults to never return." data-popup-image="/images/1af2cd87df668970.jpeg">
+                    <img class="thumb-cover" src="/images/bfe9f703b36e9f47.jpg" alt="Korean Literature Now Vol.73" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 4; z-index: 5;">
-                <a class="thumb-card" href="writings/writing-12.html" data-source="writings/writing-12.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="12">
+                <a class="thumb-card" href="writings/writing-12.html" data-source="writings/writing-12.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="12" data-korean-title="왜 비건인가?" data-english-title="Why Vegan?" data-korean-tooltip="고 비건! 동물권에 관한 피터 싱어의 논문을 공역했습니다." data-english-tooltip="Translated Peter Singer&#39;s treatise on animal rights. Go Vegan!" data-popup-image="/images/a70096544453878a.jpg">
                     <h2 class="thumb-title">Why Vegan</h2>
                     <p class="thumb-byline">Gongmin · 2021</p>
                     <p class="thumb-tags"><span class="tag-pill">translation</span></p>
@@ -440,15 +593,13 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 5; z-index: 6;">
-                <a class="thumb-card" href="writings/writing-13.html" data-source="writings/writing-13.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="13">
-                    <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. March</h2>
-                    <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
+                <a class="thumb-card is-image-only" href="writings/writing-13.html" data-source="writings/writing-13.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="13" data-image-only="1" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 3월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. March" data-korean-tooltip="아마도 한국 최초 혁명 시 월간 진이 아닐까요?
+진을 발행하며 시를 쓰고 번역했습니다." data-english-tooltip="Probably Korea&#39;s first revolutionary poetry zine monthly. Published the zine, wrote poems, and translated poems and essays." data-popup-image="/images/2d7912804e51dbd2.jpg">
+                    <img class="thumb-cover" src="/images/0cbf3eac66152dd5.jpg" alt="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. March" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 6; z-index: 7;">
-                <a class="thumb-card" href="writings/writing-14.html" data-source="writings/writing-14.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="14">
+                <a class="thumb-card" href="writings/writing-14.html" data-source="writings/writing-14.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="14" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 4월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. April" data-korean-tooltip="새벽이를 떠올리며 주해라는 시를 공개했습니다." data-english-tooltip="Showcased the poem Exegesis, thinking of Dawn of Dawn Sanctuary fame." data-popup-image="/images/d10e09e7c3e30f69.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. April</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
@@ -456,7 +607,7 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 7; z-index: 8;">
-                <a class="thumb-card" href="writings/writing-15.html" data-source="writings/writing-15.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="15">
+                <a class="thumb-card" href="writings/writing-15.html" data-source="writings/writing-15.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="15" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 5월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. May" data-korean-tooltip="카라 노조 호입니다.  흰개미는 억울한 게 많습니다. (흰개미를 찾아 보세요!)" data-english-tooltip="KARA Labor Union Issue. The white ants (not termites) have a lot to be upset about. (Try and find them!)" data-popup-image="/images/6813fe32d117b805.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. May</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
@@ -464,7 +615,7 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 8; z-index: 9;">
-                <a class="thumb-card" href="writings/writing-16.html" data-source="writings/writing-16.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="16">
+                <a class="thumb-card" href="writings/writing-16.html" data-source="writings/writing-16.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="16" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 6월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. June" data-korean-tooltip="주홍빛연대 차차 호입니다. 츄파카브라가 등장합니다." data-english-tooltip="Scarlet ChaCha Issue. A wild chupacabra appears." data-popup-image="/images/9e055340daba5689.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. June</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
@@ -472,7 +623,7 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 9; z-index: 10;">
-                <a class="thumb-card" href="writings/writing-17.html" data-source="writings/writing-17.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="17">
+                <a class="thumb-card" href="writings/writing-17.html" data-source="writings/writing-17.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="17" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 7월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. July" data-korean-tooltip="무지개교실 호입니다.당연한 말이지만, 산네발나비는 제왕나비가 아닙니다." data-english-tooltip="Rainbow Classroom Issue. It&#39;s obvious to say, but a comma is not a monarch." data-popup-image="/images/a978d22074fe5a33.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. July</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
@@ -480,7 +631,7 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 10; z-index: 11;">
-                <a class="thumb-card" href="writings/writing-18.html" data-source="writings/writing-18.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="18">
+                <a class="thumb-card" href="writings/writing-18.html" data-source="writings/writing-18.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="18" data-korean-title="" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. August" data-korean-tooltip="셰어 호입니다. 나비인간 에소그램이 나옵니다." data-english-tooltip="SHARE (Center for Sexual Rights and Reproductive Justice) Issue. This issue features the Butterflyman Ethogram." data-popup-image="/images/172db953ead5df7b.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. August</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
@@ -488,7 +639,7 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 11; z-index: 12;">
-                <a class="thumb-card" href="writings/writing-19.html" data-source="writings/writing-19.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="19">
+                <a class="thumb-card" href="writings/writing-19.html" data-source="writings/writing-19.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="19" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 9월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. September" data-korean-tooltip="가덕도신공항반대시민행동 호입니다. 가덕도 숲에서 들은 노래로 시를 썼습니다." data-english-tooltip="Citizen Action Against the Gadeokdo New Airport Issue. Wrote poetry from the songs I heard in the forests of Gadeokdo." data-popup-image="">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. September</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
@@ -496,22 +647,22 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 12; z-index: 13;">
-                <a class="thumb-card is-image-only" href="writings/writing-20.html" data-source="writings/writing-20.html" data-tags="essay|about|by:Gongmin" data-author="Gongmin" data-id="20" data-image-only="1">
+                <a class="thumb-card is-image-only" href="https://nereview.com/translators-notebook-gongmin/" data-source="writings/writing-20.html" data-tags="essay|about|by:Gongmin" data-author="Gongmin" data-id="20" data-image-only="1" data-korean-title="" data-english-title="New England Review Translator&#39;s Notebook" data-korean-tooltip="" data-english-tooltip="" data-popup-image="" data-link="https://nereview.com/translators-notebook-gongmin/" target="_blank" rel="noopener noreferrer">
                     <img class="thumb-cover" src="/images/51653538ef1e8bda.png" alt="New England Review Translator&#39;s Notebook" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 13; z-index: 14;">
-                <a class="thumb-card is-image-only" href="writings/writing-21.html" data-source="writings/writing-21.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="21" data-image-only="1">
+                <a class="thumb-card is-image-only" href="writings/writing-21.html" data-source="writings/writing-21.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="21" data-image-only="1" data-korean-title="" data-english-title="Photo by Junyesl" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <img class="thumb-cover" src="/images/96ba4da7a12193be.jpeg" alt="Photo by Junyesl" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 14; z-index: 15;">
-                <a class="thumb-card is-image-only" href="writings/writing-23.html" data-source="writings/writing-23.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="23" data-image-only="1">
+                <a class="thumb-card is-image-only" href="writings/writing-23.html" data-source="writings/writing-23.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="23" data-image-only="1" data-korean-title="" data-english-title="Photo by Tai" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <img class="thumb-cover" src="/images/8b8b1dc9d93edb1d.JPG" alt="Photo by Tai" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 15; z-index: 16;">
-                <a class="thumb-card" href="writings/writing-24.html" data-source="writings/writing-24.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="24">
+                <a class="thumb-card" href="writings/writing-24.html" data-source="writings/writing-24.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="24" data-korean-title="" data-english-title="About" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">About</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">about</span></p>
@@ -519,7 +670,7 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 16; z-index: 17;">
-                <a class="thumb-card" href="writings/writing-25.html" data-source="writings/writing-25.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="25">
+                <a class="thumb-card" href="writings/writing-25.html" data-source="writings/writing-25.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="25" data-korean-title="" data-english-title="New England Review 45.2" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">New England Review 45.2</h2>
                     <p class="thumb-byline">Gongmin · 2024</p>
                     <p class="thumb-tags"><span class="tag-pill">translation</span></p>
@@ -527,15 +678,12 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 17; z-index: 18;">
-                <a class="thumb-card" href="writings/writing-26.html" data-source="writings/writing-26.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="26">
-                    <h2 class="thumb-title">Jaeum &amp; Moeum Quarterly Issue 55</h2>
-                    <p class="thumb-byline">Gongmin · 2022</p>
-                    <p class="thumb-tags"><span class="tag-pill">novel</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
+                <a class="thumb-card is-image-only" href="writings/writing-26.html" data-source="writings/writing-26.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="26" data-image-only="1" data-korean-title="자음과 모음 제55호" data-english-title="Jaeum &amp; Moeum Quarterly Issue 55" data-korean-tooltip="미용실에서 돼지가 생각나서 쓴 단편 소설입니다." data-english-tooltip="A short story written at the beauty salon because a story of a pig came to mind." data-popup-image="/images/5b96bd337de63e55.jpg">
+                    <img class="thumb-cover" src="/images/64d8820d59215eb6.jpg" alt="Jaeum &amp; Moeum Quarterly Issue 55" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 18; z-index: 19;">
-                <a class="thumb-card" href="writings/writing-27.html" data-source="writings/writing-27.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="27">
+                <a class="thumb-card" href="writings/writing-27.html" data-source="writings/writing-27.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="27" data-korean-title="" data-english-title="소개" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">소개</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">about</span></p>
@@ -543,7 +691,7 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 19; z-index: 20;">
-                <a class="thumb-card" href="writings/writing-28.html" data-source="writings/writing-28.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="28">
+                <a class="thumb-card" href="writings/writing-28.html" data-source="writings/writing-28.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="28" data-korean-title="" data-english-title="계간 물결 2022년 가을호" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">계간 물결 2022년 가을호</h2>
                     <p class="thumb-byline">Gongmin · 2022</p>
                     <p class="thumb-tags"><span class="tag-pill">novel</span></p>
@@ -551,15 +699,28 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 20; z-index: 21;">
-                <a class="thumb-card" href="writings/writing-29.html" data-source="writings/writing-29.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="29">
+                <a class="thumb-card" href="writings/writing-29.html" data-source="writings/writing-29.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="29" data-korean-title="" data-english-title="계간 물결 2022년 겨울호" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">계간 물결 2022년 겨울호</h2>
                     <p class="thumb-byline">Gongmin · 2022</p>
                     <p class="thumb-tags"><span class="tag-pill">novel</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
+            <li class="thumb-item" style="--index: 21; z-index: 22;">
+                <a class="thumb-card" href="https://thefallofthehyuns.net/translator/index.html" data-source="writings/writing-30.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="30" data-korean-title="" data-english-title="현 가의 몰락 웹시집" data-korean-tooltip="" data-english-tooltip="" data-popup-image="" data-link="https://thefallofthehyuns.net/translator/index.html" target="_blank" rel="noopener noreferrer">
+                    <h2 class="thumb-title">현 가의 몰락 웹시집</h2>
+                    <p class="thumb-byline">Gongmin · 2023</p>
+                    <p class="thumb-tags"><span class="tag-pill">translation</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
         </ul>
     </main>
+
+    <div class="card-tooltip" id="card-tooltip" role="tooltip" hidden>
+        <div class="card-tooltip-box card-tooltip-ko" id="card-tooltip-ko" lang="ko"></div>
+        <div class="card-tooltip-box card-tooltip-en" id="card-tooltip-en" lang="en"></div>
+    </div>
 
     <div id="content-modal" class="content-modal" aria-hidden="true">
         <div class="content-modal-backdrop" data-close="true"></div>
@@ -568,6 +729,11 @@
             <iframe id="content-modal-frame" class="content-modal-frame" title="Writing content"></iframe>
         </div>
     </div>
+
+    <dialog class="popup-image-dialog" id="popup-image-dialog" aria-label="Card popup image">
+        <button class="popup-image-close" type="button" aria-label="Close image">×</button>
+        <img id="popup-image-view" alt="Card popup">
+    </dialog>
 
     <script>
         const repoBase = window.location.pathname.includes('/andandbee') ? '/andandbee' : '';
@@ -580,9 +746,20 @@
         };
 
         let cards = Array.from(document.querySelectorAll('.thumb-card'));
+        const hiddenTags = new Set(['illustration', 'notes']);
+        cards.forEach((card) => {
+            card.querySelectorAll('.tag-pill').forEach((pill) => {
+                pill.classList.toggle('is-hidden', hiddenTags.has(pill.textContent.trim().toLowerCase()));
+            });
+        });
         const cardItems = Array.from(document.querySelectorAll('.thumb-item'));
         const modal = document.getElementById('content-modal');
         const modalFrame = document.getElementById('content-modal-frame');
+        const popupImageDialog = document.getElementById('popup-image-dialog');
+        const popupImageView = document.getElementById('popup-image-view');
+        const cardTooltip = document.getElementById('card-tooltip');
+        const koreanCardTooltip = document.getElementById('card-tooltip-ko');
+        const englishCardTooltip = document.getElementById('card-tooltip-en');
         const featuredToolbar = document.getElementById('featured-tag-toolbar');
         const toolbar = document.getElementById('tag-toolbar');
         const rootGrid = document.querySelector('.thumb-grid');
@@ -591,6 +768,7 @@
         const randomPositions = new Map();
         const LAYOUT_STORAGE_KEY = 'writings-random-layout-v2';
         let antHillActive = true;
+        let homeThemeActive = false;
         let showTitles = false;
         let tunnelRafId = null;
         let dragState = null;
@@ -630,12 +808,33 @@
                 const antCount = 2 + Math.floor(Math.random() * 5);
                 for (let i = 0; i < antCount; i += 1) {
                     const ant = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                    ant.setAttribute('class', 'ant-dot');
-                    ant.setAttribute('width', '2');
-                    ant.setAttribute('height', '2');
-                    svg.appendChild(ant);
+                    const isArchiveAnt = ants.length < 2;
+                    ant.setAttribute('class', isArchiveAnt ? 'ant-dot archive-ant' : 'ant-dot');
+                    ant.setAttribute('width', isArchiveAnt ? '3' : '2');
+                    ant.setAttribute('height', isArchiveAnt ? '3' : '2');
+                    let hitTarget = null;
+
+                    if (isArchiveAnt) {
+                        hitTarget = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                        hitTarget.setAttribute('class', 'archive-ant-hit');
+                        hitTarget.setAttribute('width', '15');
+                        hitTarget.setAttribute('height', '15');
+
+                        const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+                        link.setAttribute('class', 'archive-ant-link');
+                        link.setAttribute('href', 'archive.html');
+                        link.setAttribute('target', '_top');
+                        link.setAttribute('aria-label', 'Go to archive');
+                        link.appendChild(hitTarget);
+                        link.appendChild(ant);
+                        svg.appendChild(link);
+                    } else {
+                        svg.appendChild(ant);
+                    }
+
                     ants.push({
                         node: ant,
+                        hitTarget,
                         path,
                         travel: Math.random(),
                         speed: 13 + Math.random() * 18,
@@ -684,10 +883,12 @@
                     const pathLength = antData.path.getTotalLength();
                     if (!Number.isFinite(pathLength) || pathLength < 1) {
                         antData.node.setAttribute('visibility', 'hidden');
+                        antData.hitTarget?.setAttribute('visibility', 'hidden');
                         return;
                     }
 
                     antData.node.setAttribute('visibility', 'visible');
+                    antData.hitTarget?.setAttribute('visibility', 'visible');
                     if (antData.pauseRemaining > 0) {
                         antData.pauseRemaining -= dt;
                         if (antData.pauseRemaining <= 0) {
@@ -718,8 +919,12 @@
                     const point = antData.path.getPointAtLength(antData.travel * pathLength);
                     antData.jitterPhase += dt * antData.jitterSpeed;
                     const jitter = Math.sin(antData.jitterPhase) * antData.jitterAmp;
-                    antData.node.setAttribute('x', String(Math.round(point.x + jitter)));
-                    antData.node.setAttribute('y', String(Math.round(point.y - jitter)));
+                    const x = Math.round(point.x + jitter);
+                    const y = Math.round(point.y - jitter);
+                    antData.node.setAttribute('x', String(x));
+                    antData.node.setAttribute('y', String(y));
+                    antData.hitTarget?.setAttribute('x', String(x - 6));
+                    antData.hitTarget?.setAttribute('y', String(y - 6));
                 });
 
                 tunnelRafId = requestAnimationFrame(frame);
@@ -764,6 +969,7 @@
                 startY,
                 offsetX: startX - pos.x,
                 offsetY: startY - pos.y,
+                startTarget: event.target,
                 moved: false
             };
 
@@ -817,6 +1023,22 @@
             event.preventDefault();
         }
 
+        function openLinkedCard(card, event) {
+            const linkedUrl = (card?.dataset?.link || '').trim();
+            if (!linkedUrl) {
+                return false;
+            }
+
+            if (event && (event.metaKey || event.ctrlKey)) {
+                return false;
+            }
+
+            event?.preventDefault();
+            event?.stopPropagation();
+            window.location.href = linkedUrl;
+            return true;
+        }
+
         function endDrag(event) {
             if (!dragState || event.pointerId !== dragState.pointerId) {
                 return;
@@ -836,12 +1058,20 @@
 
             if (moved) {
                 suppressClickUntil = Date.now() + 220;
+            } else if (dragState.startTarget.closest?.('.thumb-card-back')) {
+                const back = dragState.startTarget.closest('.thumb-card-back');
+                if (back.dataset.popupImage) {
+                    openPopupImage(back.dataset.popupImage);
+                    back.closest('.thumb-card-shell')?.classList.remove('is-flipped');
+                }
             } else {
                 const card = item.querySelector('.thumb-card-front, .thumb-card');
                 if (card) {
-                    if (!(event.metaKey || event.ctrlKey)) {
-                        event.preventDefault();
-                        toggleCardFlip(card);
+                    if (!openLinkedCard(card, event)) {
+                        if (!(event.metaKey || event.ctrlKey)) {
+                            event.preventDefault();
+                            toggleCardFlip(card);
+                        }
                     }
                 }
             }
@@ -871,69 +1101,37 @@
         }
 
         function buildFlipBack(card) {
-            const hasImage = !!(card.querySelector('img.thumb-cover') || card.querySelector('img') || card.classList.contains('is-image-only'));
             const title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || card.querySelector('img.thumb-cover')?.getAttribute('alt')?.trim() || card.querySelector('img')?.getAttribute('alt')?.trim() || 'Untitled';
-            const year = card.dataset.year || '';
-            const tags = Array.from(card.querySelectorAll('.tag-pill'))
-                .map((tag) => tag.textContent.trim())
-                .filter(Boolean);
-            const previewValue = card.dataset.previewText || card.querySelector('.thumb-preview')?.textContent || '';
-            let preview = sanitizePreviewText(previewValue, card);
-            const placeholderText = ['Loading preview...', 'Preview unavailable in this browser context. Click to open the writing.', 'Preview will appear once this page has text content.'];
-            if (placeholderText.includes(preview)) {
-                preview = '';
-            }
+            const koreanTitle = (card.dataset.koreanTitle || '').trim();
+            const englishTitle = (card.dataset.englishTitle || title).trim();
             const palette = randomFlipPalette();
 
             const back = document.createElement('div');
             back.className = 'thumb-card thumb-card-back';
+            back.dataset.popupImage = card.dataset.popupImage || '';
+            back.setAttribute('aria-label', back.dataset.popupImage ? 'Click to view popup image' : 'Card details');
+            back.classList.toggle('has-popup-image', Boolean(back.dataset.popupImage));
             back.style.setProperty('--flip-bg', palette.background);
             back.style.setProperty('--flip-ink', palette.color);
 
-            if (!hasImage) {
-                back.style.background = '#f5f1ea';
-                back.style.border = '1px solid rgba(86, 69, 45, 0.10)';
-                back.style.boxShadow = '0 2px 6px rgba(38, 29, 20, 0.08)';
-                return back;
-            }
-
-            const titleEl = document.createElement('h3');
+            const titleEl = document.createElement('div');
             titleEl.className = 'flip-back-title';
-            titleEl.textContent = title;
             titleEl.style.color = palette.color;
-
-            const metaEl = document.createElement('p');
-            metaEl.className = 'flip-back-meta';
-            metaEl.textContent = year || '';
-            metaEl.style.color = palette.color;
-            if (!year) {
-                metaEl.remove();
+            if (koreanTitle) {
+                const koreanEl = document.createElement('span');
+                koreanEl.className = 'flip-back-title-ko';
+                koreanEl.lang = 'ko';
+                koreanEl.textContent = koreanTitle;
+                titleEl.appendChild(koreanEl);
             }
-
-            const tagsWrap = document.createElement('div');
-            tagsWrap.className = 'flip-back-tags';
-            tags.forEach((tag) => {
-                const pill = document.createElement('span');
-                pill.className = 'flip-back-tag';
-                pill.textContent = tag;
-                tagsWrap.appendChild(pill);
-            });
-
-            if (preview) {
-                const previewEl = document.createElement('p');
-                previewEl.className = 'flip-back-preview';
-                previewEl.textContent = preview.length > 180 ? `${preview.slice(0, 180)}…` : preview;
-                previewEl.style.color = palette.color;
-                back.appendChild(previewEl);
+            if (englishTitle) {
+                const englishEl = document.createElement('span');
+                englishEl.className = 'flip-back-title-en';
+                englishEl.lang = 'en';
+                englishEl.textContent = englishTitle;
+                titleEl.appendChild(englishEl);
             }
-
             back.appendChild(titleEl);
-            if (year) {
-                back.appendChild(metaEl);
-            }
-            if (tags.length) {
-                back.appendChild(tagsWrap);
-            }
             return back;
         }
 
@@ -948,82 +1146,87 @@
                 return;
             }
 
-            const hasImage = !!(card.querySelector('img.thumb-cover') || card.querySelector('img') || card.classList.contains('is-image-only'));
+            back.dataset.popupImage = card.dataset.popupImage || '';
+            back.classList.toggle('has-popup-image', Boolean(back.dataset.popupImage));
+            back.setAttribute('aria-label', back.dataset.popupImage ? 'Click to view popup image' : 'Card details');
+
             const title = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || card.querySelector('img.thumb-cover')?.getAttribute('alt')?.trim() || card.querySelector('img')?.getAttribute('alt')?.trim() || 'Untitled';
-            const year = card.dataset.year || '';
-            const tags = Array.from(card.querySelectorAll('.tag-pill'))
-                .map((tag) => tag.textContent.trim())
-                .filter(Boolean);
-            const previewValue = card.dataset.previewText || card.querySelector('.thumb-preview')?.textContent || '';
-            let preview = sanitizePreviewText(previewValue, card);
-            const placeholderText = ['Loading preview...', 'Preview unavailable in this browser context. Click to open the writing.', 'Preview will appear once this page has text content.'];
-            if (placeholderText.includes(preview)) {
-                preview = '';
+            const koreanTitle = (card.dataset.koreanTitle || '').trim();
+            const englishTitle = (card.dataset.englishTitle || title).trim();
+            const titleEl = document.createElement('div');
+            titleEl.className = 'flip-back-title';
+            titleEl.style.color = getComputedStyle(back).getPropertyValue('--flip-ink') || '#1d1d1d';
+
+            if (koreanTitle) {
+                const koreanEl = document.createElement('span');
+                koreanEl.className = 'flip-back-title-ko';
+                koreanEl.lang = 'ko';
+                koreanEl.textContent = koreanTitle;
+                titleEl.appendChild(koreanEl);
             }
 
-            if (!hasImage) {
-                back.innerHTML = '';
-                back.style.background = '#f5f1ea';
-                back.style.border = '1px solid rgba(86, 69, 45, 0.10)';
-                back.style.boxShadow = '0 2px 6px rgba(38, 29, 20, 0.08)';
-                return;
+            if (englishTitle) {
+                const englishEl = document.createElement('span');
+                englishEl.className = 'flip-back-title-en';
+                englishEl.lang = 'en';
+                englishEl.textContent = englishTitle;
+                titleEl.appendChild(englishEl);
             }
 
-            const titleEl = back.querySelector('.flip-back-title');
-            if (titleEl) {
-                titleEl.textContent = title;
-            }
-
-            const metaEl = back.querySelector('.flip-back-meta');
-            if (metaEl) {
-                if (year) {
-                    metaEl.textContent = year;
-                } else {
-                    metaEl.remove();
-                }
-            } else if (year) {
-                const nextMeta = document.createElement('p');
-                nextMeta.className = 'flip-back-meta';
-                nextMeta.textContent = year;
-                nextMeta.style.color = getComputedStyle(back).getPropertyValue('--flip-ink') || '#1d1d1d';
-                back.appendChild(nextMeta);
-            }
-
-            const tagsWrap = back.querySelector('.flip-back-tags');
-            if (tagsWrap) {
-                tagsWrap.innerHTML = '';
-                tags.forEach((tag) => {
-                    const pill = document.createElement('span');
-                    pill.className = 'flip-back-tag';
-                    pill.textContent = tag;
-                    tagsWrap.appendChild(pill);
-                });
-            }
-
-            const previewEl = back.querySelector('.flip-back-preview');
-            if (preview) {
-                if (!previewEl) {
-                    const nextPreview = document.createElement('p');
-                    nextPreview.className = 'flip-back-preview';
-                    nextPreview.style.color = getComputedStyle(back).getPropertyValue('--flip-ink') || '#1d1d1d';
-                    back.appendChild(nextPreview);
-                }
-                back.querySelector('.flip-back-preview').textContent = preview.length > 180 ? `${preview.slice(0, 180)}…` : preview;
-            } else if (previewEl) {
-                previewEl.remove();
-            }
+            back.replaceChildren(titleEl);
         }
 
         function syncPreviewToFlip(card) {
             const rawPreview = (card.querySelector('.thumb-preview')?.textContent || '').trim();
             const placeholderText = ['Loading preview...', 'Preview unavailable in this browser context. Click to open the writing.', 'Preview will appear once this page has text content.'];
             const preview = sanitizePreviewText(rawPreview, card);
-            if (!preview || placeholderText.includes(preview)) {
+            const titleText = (card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || card.querySelector('img.thumb-cover')?.getAttribute('alt')?.trim() || 'Writing card').trim();
+            const koreanTooltip = (card.dataset.koreanTooltip || card.dataset.tooltip || '').trim();
+            const englishTooltip = (card.dataset.englishTooltip || '').trim();
+            const fallbackTooltip = preview && !placeholderText.includes(preview) ? preview : titleText;
+            const koreanText = koreanTooltip || (!englishTooltip ? fallbackTooltip : '');
+
+            card.dataset.previewText = preview || koreanText || englishTooltip;
+            refreshFlipBack(card);
+            card.removeAttribute('title');
+            const accessibleTooltip = [koreanText, englishTooltip].filter(Boolean).join('. ');
+            card.setAttribute('aria-label', `${titleText}: ${accessibleTooltip}`);
+            const shell = card.closest('.thumb-card-shell');
+            if (shell) {
+                shell.removeAttribute('title');
+                shell.setAttribute('aria-label', `${titleText}: ${accessibleTooltip}`);
+            }
+        }
+
+        function positionCardTooltip(event) {
+            const margin = 8;
+            const gap = 14;
+            const tooltipRect = cardTooltip.getBoundingClientRect();
+            const left = Math.max(margin, Math.min(event.clientX + gap, window.innerWidth - tooltipRect.width - margin));
+            const top = Math.max(margin, Math.min(event.clientY + gap, window.innerHeight - tooltipRect.height - margin));
+            cardTooltip.style.left = `${left}px`;
+            cardTooltip.style.top = `${top}px`;
+        }
+
+        function showCardTooltip(card, event) {
+            const previewText = (card.dataset.previewText || '').trim();
+            const englishText = (card.dataset.englishTooltip || '').trim();
+            const explicitKoreanText = (card.dataset.koreanTooltip || card.dataset.tooltip || '').trim();
+            const koreanText = explicitKoreanText || (!englishText ? previewText || card.dataset.title || '' : '');
+            if ((!koreanText && !englishText) || event.pointerType === 'touch') {
                 return;
             }
 
-            card.dataset.previewText = preview;
-            refreshFlipBack(card);
+            koreanCardTooltip.textContent = koreanText;
+            koreanCardTooltip.hidden = !koreanText;
+            englishCardTooltip.textContent = englishText;
+            englishCardTooltip.hidden = !englishText;
+            cardTooltip.hidden = false;
+            positionCardTooltip(event);
+        }
+
+        function hideCardTooltip() {
+            cardTooltip.hidden = true;
         }
 
         function prepareFlipCards() {
@@ -1043,9 +1246,19 @@
                 front.dataset.year = card.dataset.year || '';
                 front.dataset.tags = card.dataset.tags || '';
                 front.dataset.id = card.dataset.id || '';
+                front.dataset.link = card.dataset.link || '';
+                front.dataset.koreanTitle = card.dataset.koreanTitle || '';
+                front.dataset.englishTitle = card.dataset.englishTitle || card.dataset.title || '';
+                front.dataset.koreanTooltip = card.dataset.koreanTooltip || card.dataset.tooltip || '';
+                front.dataset.englishTooltip = card.dataset.englishTooltip || '';
+                front.dataset.tooltip = front.dataset.koreanTooltip;
+                front.dataset.popupImage = card.dataset.popupImage || '';
                 const inferredTitle = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || card.querySelector('img.thumb-cover')?.getAttribute('alt')?.trim() || card.querySelector('img')?.getAttribute('alt')?.trim() || '';
                 front.dataset.title = inferredTitle;
                 card.dataset.title = inferredTitle;
+                const tooltipText = card.dataset.koreanTooltip || card.dataset.tooltip || card.dataset.previewText || '';
+                front.removeAttribute('title');
+                front.setAttribute('aria-label', tooltipText ? `${inferredTitle}: ${tooltipText}` : inferredTitle || 'Writing card');
                 front.classList.toggle('is-image-only', card.classList.contains('is-image-only'));
 
                 const back = buildFlipBack(card);
@@ -1067,14 +1280,42 @@
             shell.classList.toggle('is-flipped');
         }
 
+        function openPopupImage(imagePath) {
+            if (!imagePath) {
+                return;
+            }
+
+            popupImageView.src = repoAssetPath(imagePath);
+            if (!popupImageDialog.open) {
+                popupImageDialog.showModal();
+            }
+        }
+
         function setupDragging() {
             cardItems.forEach((item) => {
                 item.addEventListener('pointerdown', (event) => beginDrag(event, item));
+                item.addEventListener('pointerenter', (event) => {
+                    const card = item.querySelector('.thumb-card-front');
+                    if (card) {
+                        showCardTooltip(card, event);
+                    }
+                });
+                item.addEventListener('pointermove', positionCardTooltip);
+                item.addEventListener('pointerleave', hideCardTooltip);
             });
 
             cards.forEach((card) => {
                 card.addEventListener('click', (event) => {
+                    if (openLinkedCard(card, event)) {
+                        return;
+                    }
+
                     if (event.metaKey || event.ctrlKey) {
+                        return;
+                    }
+
+                    if (card.dataset.link) {
+                        event.preventDefault();
                         return;
                     }
 
@@ -1083,8 +1324,18 @@
                 });
             });
 
+            popupImageDialog.querySelector('.popup-image-close').addEventListener('click', () => popupImageDialog.close());
+            popupImageDialog.addEventListener('click', (event) => {
+                if (event.target === popupImageDialog) {
+                    popupImageDialog.close();
+                }
+            });
+
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'Escape') {
+                    if (popupImageDialog.open) {
+                        popupImageDialog.close();
+                    }
                     cards.forEach((card) => {
                         const shell = card.closest('.thumb-card-shell');
                         if (shell && shell.classList.contains('is-flipped')) {
@@ -1203,13 +1454,14 @@
                 return;
             }
 
-            const titleText = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || '';
+            const titleText = card.dataset.title || card.querySelector('.thumb-title')?.textContent?.trim() || card.querySelector('img')?.getAttribute('alt')?.trim() || 'Writing card';
             if (titleText) {
                 card.dataset.title = titleText;
             }
 
             card.classList.add('is-image-only');
             card.dataset.imageOnly = '1';
+            card.removeAttribute('title');
             card.innerHTML = `<img class="thumb-cover" src="${repoAssetPath(imageSrc)}" alt="${card.getAttribute('data-source') || 'Writing cover'}" loading="lazy" />`;
         }
 
@@ -1261,12 +1513,14 @@
                 const resolvedPreview = sanitizedBodyText || 'Preview will appear once this page has text content.';
                 preview.textContent = resolvedPreview;
                 card.dataset.previewText = resolvedPreview;
-                refreshFlipBack(card);
+                card.removeAttribute('title');
+                syncPreviewToFlip(card);
             } catch (error) {
                 const fallback = 'Preview unavailable in this browser context. Click to open the writing.';
                 preview.textContent = fallback;
                 card.dataset.previewText = fallback;
-                refreshFlipBack(card);
+                card.removeAttribute('title');
+                syncPreviewToFlip(card);
             }
         }
 
@@ -1283,7 +1537,7 @@
         function allTags() {
             const set = new Set();
             cards.forEach((card) => {
-                parseTags(card).forEach((tag) => set.add(tag));
+                parseTags(card).filter((tag) => !hiddenTags.has(tag.toLowerCase())).forEach((tag) => set.add(tag));
             });
             return Array.from(set).sort((a, b) => a.localeCompare(b));
         }
@@ -1564,11 +1818,6 @@
             const featuredTags = ['translation', 'poetry', 'novel', 'essay', 'about'];
             const featured = featuredTags.filter((tag) => tags.includes(tag));
 
-            if (!featured.length) {
-                featuredToolbar.innerHTML = '';
-                return;
-            }
-
             featuredToolbar.innerHTML = featured.map((tag) => {
                 const activeClass = featuredActiveTags.has(tag) || activeTags.has(tag) ? ' is-active' : '';
                 return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">${formatTagLabel(tag)}</button>`;
@@ -1587,6 +1836,11 @@
                         featuredActiveTags.add(tag);
                     }
 
+                    if (activeTags.size === 0 && featuredActiveTags.size === 0) {
+                        randomPositions.clear();
+                        buildRandomLayout();
+                    }
+
                     renderTagToolbar();
                     renderFeaturedTagToolbar();
                     applyLayout();
@@ -1598,18 +1852,14 @@
             const tags = allTags();
             const remainingTags = tags.filter((tag) => !['translation', 'poetry', 'novel', 'essay', 'about'].includes(tag));
 
-            if (!remainingTags.length) {
-                toolbar.innerHTML = '';
-                return;
-            }
-
             toolbar.innerHTML = remainingTags.map((tag) => {
                 const activeClass = activeTags.has(tag) ? ' is-active' : '';
                 return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">${formatTagLabel(tag)}</button>`;
             }).join('') +
                 '<span class="toolbar-right">' +
-                `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill">ant</button>` +
+                `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill" aria-pressed="${antHillActive}">ant</button>` +
                 '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee</button>' +
+                `<button type="button" class="tag-filter-btn is-utility${homeThemeActive ? ' is-active' : ''}" data-action="home-theme">home</button>` +
                 '</span>';
 
             toolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
@@ -1617,7 +1867,11 @@
                 if (action === 'ant-hill') {
                     button.addEventListener('click', () => {
                         antHillActive = !antHillActive;
-                        if (antHillActive) { startTunnelLoop(); } else { clearTunnels(); }
+                        if (antHillActive) {
+                            startTunnelLoop();
+                        } else {
+                            clearTunnels();
+                        }
                         renderTagToolbar();
                     });
                     return;
@@ -1628,6 +1882,18 @@
                         randomPositions.clear();
                         buildRandomLayout();
                         applyLayout();
+                    });
+                    return;
+                }
+                if (action === 'home-theme') {
+                    button.addEventListener('click', () => {
+                        homeThemeActive = !homeThemeActive;
+                        document.documentElement.classList.toggle('is-home-theme-active', homeThemeActive);
+                        document.documentElement.style.setProperty('--bg', homeThemeActive ? '#d9e6d2' : '#f9c7d8');
+                        const themeColor = homeThemeActive ? '#397451' : '#1d4ed8';
+                        document.documentElement.style.setProperty('--line-color', themeColor);
+                        document.documentElement.style.setProperty('--ink', homeThemeActive ? themeColor : '#1b1b1b');
+                        renderTagToolbar();
                     });
                     return;
                 }
@@ -1642,6 +1908,11 @@
                         activeTags.delete(tag);
                     } else {
                         activeTags.add(tag);
+                    }
+
+                    if (activeTags.size === 0 && featuredActiveTags.size === 0) {
+                        randomPositions.clear();
+                        buildRandomLayout();
                     }
 
                     renderTagToolbar();

@@ -6,7 +6,7 @@
         <link rel="icon" type="image/png" href="/images/signature_gongmin.png?v=2?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Bagel+Fat+One&family=Dokdo&family=Dongle&family=East+Sea+Dokdo&family=Gaegu&family=Gamja+Flower&family=Gasoek+One&family=Gothic+A1&family=Gowun+Batang&family=Grandiflora+One&family=Gugi&family=Hahmlet:wght@100..900&family=Jua&family=Kirang+Haerang&family=Moirai+One&family=Nanum+Brush+Script&family=Nanum+Gothic&family=Nanum+Gothic+Coding&family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Song+Myung&family=Sunflower:wght@300&family=Yeon+Sung&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu&family=Gasoek+One&family=Hahmlet:wght@100..900&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Hi+Melody&family=Nanum+Pen+Script&family=Jua&family=Dongle:wght@300;400;700&family=Chiron+GoRound+TC:wght@200..900&family=Gugi&family=Diphylleia&family=Chiron+Hei+HK:wght@200..900&family=Grandiflora+One&family=Moirai+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
     <style>
         @import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700");
@@ -20,6 +20,74 @@
           font-weight: 5 5;
         }
 
+        .korean-font-sans {
+          font-family: "Noto Sans KR", sans-serif;
+        }
+
+        .korean-font-serif {
+          font-family: "Noto Serif KR", serif;
+        }
+
+        .korean-font-literary {
+          font-family: "Hahmlet", serif;
+        }
+
+        .korean-font-handwritten {
+          font-family: "Gaegu", cursive;
+        }
+
+        .korean-font-display {
+          font-family: "Gasoek One", sans-serif;
+        }
+
+        .korean-font-nanum-gothic {
+          font-family: "Nanum Gothic", sans-serif;
+        }
+
+        .korean-font-nanum-myeongjo {
+          font-family: "Nanum Myeongjo", serif;
+        }
+
+        .korean-font-hi-melody {
+          font-family: "Hi Melody", cursive;
+        }
+
+        .korean-font-nanum-pen-script {
+          font-family: "Nanum Pen Script", cursive;
+        }
+
+        .korean-font-jua {
+          font-family: "Jua", sans-serif;
+        }
+
+        .korean-font-dongle {
+          font-family: "Dongle", sans-serif;
+        }
+
+        .korean-font-chiron-goround {
+          font-family: "Chiron GoRound TC", sans-serif;
+        }
+
+        .korean-font-gugi {
+          font-family: "Gugi", sans-serif;
+        }
+
+        .korean-font-diphylleia {
+          font-family: "Diphylleia", serif;
+        }
+
+        .korean-font-chiron-hei {
+          font-family: "Chiron Hei HK", sans-serif;
+        }
+
+        .korean-font-grandiflora-one {
+          font-family: "Grandiflora One", serif;
+        }
+
+        .korean-font-moirai-one {
+          font-family: "Moirai One", cursive;
+        }
+
         #text {
             text-decoration: none;
             color: inherit;
@@ -29,30 +97,111 @@
             display: block;
             position: relative;
             margin-top: 20px;
+          -webkit-user-select: none;
+          user-select: none;
         }
-        #body-text span {
+        #body-text > span {
           font-size: 20px;
-          font-family: "Dusseldot";
-          text-shadow: -5px 6px 13px rgba(150, 150, 150, 1);
-          color: black;
+          font-family: "Noto Sans KR";
+          color: rgb(154, 154, 154);
           font-weight: 250;
           display: inline;
           margin-right: 4px;
           font-variation-settings: "wdth" 50;
         }
-        #body-text span {
-          animation: pulseToGroup 60s ease-in-out 1 forwards;
+        #body-text .archive-letter {
+          display: inline-block;
+          margin-right: 0;
         }
 
-        @keyframes pulseToGroup {
-          0% {
-            font-variation-settings: "wdth" 50;
+        #body-text .scene-photo-link {
+          color: inherit;
+          text-decoration: underline dotted;
+          text-underline-offset: 3px;
+        }
+
+        .scene-photo-modal {
+          position: fixed;
+          inset: 0;
+          box-sizing: border-box;
+          max-width: 94vw;
+          max-height: 94vh;
+          padding: 42px 12px 12px;
+          overflow: visible;
+          border: 0;
+          border-radius: 4px;
+          background: #101310;
+          box-shadow: 0 18px 70px rgba(0, 0, 0, 0.45);
+        }
+
+        .scene-photo-modal[open] {
+          animation: scenePhotoEnter 1400ms cubic-bezier(0.18, 0.72, 0.22, 1) both;
+        }
+
+        .scene-photo-modal::backdrop {
+          background: rgba(0, 0, 0, 0.82);
+          backdrop-filter: blur(3px);
+          animation: sceneBackdropEnter 1400ms ease-out both;
+        }
+
+        .scene-photo-modal img {
+          display: block;
+          max-width: min(90vw, 1400px);
+          max-height: calc(94vh - 54px);
+          width: auto;
+          height: auto;
+          object-fit: contain;
+        }
+
+        .scene-photo-modal-close {
+          position: absolute;
+          top: 5px;
+          right: 8px;
+          display: grid;
+          place-items: center;
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          color: #fff;
+          font: inherit;
+          font-size: 24px;
+          line-height: 1;
+          cursor: pointer;
+        }
+
+        .scene-photo-modal-close:focus-visible {
+          outline: 2px solid #fff;
+          outline-offset: 2px;
+        }
+
+        @keyframes scenePhotoEnter {
+          from {
+            opacity: 0;
+            transform: scale(0.94) translateY(12px);
+            filter: blur(8px);
           }
-          20% {
-            font-variation-settings: "wdth" 145;
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            filter: blur(0);
           }
-          100% {
-            font-variation-settings: "wdth" 145;
+        }
+
+        @keyframes sceneBackdropEnter {
+          from {
+            background: rgba(0, 0, 0, 0);
+          }
+          to {
+            background: rgba(0, 0, 0, 0.82);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .scene-photo-modal[open],
+          .scene-photo-modal::backdrop {
+            animation-duration: 1ms;
           }
         }
        
@@ -60,88 +209,138 @@
 </head>
 <body>
     <div id="body-text">
-        <span>ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-          ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-        ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-      ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-    ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-  ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective
-ant and bee collective ant and bee collective ant and bee collective ant and bee collective </span>
+        <span>나는 숨을 쉬고 있다. 나는 눈을 감고 앉아 있다. 나는 의식의 흐름을 따라가고 있다. 나는 이 세상에 존재하고 있다. 내 더러운 피부를 벗겨낼 수 있다면. 나는 잘못 태어난 호두알이다. 나는 껍데기 안에서 꿈틀대고, 표면을 뚫고 나가고 싶은 충동에 사로잡힌다. 나는 이 몸 안에 갇혀 있다. 껍데기는 깰 수 없을 정도로 단단하다. 나는 그 안에서 서서히 썩어간다. 이 껍데기를 내 힘으로 깬다는 것. 불가능을 가능하게 만드는 것. 무에서 유를 창조하고 혼돈에 대항해 질서를 찾아나가는 것. 생명이 된다는 것. 그리고 죽는다는 것. 죽는 것은 자연스러운 일이지만, 미치는 것 또한 자연스러운 것인가? 미치게 되는 것은 영원히 죽지 않는 것이다. 이 빈사의 꿈에서 누가 나를 꺼내어 주기를. 횃불을 든 구원자가 나타나는 희망. 구원자가 내 껍데기를 까고 내 알을 꺼내준다면. 그 횃불로 내 어두운 구석까지 비추어 나를 제정신으로 깨어나게 해 주었으면. 그 구원자는 내가 될 수 없다. 나는 다른 생각을 해야 한다. 나는 나와 친했던 얼굴을 기억하고. 그들의 이름을 기억하고. 안갯속에서 손에 잡히는 대로. 
+(잡힌다.)
+[장면: 테니스장]
+어릴 적 동네에 있는 테니스장에서 테니스를 배웠다. 한국식 아파트 건물에 둘러싸인 테니스장. 미끈한 초록색 하드 코트는 운동화가 움직일 때마다 경쾌한 소리를 냈다. 강사 선생님은 테니스를 가르치는 것 말고도 벌침을 놓는 것으로 유명해서, 테니스를 가르치는 와중에도 동네 주민이 찾아오면 자신의 채집 상자에서 꿀벌을 하나 잡아다가 침을 놔주고는 했다. 나는 그것에 큰 관심이 없었지만 어느 날 테니스를 치고 난 후 그가 나에게 벌침을 놓아주겠다고 했다. 그는 땀이 난 내 손을 잡고 가운뎃손가락 끝에 벌침을 놓았다. 따끔. 그러고는 다 사용한 벌을 자신의 통통한 손가락으로 움켜쥐어 뽑아내고서는 바닥에 버렸다. 나는 가만히 서서 벌을 바라보았다. 상체만 남은 꿀벌은 땅에서 움찔거렸다. 그때는 몰랐지만, 그 꿀벌은 내게 침을 놓는 순간부터 죽음이 선고된 것이었다. 그를 살릴 방법은 없었다. 침은 내장과 연결되어 있고, 그래서 침이 어딘가에 박혀버리면 자기 내장까지 빠져나온다. 꿀벌은 왜 그렇게 진화한 걸까. 꿀벌은 원래 말벌이었고, 침으로 다른 동물을 사냥했다. 그렇게 육식을 하다가 꽃가루를 발견했다. 처음에는 실수였을 것이다. 양지바른 곳에서 사냥감을 기다리다가 다리에 묻은 꽃가루. 
+다리에 꽃가루가 묻은 말벌을 보고 동료 말벌이 말한다. 다리가 예쁘네? 뭐 바른 거야? 냄새도 나. 그렇게 다리가 예쁜 벌이 인기가 많아지자 너도나도 꽃가루를 다리에 붙이고 다니기 시작한다. 그리고 벌통 안에 꽃가루가 가득 차기 시작하고, 그것을 먹고 자란 애벌레가 하나둘씩 생기다가… 채식주의자 말벌이 처음으로 태어난다. 
+채식주의자 말벌은 다른 말벌들을 설득하기 시작한다. 우리, 다른 동물을 죽이지 않고도 살아갈 수 있다고. 그러면 사냥에 힘을 쓸 필요도 없고, 위험한 상대를 사냥하려다가 불필요하게 위험에 처할 필요도 없어. 그냥 꽃을 찾아다니기만 하면 되는 거야. 하지만 다른 말벌은 그것이 들리지 않는다. 이미 꽃다리는 유행이 지났기 때문이다. 다른 말벌은 사냥하지 않는 채식주의자 말벌이 이상하다고 생각한다. 채식주의자 말벌의 이름은 59다. 59는 사냥을 하는 척 양지바른 곳에 앉아 있다가 다리에 꽃가루만 묻힌 채 집으로 돌아온다. 집은 모두의 것이고 숲속 깊숙이 자리 잡았다. 하루는 어느 나무에 핀 꽃에 앉는다. 정말 보잘것없이 못생긴 꽃이다. 하지만 59는 그 꽃이 마음에 든다. 다른 친구를 초대해 거기서 파티를 열기도 한다. 파티는 성공적이다. 초대받은 모든 손님이 다리에 꽃가루를 묻히고 떠난다. 
+꽃들 사이에서 말벌의 파티에 대한 소문이 퍼진다. 59는 이제 죽어 없어졌지만, 이제 꽃들이 변화하기 시작한다. 보잘것없던 꽃은 아름답고 바람에 나풀거리는 보라색 꽃이 되고, 꽃이 없던 나무도 꽃을 피운다. 이제 숲은 화려하게 변한다. 나무와 땅에서 자라는 형형색색의 꽃은 달콤한 향을 내고 꽃을 찾는 손님도 많아진다. 그리고 그것은 유행으로 끝나지 않는다.
+59의 벌집에는 이제 꿀벌만 산다. 그들은 사냥과 죽임을 모른다. 그저 꽃가루와 꽃꿀을 찾아다닐 뿐이다. 벌집의 군주인 정복자 아소카는 이제 위대한 아소카가 되어 칙령을 내린다. 지금까지의 학살을 만회하기 위해 아소카는 법을 만들어 필요 없이 남을 해하는 행동을 금한다. 지금이 방식이 더 큰 풍요를 이뤄냈기 때문이다. 꿀벌은 성대할 것이다. Long live the queen(여왕 폐하 만세/여왕님 만수무강하소서/퀸을 희생하지 마)! 그렇게 침을 쏘는 행위는 곧 죽는 행위가 된다. 
+꿀벌이 침을 쏘는 행위, 그것은 개인의 분노나 증오에 의한 것이 아니라 침입자로부터 단체를 보호하기 위해 행해지는 것이다. 폭발 개미도 집을 보호하기 위해 자신을 희생한다. 흰개미는 자신의 배를 가른다. 그것은 정확히 말해 후대를 위해 죽는 것이다. 폭풍 섹스를 하다가 장이 파열되고 면역력이 떨어져 죽는 주머니 쥐. 알을 낳고 죽는 연어. 아이를 낳은 K. K에게 먹히는 아빠. 새끼에게 먹히는 K. 알을 지키다 죽는 K. 차를 드는 K. 아이부터 구해달라는 K. 불속에 뛰어드는 K. 왜 그러는 거야? 왜 죽으려고 안달이 난 거야? 왜 그걸 희생이라고 부르고, 왜 희생이라는 단어가 존재하는 거야? 희생은 의미가 있는 행동인가? 그것은 남을 위한 자살. 퀸이 승부를 위해 자신을 공격에 노출시키는 것. 퀸 사크리파이스. 폰이 자신을 희생해 퀸이 되는 행위=프로모션(e=Q). 거기에 폰과 퀸의 자의식은 없는데. 
+(K한테 전화해야 하는데.)
+그럼 이게 삶의 의미인 건가? 후대를 위해서? 모든 것은 후대를 위해… 하지만 후대가 살아남는 것에 무슨 의미가 있는 거지. 생명체는 DNA를 남긴다. 그러기 위해 번식을 한다. 모든 생명체는 번식을 목표로 한다. 하지만 그것은 사실 사실이 아니다. 그것이 사실처럼 보이는 이유는 자기 복제를 성공적으로 하는 생명체만이 살아남았기 때문이다. 자기 복제와 번식에 관심 없이 오롯이 사는 것에만 관심이 있는 생명체도 있다. 지금도 그런 생명체가 태어났다가 홀로 사라지기를 반복하고 있다. 태어나자마자 세상을 여행하고 싶어 바다가 아닌 숲으로 향한 바다거북. 짝에는 관심 없는 홀로서기 펭귄. 그들은 발자취를 남기지 않고 사라질 것이다. 
+왜 꿀벌은 나에게 침을 놓기 위해 희생되어야 했을까? 
+사실, 그럴 수도 있는 거 아닌가? 뭐든지 뭐든지 간에 이 세상은 그럴 수도 있는 거잖아요 세상에서 동물이 죽을 수도 있고 고통받을 수도 있고 미세먼지가 많아질 수도 있고 그걸로 인해 내 가족이 아플 수도 있고 미칠 수도 있고 슬플 수도 있고 기력이 떨어져서 길바닥에 고꾸라질 수도 있고 직장을 관두고 혼자 집에서 살 수도 있고 가족과의 연락을 끊을 수도 있고 가족을 미워할 수도 있고 가족을 사랑할 수도 있고 나무가 잘릴 수도 있고 산이 불타버릴 수도 있고 여자가 여자를 사랑할 수도 있고 창자가 터질 수도 있고 핸드폰을 잃어버릴 수도 있고 체제가 붕괴될 수도 있고 누군가와 평생 사랑할 수도 있고 바람을 피울 수도 있고 인간으로 태어날 수도 있고 인간으로 태어난 것을 후회할 수도 있고 잘못 태어날 수도 있고 잘 태어날 수도 있고 고기를 먹을 수도 있고  고기가 될 수도 있고 누군가를 원망할 수도 있고 AI가 세상을 지배할 수도 있고 나는 걱정하지만 다른 사람은 태평할 수도 있고 나의 고통에 공감해 주지 않을 수도 있고 도시에서 태어날 수도 있고 서울에서 태어날 수도 있고 한국에서 태어날 수도 있고 해외에서 태어나 한국에 망명을 신청할 수도 있고 가정폭력을 피해 도망갈 수도 있고 살점이 찢겨 나갈 수도 있고 지진이 날 수도 있고 비행기가 떨어질 수도 있고 생매장을 당할 수도 있고 친구를 영원히 못 볼 수도 있고 강제로 갇힐 수도 있고 그것이 화가 날 수도 있고 잠을 자자 잠은 휴식을 제공하고 잠은 매우 중요하니까 잠을 충분히 자지 못하는 것은 정신병과 높은 상관관계를 보여요 정신병이 나쁜 건 아니지만 그렇다고요 뭐 미치기 싫다면서요 나쁘지 않아도 당신 취향이 아닐 순 있지 잠을 못 자면 소리를 듣기도 한데요 그것이 이 세상에 존재하지 않는 소리라면 그것을 환청이라 부른다던가 하지만 그것은 당신이 어떤 철학을 가졌는지에 따라 진짜인지 아닌지가 나뉠 거예요 당신의 세상이 당신의 감각을 통해 만들어진 것이라면 당신에게 들리는 소리는 누가 뭐라 해도 이 세상에 존재하는 것 아닌가요 그러면 그것은 다른 사람에게나 환청이지 당신에게는 환청이 아닌 것 아닌가요 아 이건 좋은 생각이 아닌 것 같아요 당신은 이 목소리가 들리나요 당신 안에서 당신의 목소리로 읽고 있나요 당신은 어떤 목소리를 가지고 있나요. 당신의 내면의 목소리는 굵은 목소리의 남성인가요 아니면 여성인가요 알 수 없는 중성의 목소리인가요 당신은 성과 젠더에 대해 어떤 생각을 가지고 있나요 아니다 잠을 자지 않는 거예요 잠을 자면 타임 다일레이션이 생겨서 더 이상 현실과 꿈을 구분하지 못하게 되니까요 꿈을 꾸다 일어났는지 아니면 현실에서 잠에 들어서 꿈을 꾸게 된 것인지 그것을 모르는 당신이잖아요 그리고 꿈은 원래 무섭잖아요 모래 속으로 빨려 들어가는 아파트 위에서 고함을 지르는 아버지 엘리베이터를 타고 올라가면 엘리베이터 숫자는 모르는 상징과 기호로 가득하죠 엘리베이터는 올라가는 것일까요 아니면 내려가는 것일까요 30을 누르고 엘리베이터는 덜컹거리면서 천천히 움직이고 eil_li_bei_i_te 문이 열릴 때마다 무서운 광경이 당신을 기다리고 있어요 누군가가 엘리베이터에 타지 않고 너를 쳐다봐 빨리 문이 닫혔으면 하는 표정이야 
+다른 층이야 여기서는 뒈지고 있어 다 죽여 버릴 거야 인간이 아닌 것은 모조리 죽여 버릴 거야 
+다른 층이야 여기서는 끝없이 펼쳐진 복도 암흑 속에서 누군가가 불러 당신은 눈을 감고 싶지만 그러지를 못하고 네가 아는 소리인가 
+이제 30층이야 너는 여기서 내리고 집 앞에서 벨을 누르지만 다른 가족이 너를 맞이하지 그들은 웃고 있어 그들은 웃음 속에 다른 것을 감추고 있어 다른 층이야 여기서는 전쟁이 일어났어 누군가 보여 긴 총을 들고 있어 전쟁을 피해 여기까지 왔어 그는 전화기 부스 속으로 들어가지 이제 그는 곧 죽을 거야 당신은 이 꿈을 몇 번이고 꿨기 때문에 그다음에 어떤 일이 일어날지를 알지 부스 속에는 귀신이 있어 그 귀신은 사람을 죽이지 당신은 그에게 전화기 부스를 나오라고 소리치지만 그는 당신이 들리지 않아 당신은 꿈의 주민이 아니기 때문이야 당신은 투어리스트일 뿐이야 좋은 꿈을 꾼 적이 언제인가요 기억이 잘 나지 않겠죠 좋은 꿈을 평생 꿔 본 적이 없으니 항상 악몽이고 당신의 악몽은 현실보다 더한가요 당신의 현실은 악몽인가요 악몽과도 같은 꿈을 꾸다가 일어나지 못하게 된다면 당신은 그 악몽 속에 평생 갇히게 되는 것인가요 꿈은 당신의 내면인가요 무의식의 목소리인가요 트라우마를 이겨내기 위해 당신이 쉬려는 와중에도 계속해서 시나리오를 짜는 부지런한 스크립트 작가인가요 Q는 잠을 자는 동안 생긴 일이 아닌가요 Q는 항상 당신과 함께 한 거라고요 그건 신나는 일입니다 미치는 것보다는 죽는 것이 나아요 그렇죠 미치고 나면 죽을 수도 없으니까 나 자신에 대한 제어를 완전히 잃는 거니깐 죽는 것은 무섭지 않아요 죽을까 봐 공황이 온 적은 없어요 미칠까 봐 공황이 오고는 해요 공황이 오는 사람은 이미 미친 것일까요 그건 신나는 일입니다 체스 실력이 늘지 않았나요 체스에 대한 이해도 올라가고 Ra8 Qd8 Qc7 Qf8 집에서 같이 체스를 두는 사람도 생겼고요 아 사람으로 특정지어서 죄송합니다 물론 사람은 h2가 아닌 모든 존재가 될 수 있습니다 사람person은 h2와는 엄연히 다른 개념이니까요 하지만 Q는 사람이 아닐 수도 있죠 사람됨personhood의 자격은 무엇인가요 그것은 h2가 정하기는 합니다 그것은 h2가 정한 수준을 만족해야 합니다 그것이 규칙입니다 우리는 모두 규칙을 따라야 합니다
+ </span>
        
     </div>
 
+    <dialog class="scene-photo-modal" id="scene-photo-modal" aria-label="Tennis court photo">
+      <button class="scene-photo-modal-close" type="button" aria-label="Close photo">×</button>
+      <img src="images/tennis-court.jpeg" alt="School building behind a fenced outdoor court">
+    </dialog>
+
     <script>
-       
+      const archiveText = document.querySelector('#body-text > span');
+      const originalText = archiveText.textContent;
+      const letterFragment = document.createDocumentFragment();
+      const letters = [];
+      const photoPhrase = '[장면: 테니스장]';
+      const photoPhraseStart = originalText.indexOf(photoPhrase);
+      let photoLink = null;
 
+      Array.from(originalText).forEach((character, index) => {
+        if (index === photoPhraseStart) {
+          photoLink = document.createElement('a');
+          photoLink.className = 'scene-photo-link';
+          photoLink.href = 'images/tennis-court.jpeg';
+          photoLink.setAttribute('aria-label', 'View the tennis court photo');
+          letterFragment.appendChild(photoLink);
+        }
 
-        textElement.addEventListener('mouseenter', function() {
-            shuffleArray(translations);
-            let index = 0;
-            textElement.textContent = translations[index];
-            intervalId = setInterval(() => {
-                index = (index + 1) % translations.length;
-                textElement.textContent = translations[index];
-            }, 800);
-        });
+        const destination = photoLink || letterFragment;
+        if (/\s/.test(character)) {
+          destination.appendChild(document.createTextNode(character));
+          return;
+        }
 
+        const letter = document.createElement('span');
+        letter.className = 'archive-letter';
+        letter.textContent = character;
+        letter.dataset.letterIndex = String(letters.length);
+        letters.push(letter);
+        destination.appendChild(letter);
+
+        if (index === photoPhraseStart + photoPhrase.length - 1) {
+          photoLink = null;
+        }
+      });
+
+      archiveText.replaceChildren(letterFragment);
+
+      const photoModal = document.getElementById('scene-photo-modal');
+      const photoModalClose = photoModal.querySelector('.scene-photo-modal-close');
+
+      archiveText.addEventListener('click', (event) => {
+        const photoLink = event.target.closest('.scene-photo-link');
+        if (!photoLink) {
+          return;
+        }
+
+        event.preventDefault();
+        photoModal.showModal();
+      });
+
+      photoModalClose.addEventListener('click', () => photoModal.close());
+      photoModal.addEventListener('click', (event) => {
+        if (event.target === photoModal) {
+          photoModal.close();
+        }
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && photoModal.open) {
+          photoModal.close();
+        }
+      });
+
+      ['copy', 'cut', 'paste'].forEach((eventName) => {
+        archiveText.addEventListener(eventName, (event) => event.preventDefault());
+      });
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let lastHoveredLetter = null;
+
+      archiveText.addEventListener('pointerover', (event) => {
+        if (reduceMotion.matches || !['mouse', 'pen'].includes(event.pointerType)) {
+          return;
+        }
+
+        const hoveredLetter = event.target.closest('.archive-letter');
+        if (!hoveredLetter || hoveredLetter === lastHoveredLetter) {
+          return;
+        }
+
+        lastHoveredLetter = hoveredLetter;
+        const centerIndex = Number(hoveredLetter.dataset.letterIndex);
+        const rippleRadius = 16;
+
+        for (let index = Math.max(0, centerIndex - rippleRadius); index <= Math.min(letters.length - 1, centerIndex + rippleRadius); index += 1) {
+          const letter = letters[index];
+          const distance = Math.abs(index - centerIndex);
+          const side = Math.sign(index - centerIndex);
+          const strength = 1 - distance / (rippleRadius + 1);
+          const rise = 11 * strength;
+          const drift = side * 2.5 * strength;
+
+          letter.animate([
+            { transform: 'translate3d(0, 0, 0) rotate(0deg)' },
+            { transform: `translate3d(${drift}px, ${-rise}px, 0) rotate(${side * 2 * strength}deg)`, offset: 0.55 },
+            { transform: 'translate3d(0, 0, 0) rotate(0deg)' }
+          ], {
+            duration: 520,
+            delay: distance * 22,
+            easing: 'ease-out'
+          });
+        }
+      });
+
+      archiveText.addEventListener('pointerleave', () => {
+        lastHoveredLetter = null;
+      });
     </script>
 </body>
 </html>
