@@ -1063,6 +1063,8 @@
                 if (back.dataset.popupImage) {
                     openPopupImage(back.dataset.popupImage);
                     back.closest('.thumb-card-shell')?.classList.remove('is-flipped');
+                } else {
+                    back.closest('.thumb-card-shell')?.classList.remove('is-flipped');
                 }
             } else {
                 const card = item.querySelector('.thumb-card-front, .thumb-card');
