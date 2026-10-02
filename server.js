@@ -310,7 +310,14 @@ function sanitizeBodyText(input) {
 
 function toParagraphs(text) {
   const content = String(text || '');
-  return content ? `<p>${escapeHtml(content).replace(/\n/g, '<br>')}</p>` : '';
+  if (!content) {
+    return '';
+  }
+
+  const formattedContent = escapeHtml(content)
+    .replace(/\*\*([^*\n]+)\*\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+  return `<p>${formattedContent}</p>`;
 }
 
 function tagsHtml(tags) {
@@ -970,6 +977,11 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             background: var(--danger);
         }
 
+        button.italic-button {
+          margin: 0 0 0.35rem;
+          padding: 0.3rem 0.6rem;
+        }
+
         .status {
             margin-top: 0.8rem;
             min-height: 1.2rem;
@@ -1078,9 +1090,11 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
                     <input id="link" name="link" type="url" placeholder="https://example.com" />
 
                     <label for="korean-tooltip">Korean tooltip (한국어)</label>
+                    <button type="button" class="secondary italic-button" data-italic-target="korean-tooltip" title="Italic" aria-label="Italicize selected Korean tooltip text"><em>I</em></button>
                     <textarea id="korean-tooltip" name="koreanTooltip" class="short-textarea" placeholder="한국어 툴팁"></textarea>
 
                     <label for="english-tooltip">English tooltip</label>
+                    <button type="button" class="secondary italic-button" data-italic-target="english-tooltip" title="Italic" aria-label="Italicize selected English tooltip text"><em>I</em></button>
                     <textarea id="english-tooltip" name="englishTooltip" class="short-textarea" placeholder="English tooltip text"></textarea>
 
                     <label>이미지 업로드 (선택 사항)</label>
@@ -1170,6 +1184,22 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
         const linkInput = document.getElementById('link');
         const koreanTooltipInput = document.getElementById('korean-tooltip');
         const englishTooltipInput = document.getElementById('english-tooltip');
+        document.querySelectorAll('[data-italic-target]').forEach((button) => {
+          button.addEventListener('click', () => {
+            const input = document.getElementById(button.dataset.italicTarget);
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const selectedText = input.value.slice(start, end);
+
+            if (selectedText) {
+                    input.setRangeText('*' + selectedText + '*', start, end, 'select');
+            } else {
+              input.setRangeText('**', start, end, 'end');
+              input.setSelectionRange(start + 1, start + 1);
+            }
+            input.focus();
+          });
+        });
         const imageInput = document.getElementById('image');
         const popupImageInput = document.getElementById('popup-image');
         const popupImageFileInput = document.getElementById('popup-image-file');

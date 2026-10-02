@@ -20,7 +20,7 @@
             --edge: rgba(255, 255, 255, 0.12);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 22;
+            --card-count: 26;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -158,8 +158,13 @@
             width: var(--card-width);
             list-style: none;
             transform: translate3d(var(--x, 0px), var(--y, 0px), 0) rotate(var(--r, 0deg));
-            transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms), z-index 120ms linear;
+            transition: opacity 320ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms), z-index 120ms linear;
             cursor: grab;
+        }
+
+        .thumb-item.is-notes-hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .thumb-item.is-dragging {
@@ -195,6 +200,10 @@
         .thumb-card.is-image-only {
             padding: 0;
             overflow: hidden;
+        }
+
+        .thumb-card:not(.is-image-only) {
+            padding: 0;
         }
 
         .thumb-card-shell {
@@ -316,6 +325,10 @@
             order: 1;
         }
 
+        .thumb-card:not(.is-image-only) .thumb-title:not(.is-hidden) {
+            padding: 0.72rem 0.68rem 0;
+        }
+
         .thumb-title.is-hidden {
             display: none;
         }
@@ -341,6 +354,10 @@
             order: 4;
         }
 
+        .thumb-card:not(.is-image-only) .thumb-tags {
+            display: none;
+        }
+
         .tag-pill {
             border: 1px solid rgba(0, 0, 0, 0.2);
             padding: 0.08rem 0.34rem;
@@ -359,6 +376,7 @@
             font-size: 0.67rem;
             line-height: 1.45;
             color: rgba(0, 0, 0, 0.84);
+            white-space: pre-line;
             display: -webkit-box;
             line-clamp: 9;
             -webkit-line-clamp: 9;
@@ -366,6 +384,14 @@
             overflow: hidden;
             min-height: 8.4em;
             order: 3;
+        }
+
+        .thumb-card:not(.is-image-only) .thumb-preview {
+            box-sizing: border-box;
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            padding: 0.72rem 0.68rem;
         }
 
         .card-tooltip {
@@ -481,13 +507,13 @@
             position: fixed;
             inset: 0;
             box-sizing: border-box;
-            max-width: 96vw;
-            max-height: 96vh;
+            max-width: 88vw;
+            max-height: 90vh;
             padding: 42px 12px 12px;
             overflow: visible;
             border: 0;
-            background: #111;
-            box-shadow: 0 18px 70px rgba(0, 0, 0, 0.45);
+            background: transparent;
+            box-shadow: none;
         }
 
         .popup-image-dialog[open] {
@@ -495,9 +521,7 @@
         }
 
         .popup-image-dialog::backdrop {
-            background: rgba(0, 0, 0, 0.82);
-            backdrop-filter: blur(3px);
-            animation: popupBackdropEnter 1400ms ease-out both;
+            background: transparent;
         }
 
         @keyframes popupImageEnter {
@@ -513,25 +537,39 @@
             }
         }
 
-        @keyframes popupBackdropEnter {
-            from { background: rgba(0, 0, 0, 0); }
-            to { background: rgba(0, 0, 0, 0.82); }
-        }
-
         @media (prefers-reduced-motion: reduce) {
             .popup-image-dialog[open],
             .popup-image-dialog::backdrop {
                 animation-duration: 1ms;
             }
+
+            .thumb-item {
+                transition: none;
+            }
+
+            .popup-image-dialog[open] img {
+                animation: none;
+            }
         }
 
         .popup-image-dialog img {
             display: block;
-            max-width: min(92vw, 1400px);
-            max-height: calc(96vh - 54px);
+            max-width: min(84vw, 1200px);
+            max-height: calc(90vh - 54px);
             width: auto;
             height: auto;
             object-fit: contain;
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+
+        .popup-image-dialog[open] img {
+            animation: popupImageFloat 6s ease-in-out 1.4s infinite;
+        }
+
+        @keyframes popupImageFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
         }
 
         .popup-image-close {
@@ -593,112 +631,128 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 5; z-index: 6;">
-                <a class="thumb-card is-image-only" href="writings/writing-13.html" data-source="writings/writing-13.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="13" data-image-only="1" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 3월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. March" data-korean-tooltip="아마도 한국 최초 혁명 시 월간 진이 아닐까요?
-진을 발행하며 시를 쓰고 번역했습니다." data-english-tooltip="Probably Korea&#39;s first revolutionary poetry zine monthly. Published the zine, wrote poems, and translated poems and essays." data-popup-image="/images/2d7912804e51dbd2.jpg">
+                <a class="thumb-card is-image-only" href="writings/writing-13.html" data-source="writings/writing-13.html" data-tags="poetry|translation|zine|by:Gongmin" data-author="Gongmin" data-id="13" data-image-only="1" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 3월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. March" data-korean-tooltip="아마도 한국 최초 혁명 시 월간 진이 아닐까요?
+
+진을 발행하며 시를 쓰고 번역했습니다.
+
+3월에는 가자로 향하는 천 개의 메들린호 한국지부와 연대했습니다." data-english-tooltip="Probably Korea&#39;s first revolutionary poetry zine monthly, methinks. 
+
+Published the zine, wrote poems, and translated poems and essays.
+
+This issue was dedicated to Thousand Madleens to Gaza Korea." data-popup-image="/images/2d7912804e51dbd2.jpg">
                     <img class="thumb-cover" src="/images/0cbf3eac66152dd5.jpg" alt="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. March" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 6; z-index: 7;">
-                <a class="thumb-card" href="writings/writing-14.html" data-source="writings/writing-14.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="14" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 4월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. April" data-korean-tooltip="새벽이를 떠올리며 주해라는 시를 공개했습니다." data-english-tooltip="Showcased the poem Exegesis, thinking of Dawn of Dawn Sanctuary fame." data-popup-image="/images/d10e09e7c3e30f69.jpg">
+                <a class="thumb-card" href="writings/writing-14.html" data-source="writings/writing-14.html" data-tags="poetry|translation|zine|by:Gongmin" data-author="Gongmin" data-id="14" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 4월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. April" data-korean-tooltip="4월에는 새벽이 생추어리와 연대했습니다. 
+
+새벽이를 떠올리며 시 「주해」를 실었습니다." data-english-tooltip="We stood in solidarity with Dawn Sanctuary in April. 
+
+I showcased my poem *Exegesis* with Dawn in mind." data-popup-image="/images/d10e09e7c3e30f69.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. April</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
+                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span><span class="tag-pill">zine</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 7; z-index: 8;">
-                <a class="thumb-card" href="writings/writing-15.html" data-source="writings/writing-15.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="15" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 5월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. May" data-korean-tooltip="카라 노조 호입니다.  흰개미는 억울한 게 많습니다. (흰개미를 찾아 보세요!)" data-english-tooltip="KARA Labor Union Issue. The white ants (not termites) have a lot to be upset about. (Try and find them!)" data-popup-image="/images/6813fe32d117b805.jpg">
+                <a class="thumb-card" href="writings/writing-15.html" data-source="writings/writing-15.html" data-tags="poetry|translation|zine|by:Gongmin" data-author="Gongmin" data-id="15" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 5월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. May" data-korean-tooltip="5월에는 카라 노조와 연대했습니다. 
+
+노조를 생각하며「 동자석은 코가 없고, 아이가 많고, 가슴이 없고, 구멍으로 가득하다」를 썼습니다. 
+
+흰개미는 억울한 게 참 많습니다. (흰개미를 찾아 보세요!)" data-english-tooltip="May issue was dedicated to the KARA Labor Union. 
+
+I wrote *The Stone Child has No Nose, Many Children, No Chest, and is Full of Holes* thinking of the labor union. 
+
+The white ants (not termites) sure have a lot to be upset about. (Try and find them!)" data-popup-image="/images/6813fe32d117b805.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. May</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
+                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span><span class="tag-pill">zine</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 8; z-index: 9;">
-                <a class="thumb-card" href="writings/writing-16.html" data-source="writings/writing-16.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="16" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 6월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. June" data-korean-tooltip="주홍빛연대 차차 호입니다. 츄파카브라가 등장합니다." data-english-tooltip="Scarlet ChaCha Issue. A wild chupacabra appears." data-popup-image="/images/9e055340daba5689.jpg">
+                <a class="thumb-card" href="writings/writing-16.html" data-source="writings/writing-16.html" data-tags="poetry|translation|zine|by:Gongmin" data-author="Gongmin" data-id="16" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 6월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. June" data-korean-tooltip="주홍빛연대 차차와 연대했습니다.
+
+츄파카브라가 등장합니다." data-english-tooltip="In June, we stood in solidarity with Scarlet ChaCha.
+
+A wild chupacabra appears." data-popup-image="/images/9e055340daba5689.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. June</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
+                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span><span class="tag-pill">zine</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 9; z-index: 10;">
-                <a class="thumb-card" href="writings/writing-17.html" data-source="writings/writing-17.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="17" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 7월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. July" data-korean-tooltip="무지개교실 호입니다.당연한 말이지만, 산네발나비는 제왕나비가 아닙니다." data-english-tooltip="Rainbow Classroom Issue. It&#39;s obvious to say, but a comma is not a monarch." data-popup-image="/images/a978d22074fe5a33.jpg">
+                <a class="thumb-card" href="writings/writing-17.html" data-source="writings/writing-17.html" data-tags="poetry|translation|zine|by:Gongmin" data-author="Gongmin" data-id="17" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 7월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. July" data-korean-tooltip="무지개교실과 연대했습니다. 
+
+당연한 말이지만, 산네발나비는 제왕나비가 아닙니다." data-english-tooltip="Made in solidarity with Rainbow Classroom. 
+
+It&#39;s obvious to say, but a comma is *not* a monarch." data-popup-image="/images/a978d22074fe5a33.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. July</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
+                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span><span class="tag-pill">zine</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 10; z-index: 11;">
-                <a class="thumb-card" href="writings/writing-18.html" data-source="writings/writing-18.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="18" data-korean-title="" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. August" data-korean-tooltip="셰어 호입니다. 나비인간 에소그램이 나옵니다." data-english-tooltip="SHARE (Center for Sexual Rights and Reproductive Justice) Issue. This issue features the Butterflyman Ethogram." data-popup-image="/images/172db953ead5df7b.jpg">
+                <a class="thumb-card" href="writings/writing-18.html" data-source="writings/writing-18.html" data-tags="poetry|translation|zine|by:Gongmin" data-author="Gongmin" data-id="18" data-korean-title="" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. August" data-korean-tooltip="셰어와 연대했습니다. 
+
+나비인간 에소그램이 나옵니다." data-english-tooltip="Made in solidarity with SHARE (Center for Sexual Rights and Reproductive Justice). 
+
+It features an ethogram of Butterflyman." data-popup-image="/images/172db953ead5df7b.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. August</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
+                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span><span class="tag-pill">zine</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 11; z-index: 12;">
-                <a class="thumb-card" href="writings/writing-19.html" data-source="writings/writing-19.html" data-tags="poetry|translation|by:Gongmin" data-author="Gongmin" data-id="19" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 9월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. September" data-korean-tooltip="가덕도신공항반대시민행동 호입니다. 가덕도 숲에서 들은 노래로 시를 썼습니다." data-english-tooltip="Citizen Action Against the Gadeokdo New Airport Issue. Wrote poetry from the songs I heard in the forests of Gadeokdo." data-popup-image="">
+                <a class="thumb-card" href="writings/writing-19.html" data-source="writings/writing-19.html" data-tags="poetry|translation|zine|by:Gongmin" data-author="Gongmin" data-id="19" data-korean-title="내가 시 쓸 수 없다면, 우리의 혁명이 아니다 9월호" data-english-title="IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. September" data-korean-tooltip="가덕도신공항반대시민행동과 연대했습니다.
+
+가덕도 숲에서 들은 노래로 시 「귓속말로 말해줄까」를 썼습니다." data-english-tooltip="Made in solidarity with the Citizen Action Against the Gadeokdo New Airport.
+
+I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the forests of Gadeokdo." data-popup-image="/images/bd41395962dfb2f7.jpg">
                     <h2 class="thumb-title">IF I CAN&#39;T WRITE POETRY, IT IS NOT OUR REVOLUTION Vol. September</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span></p>
+                    <p class="thumb-tags"><span class="tag-pill">poetry</span><span class="tag-pill">translation</span><span class="tag-pill">zine</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
             <li class="thumb-item" style="--index: 12; z-index: 13;">
-                <a class="thumb-card is-image-only" href="https://nereview.com/translators-notebook-gongmin/" data-source="writings/writing-20.html" data-tags="essay|about|by:Gongmin" data-author="Gongmin" data-id="20" data-image-only="1" data-korean-title="" data-english-title="New England Review Translator&#39;s Notebook" data-korean-tooltip="" data-english-tooltip="" data-popup-image="" data-link="https://nereview.com/translators-notebook-gongmin/" target="_blank" rel="noopener noreferrer">
-                    <img class="thumb-cover" src="/images/51653538ef1e8bda.png" alt="New England Review Translator&#39;s Notebook" loading="lazy" />
+                <a class="thumb-card is-image-only" href="https://nereview.com/translators-notebook-gongmin/" data-source="writings/writing-20.html" data-tags="essay|about|by:Gongmin" data-author="Gongmin" data-id="20" data-image-only="1" data-korean-title="뉴 잉글랜드 리뷰 번역가의 노트" data-english-title="New England Review Translator&#39;s Notebook" data-korean-tooltip="뉴 잉글랜드 리뷰를 위해 번역가의 노트를 작성했습니다. 혐오표현과 욕설을 도대체 어떻게 번역할 수 있는가에 대한 고뇌를 조금 끄적였습니다." data-english-tooltip="I wrote a translator&#39;s notebook for the New England Review. There, I ramble on about the seeming impossibility that is translating slurs and hate speech." data-popup-image="" data-link="https://nereview.com/translators-notebook-gongmin/" target="_blank" rel="noopener noreferrer">
+                    <img class="thumb-cover" src="/images/db21e798581374dc.jpg" alt="New England Review Translator&#39;s Notebook" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 13; z-index: 14;">
-                <a class="thumb-card is-image-only" href="writings/writing-21.html" data-source="writings/writing-21.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="21" data-image-only="1" data-korean-title="전예슬 작가가 찍어준 2026년 프로필 사진" data-english-title="2026 Photo by Junyesl" data-korean-tooltip="제주 조수리 고사리숲길에서 뷰티풀하게 찍은 사진입니다." data-english-tooltip="A beautiful photo taken in Brackeny Path, Jeju" data-popup-image="">
+                <a class="thumb-card is-image-only" href="writings/writing-21.html" data-source="writings/writing-21.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="21" data-image-only="1" data-korean-title="사진: 전예슬 (2026)" data-english-title="Photo: Junyesl (2026)" data-korean-tooltip="제주 조수리 고사리숲길에서 찍은 프로필 사진입니다." data-english-tooltip="This is a profile picture taken along the Brackeny Path in Josu-ri, Jeju" data-popup-image="">
                     <img class="thumb-cover" src="/images/5cd205cf025fbb3a.jpg" alt="Photo by Junyesl" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 14; z-index: 15;">
-                <a class="thumb-card is-image-only" href="writings/writing-23.html" data-source="writings/writing-23.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="23" data-image-only="1" data-korean-title="" data-english-title="Photo by Tai" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                <a class="thumb-card is-image-only" href="writings/writing-23.html" data-source="writings/writing-23.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="23" data-image-only="1" data-korean-title="사진: 태식 (1996)" data-english-title="Photo: Tai (1996)" data-korean-tooltip="코사크 댄스인 프리샤드카를 추기 위해 준비하는 모습입니다." data-english-tooltip="A picture of me getting ready to dance the Prisyadka." data-popup-image="">
                     <img class="thumb-cover" src="/images/8b8b1dc9d93edb1d.JPG" alt="Photo by Tai" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 15; z-index: 16;">
-                <a class="thumb-card" href="writings/writing-24.html" data-source="writings/writing-24.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="24" data-korean-title="" data-english-title="About" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
-                    <h2 class="thumb-title">About</h2>
-                    <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">about</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 16; z-index: 17;">
-                <a class="thumb-card" href="writings/writing-25.html" data-source="writings/writing-25.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="25" data-korean-title="" data-english-title="New England Review 45.2" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                <a class="thumb-card" href="writings/writing-25.html" data-source="writings/writing-25.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="25" data-korean-title="뉴 잉글랜드 리뷰 2024년 여름호" data-english-title="New England Review Vol. 45 No. 2" data-korean-tooltip="한국 시인 7인과 번역가를 조명하는 특집에 계미현의 시를 번역했습니다." data-english-tooltip="Translated three poems by Gye Mihyun for a special folio featuring seven Korean poets and their translators." data-popup-image="">
                     <h2 class="thumb-title">New England Review 45.2</h2>
                     <p class="thumb-byline">Gongmin · 2024</p>
                     <p class="thumb-tags"><span class="tag-pill">translation</span></p>
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
-            <li class="thumb-item" style="--index: 17; z-index: 18;">
+            <li class="thumb-item" style="--index: 16; z-index: 17;">
                 <a class="thumb-card is-image-only" href="writings/writing-26.html" data-source="writings/writing-26.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="26" data-image-only="1" data-korean-title="자음과 모음 제55호" data-english-title="Jaeum &amp; Moeum Quarterly Issue 55" data-korean-tooltip="미용실에서 돼지가 생각나서 쓴 단편 소설입니다." data-english-tooltip="A short story written at the beauty salon because a story of a pig came to mind." data-popup-image="/images/5b96bd337de63e55.jpg">
                     <img class="thumb-cover" src="/images/64d8820d59215eb6.jpg" alt="Jaeum &amp; Moeum Quarterly Issue 55" loading="lazy" />
                 </a>
             </li>
+            <li class="thumb-item" style="--index: 17; z-index: 18;">
+                <a class="thumb-card is-image-only" href="writings/writing-28.html" data-source="writings/writing-28.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="28" data-image-only="1" data-korean-title="" data-english-title="계간 물결 2022년 가을호" data-korean-tooltip="단편 소설 &quot;참나무 언덕&quot;을 발표했습니다." data-english-tooltip="Published the short story &quot;The Oak Tree Hill.&quot;" data-popup-image="/images/79eac1ee7c1c15ce.jpg">
+                    <img class="thumb-cover" src="/images/01a0d0ffab1afc1e.JPEG" alt="계간 물결 2022년 가을호" loading="lazy" />
+                </a>
+            </li>
             <li class="thumb-item" style="--index: 18; z-index: 19;">
-                <a class="thumb-card" href="writings/writing-27.html" data-source="writings/writing-27.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="27" data-korean-title="" data-english-title="소개" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
-                    <h2 class="thumb-title">소개</h2>
-                    <p class="thumb-byline">Gongmin · 2026</p>
-                    <p class="thumb-tags"><span class="tag-pill">about</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 19; z-index: 20;">
-                <a class="thumb-card" href="writings/writing-28.html" data-source="writings/writing-28.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="28" data-korean-title="" data-english-title="계간 물결 2022년 가을호" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
-                    <h2 class="thumb-title">계간 물결 2022년 가을호</h2>
-                    <p class="thumb-byline">Gongmin · 2022</p>
-                    <p class="thumb-tags"><span class="tag-pill">novel</span></p>
-                    <p class="thumb-preview">Loading preview...</p>
-                </a>
-            </li>
-            <li class="thumb-item" style="--index: 20; z-index: 21;">
                 <a class="thumb-card" href="writings/writing-29.html" data-source="writings/writing-29.html" data-tags="novel|by:Gongmin" data-author="Gongmin" data-id="29" data-korean-title="" data-english-title="계간 물결 2022년 겨울호" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">계간 물결 2022년 겨울호</h2>
                     <p class="thumb-byline">Gongmin · 2022</p>
@@ -706,12 +760,51 @@
                     <p class="thumb-preview">Loading preview...</p>
                 </a>
             </li>
-            <li class="thumb-item" style="--index: 21; z-index: 22;">
+            <li class="thumb-item" style="--index: 19; z-index: 20;">
                 <a class="thumb-card" href="https://thefallofthehyuns.net/translator/index.html" data-source="writings/writing-30.html" data-tags="translation|by:Gongmin" data-author="Gongmin" data-id="30" data-korean-title="" data-english-title="현 가의 몰락 웹시집" data-korean-tooltip="" data-english-tooltip="" data-popup-image="" data-link="https://thefallofthehyuns.net/translator/index.html" target="_blank" rel="noopener noreferrer">
                     <h2 class="thumb-title">현 가의 몰락 웹시집</h2>
                     <p class="thumb-byline">Gongmin · 2023</p>
                     <p class="thumb-tags"><span class="tag-pill">translation</span></p>
                     <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 20; z-index: 21;">
+                <a class="thumb-card is-image-only" href="writings/writing-31.html" data-source="writings/writing-31.html" data-tags="translation|by:Taepung and Pokpung" data-author="Taepung and Pokpung" data-id="31" data-image-only="1" data-korean-title="금성까지 왕복달리기 2" data-english-title="RUNNING BACK AND FORTH TO VENUS VOL.2" data-korean-tooltip="홍이현숙 작가님의 도록 『 금성까지 왕복달리기 2』를 Colin Muat 그리고 임수영 님과 함께 번역했습니다. 「 수행일지—고래자세」 의 번역에서는 고래의 소리에 집중했습니다." data-english-tooltip="Translated Hong Lee Hyunsook&#39;s Exhibition Catalogue *Running Back and Forth to Venus Vol. 2* alongside Colin Mouat and Leam Sooyoung. In translating &#39;Whale Āsana Practice Journal&#39;, I focused on the sound of whales." data-popup-image="/images/c9c4bd90f15140e6.jpg">
+                    <img class="thumb-cover" src="/images/721d508fb5a9659e.png" alt="홍이현숙 도록 번역작업" loading="lazy" />
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 21; z-index: 22;">
+                <a class="thumb-card is-image-only" href="writings/writing-32.html" data-source="writings/writing-32.html" data-tags="poetry|event|friends" data-author="Unknown" data-id="32" data-image-only="1" data-korean-title="『말 꿈 몸』 낭독회" data-english-title="*Word Dream Body* Poetry Collection Reading" data-korean-tooltip="김선오 시인의 시집 『말 꿈 몸』 낭독회에 꼽사리로 끼었습니다. 김리윤, 이유나, 계미현 시인과 함께 쓴 「합창」 을 불렀습니다." data-english-tooltip="I tagged along to a queer reading of poet Kim Sono’s poetry collection, *Word Dream Body*. I recited “Chorus,” a poem I composed with poets Kim Liyoun, Eunice Lee, and Gye Mihyun." data-popup-image="/images/7dd4978e9111fc43.jpeg">
+                    <img class="thumb-cover" src="/images/54278ec0f4177d8e.jpg" alt="『말 꿈 몸』 낭독회" loading="lazy" />
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 22; z-index: 23;">
+                <a class="thumb-card" href="writings/writing-33.html" data-source="writings/writing-33.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="33" data-korean-title="소개" data-english-title="소개" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">소개</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">about</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 23; z-index: 24;">
+                <a class="thumb-card" href="writings/writing-35.html" data-source="writings/writing-35.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="35" data-korean-title="" data-english-title="About" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">About</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">about</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 24; z-index: 25;">
+                <a class="thumb-card" href="writings/writing-36.html" data-source="writings/writing-36.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="36" data-korean-title="활동" data-english-title="Activism" data-korean-tooltip="투쟁!" data-english-tooltip="Solidarity!" data-popup-image="/images/ee750931aa85b5f9.jpeg">
+                    <h2 class="thumb-title">활동</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">about</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 25; z-index: 26;">
+                <a class="thumb-card is-image-only" href="writings/writing-37.html" data-source="writings/writing-37.html" data-tags="Lecture|by:Gongmin" data-author="Gongmin" data-id="37" data-image-only="1" data-korean-title="베껴쓰기로 시작하기" data-english-title="Learning by Copying" data-korean-tooltip="필사를 통해 글쓰기 실력을 늘려나가자는 취지의 강의였습니다." data-english-tooltip="I ran a workshop to help those seeking to improve their writing skills through the practice of transcribing texts." data-popup-image="/images/98b591ea161a6210.jpeg">
+                    <img class="thumb-cover" src="/images/95a6c97fb4ea97ca.jpeg" alt="베껴쓰기로 시작하기" loading="lazy" />
                 </a>
             </li>
         </ul>
@@ -732,7 +825,7 @@
 
     <dialog class="popup-image-dialog" id="popup-image-dialog" aria-label="Card popup image">
         <button class="popup-image-close" type="button" aria-label="Close image">×</button>
-        <img id="popup-image-view" alt="Card popup">
+        <img id="popup-image-view" alt="Card popup" draggable="false">
     </dialog>
 
     <script>
@@ -772,6 +865,7 @@
             { background: '#d9e6d2', lineColor: '#397451', ink: '#397451' },
             { background: '#d7e7ed', lineColor: '#a34f3d', ink: '#713a30' }
         ];
+        let notesOnlyActive = false;
         let antHillActive = true;
         let homeThemeIndex = 0;
         let showTitles = false;
@@ -801,7 +895,7 @@
             svg.id = 'tunnel-svg';
             rootGrid.insertBefore(svg, rootGrid.firstChild);
 
-            const visible = cardItems.filter((item) => item.style.display !== 'none');
+            const visible = cardItems.filter((item) => !item.classList.contains('is-notes-hidden'));
             const pairs = [];
             for (let i = 0; i < visible.length - 1; i++) {
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1132,14 +1226,14 @@
                 const koreanEl = document.createElement('span');
                 koreanEl.className = 'flip-back-title-ko';
                 koreanEl.lang = 'ko';
-                koreanEl.textContent = koreanTitle;
+                setInlineEmphasis(koreanEl, koreanTitle);
                 titleEl.appendChild(koreanEl);
             }
             if (englishTitle) {
                 const englishEl = document.createElement('span');
                 englishEl.className = 'flip-back-title-en';
                 englishEl.lang = 'en';
-                englishEl.textContent = englishTitle;
+                setInlineEmphasis(englishEl, englishTitle);
                 titleEl.appendChild(englishEl);
             }
             back.appendChild(titleEl);
@@ -1172,7 +1266,7 @@
                 const koreanEl = document.createElement('span');
                 koreanEl.className = 'flip-back-title-ko';
                 koreanEl.lang = 'ko';
-                koreanEl.textContent = koreanTitle;
+                setInlineEmphasis(koreanEl, koreanTitle);
                 titleEl.appendChild(koreanEl);
             }
 
@@ -1180,7 +1274,7 @@
                 const englishEl = document.createElement('span');
                 englishEl.className = 'flip-back-title-en';
                 englishEl.lang = 'en';
-                englishEl.textContent = englishTitle;
+                setInlineEmphasis(englishEl, englishTitle);
                 titleEl.appendChild(englishEl);
             }
 
@@ -1235,13 +1329,39 @@
             const previewText = (card.dataset.previewText || '').trim();
             const englishText = (card.dataset.englishTooltip || '').trim();
             const explicitKoreanText = (card.dataset.koreanTooltip || card.dataset.tooltip || '').trim();
+            if (!explicitKoreanText && !englishText) {
+                koreanCardTooltip.replaceChildren();
+                englishCardTooltip.replaceChildren();
+                koreanCardTooltip.hidden = true;
+                englishCardTooltip.hidden = true;
+                cardTooltip.hidden = true;
+                return;
+            }
+
             const koreanText = explicitKoreanText || (!englishText ? previewText || card.dataset.title || '' : '');
 
-            koreanCardTooltip.textContent = koreanText;
+            setInlineEmphasis(koreanCardTooltip, koreanText);
             koreanCardTooltip.hidden = !koreanText;
-            englishCardTooltip.textContent = englishText;
+            setInlineEmphasis(englishCardTooltip, englishText);
             englishCardTooltip.hidden = !englishText;
             cardTooltip.hidden = !koreanText && !englishText;
+        }
+
+        function setInlineEmphasis(element, text) {
+            const italicPattern = /\*([^*\n]+)\*/g;
+            let lastIndex = 0;
+            const nodes = [];
+
+            for (const match of text.matchAll(italicPattern)) {
+                nodes.push(document.createTextNode(text.slice(lastIndex, match.index)));
+                const italic = document.createElement('em');
+                italic.textContent = match[1];
+                nodes.push(italic);
+                lastIndex = match.index + match[0].length;
+            }
+
+            nodes.push(document.createTextNode(text.slice(lastIndex)));
+            element.replaceChildren(...nodes);
         }
 
         function isMobileViewer() {
@@ -1286,6 +1406,10 @@
                 const front = document.createElement('div');
                 front.className = 'thumb-card thumb-card-front';
                 front.innerHTML = card.innerHTML;
+                const frontTitle = front.querySelector('.thumb-title');
+                if (frontTitle) {
+                    setInlineEmphasis(frontTitle, frontTitle.textContent);
+                }
                 front.dataset.source = card.dataset.source || '';
                 front.dataset.author = card.dataset.author || '';
                 front.dataset.year = card.dataset.year || '';
@@ -1398,6 +1522,7 @@
             });
 
             popupImageDialog.querySelector('.popup-image-close').addEventListener('click', () => popupImageDialog.close());
+            popupImageView.addEventListener('dragstart', (event) => event.preventDefault());
             popupImageDialog.addEventListener('click', (event) => {
                 if (event.target === popupImageDialog) {
                     popupImageDialog.close();
@@ -1434,8 +1559,10 @@
             return rawText
                 .replace(/<!\[CDATA\[/gi, ' ')
                 .replace(/]]>/g, ' ')
-                .replace(/\s+/g, ' ')
-                .replace(/[\r\n]+/g, ' ')
+                .replace(/\r\n?/g, '\n')
+                .replace(/[^\S\n]+/g, ' ')
+                .replace(/[ \t]*\n[ \t]*/g, '\n')
+                .replace(/\n{3,}/g, '\n\n')
                 .trim();
         }
 
@@ -1466,7 +1593,7 @@
                         continue;
                     }
                     const escaped = escapeForRegex(entry);
-                    const leadingPattern = new RegExp(`^\\s*(?:by\\s+)?${escaped}\\s*`, 'i');
+                    const leadingPattern = new RegExp(`^[ \\t]*(?:by[ \\t]+)?${escaped}[ \\t]*`, 'i');
                     if (leadingPattern.test(next)) {
                         next = next.replace(leadingPattern, '');
                         changed = true;
@@ -1475,9 +1602,9 @@
             }
 
             next = next
-                .replace(/^(?:\s|[•·,;:—–-])+/, '')
-                .replace(/\s{2,}/g, ' ')
-                .replace(/[\s•·,;:—–-]+$/, '')
+                .replace(/^[ \t•·,;:—–-]+/, '')
+                .replace(/[ \t]{2,}/g, ' ')
+                .replace(/[ \t•·,;:—–-]+$/, '')
                 .trim();
 
             return next;
@@ -1494,12 +1621,16 @@
                 node.remove();
             });
 
+            bodyClone.querySelectorAll('br').forEach((node) => {
+                node.replaceWith(document.createTextNode('\n'));
+            });
+
             const textChunks = Array.from(bodyClone.querySelectorAll('p, li, blockquote'))
                 .map((node) => cleanPreviewText(node.textContent || ''))
                 .filter(Boolean);
 
             if (textChunks.length > 0) {
-                return textChunks.join(' ');
+                return textChunks.join('\n');
             }
 
             return cleanPreviewText(bodyClone.textContent || '');
@@ -1581,6 +1712,7 @@
 
                 if (pageTitle && title && title.textContent.startsWith('Writing Title')) {
                     title.textContent = pageTitle;
+                    setInlineEmphasis(title, pageTitle);
                 }
 
                 const resolvedPreview = sanitizedBodyText || 'Preview will appear once this page has text content.';
@@ -1756,9 +1888,20 @@
         function applyLayout() {
             clearStackLabels();
 
+            const visibleCardItems = cardItems.filter((item) => {
+                const card = item.querySelector('.thumb-card');
+                const isNotesCard = card && parseTags(card).some((tag) => tag.toLowerCase() === 'notes');
+                const isVisible = notesOnlyActive ? isNotesCard : !isNotesCard;
+                item.classList.toggle('is-notes-hidden', !isVisible);
+                item.inert = !isVisible;
+                return isVisible;
+            });
+
             const featuredOrder = ['translation', 'poetry', 'novel', 'essay', 'about'];
-            const featuredTags = featuredOrder.filter((tag) => featuredActiveTags.has(tag) || activeTags.has(tag));
-            const selectedTags = featuredTags.length > 0 ? featuredTags : Array.from(activeTags);
+            const featuredTags = notesOnlyActive
+                ? ['notes']
+                : featuredOrder.filter((tag) => featuredActiveTags.has(tag) || activeTags.has(tag));
+            const selectedTags = notesOnlyActive ? ['notes'] : featuredTags.length > 0 ? featuredTags : Array.from(activeTags);
             rootGrid.classList.toggle('is-grouped', selectedTags.length > 0);
             const width = rootGrid.clientWidth;
             const stackCount = Math.max(selectedTags.length, 1);
@@ -1768,7 +1911,7 @@
             const stackMembersByTag = new Map();
             selectedTags.forEach((tag) => stackMembersByTag.set(tag, []));
 
-            cardItems.forEach((item) => {
+            visibleCardItems.forEach((item) => {
                 const card = item.querySelector('.thumb-card');
                 if (!card) {
                     return;
@@ -1836,7 +1979,7 @@
                     currentY += rowsForTag * rowHeight + 62;
                 });
 
-                const ungrouped = cardItems.filter((item) => !groupedSet.has(item));
+                const ungrouped = visibleCardItems.filter((item) => !groupedSet.has(item));
                 const belowY = currentY + 70;
 
                 ungrouped.forEach((item, index) => {
@@ -1872,7 +2015,7 @@
                     (stackMembersByTag.get(tag) || []).forEach((item) => groupedSet.add(item));
                 });
 
-                const ungrouped = cardItems.filter((item) => !groupedSet.has(item));
+                const ungrouped = visibleCardItems.filter((item) => !groupedSet.has(item));
                 const belowY = stackStartY + 360;
 
                 ungrouped.forEach((item, index) => {
@@ -1923,7 +2066,11 @@
 
         function renderTagToolbar() {
             const tags = allTags();
-            const remainingTags = tags.filter((tag) => !['translation', 'poetry', 'novel', 'essay', 'about'].includes(tag));
+            const hiddenToggleTags = new Set(['event', 'events', 'friends']);
+            const remainingTags = tags.filter((tag) =>
+                !['translation', 'poetry', 'novel', 'essay', 'about'].includes(tag) &&
+                !hiddenToggleTags.has(tag.toLowerCase())
+            );
 
             toolbar.innerHTML = remainingTags.map((tag) => {
                 const activeClass = activeTags.has(tag) ? ' is-active' : '';
@@ -1932,11 +2079,23 @@
                 '<span class="toolbar-right">' +
                 `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill" aria-pressed="${antHillActive}">ant</button>` +
                 '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee</button>' +
+                `<button type="button" class="tag-filter-btn is-utility${notesOnlyActive ? ' is-active' : ''}" data-action="notes-only" aria-pressed="${notesOnlyActive}">notes</button>` +
                 `<button type="button" class="tag-filter-btn is-utility${homeThemeIndex > 0 ? ' is-active' : ''}" data-action="home-theme">home</button>` +
                 '</span>';
 
             toolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
                 const action = button.getAttribute('data-action');
+                if (action === 'notes-only') {
+                    button.addEventListener('click', () => {
+                        notesOnlyActive = !notesOnlyActive;
+                        renderTagToolbar();
+                        applyLayout();
+                        if (antHillActive) {
+                            startTunnelLoop();
+                        }
+                    });
+                    return;
+                }
                 if (action === 'ant-hill') {
                     button.addEventListener('click', () => {
                         antHillActive = !antHillActive;
@@ -2006,8 +2165,8 @@
         applyCardMetaVisibility();
         renderFeaturedTagToolbar();
         renderTagToolbar();
-        startTunnelLoop();
         applyLayout();
+        startTunnelLoop();
         setupDragging();
 
         window.addEventListener('resize', () => {
