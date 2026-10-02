@@ -784,17 +784,20 @@ app.post('/admin/logout', (req, res) => {
   return res.redirect('/admin/login');
 });
 
-app.post('/admin/upload-image', requireAdminAuth, upload.single('image'), async (req, res) => {
-  try {
+app.post('/admin/upload-image', requireAdminAuth, (req, res) => {
+  upload.single('image')(req, res, (uploadError) => {
+    if (uploadError) {
+      const status = uploadError.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+      return res.status(status).json({ error: uploadError.message || 'Upload failed' });
+    }
+
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    
+
     const imageUrl = '/images/' + req.file.filename;
-    res.json({ url: imageUrl });
-  } catch (error) {
-    res.status(500).json({ error: error.message || 'Upload failed' });
-  }
+    return res.json({ url: imageUrl });
+  });
 });
 
 app.get('/admin', requireAdminAuth, async (req, res) => {
@@ -1263,15 +1266,20 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
             try {
                 const response = await fetch('/admin/upload-image', {
                     method: 'POST',
+                  headers: { 'Accept': 'application/json' },
                     body: formData
                 });
 
+                const contentType = response.headers.get('content-type') || '';
+                const data = contentType.includes('application/json') ? await response.json() : null;
                 if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.error || 'Upload failed');
+                    throw new Error(data?.error || 'Upload failed (HTTP ' + response.status + ')');
                 }
 
-                const data = await response.json();
+                if (!data) {
+                    throw new Error('The server returned an unexpected response. Please log in again and retry.');
+                }
+
                 targetInput.value = data.url;
                 targetPreview.src = data.url;
                 targetPreview.classList.add('show');

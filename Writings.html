@@ -652,8 +652,8 @@
                 </a>
             </li>
             <li class="thumb-item" style="--index: 13; z-index: 14;">
-                <a class="thumb-card is-image-only" href="writings/writing-21.html" data-source="writings/writing-21.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="21" data-image-only="1" data-korean-title="" data-english-title="Photo by Junyesl" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
-                    <img class="thumb-cover" src="/images/96ba4da7a12193be.jpeg" alt="Photo by Junyesl" loading="lazy" />
+                <a class="thumb-card is-image-only" href="writings/writing-21.html" data-source="writings/writing-21.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="21" data-image-only="1" data-korean-title="전예슬 작가가 찍어준 2026년 프로필 사진" data-english-title="2026 Photo by Junyesl" data-korean-tooltip="제주 조수리 고사리숲길에서 뷰티풀하게 찍은 사진입니다." data-english-tooltip="A beautiful photo taken in Brackeny Path, Jeju" data-popup-image="">
+                    <img class="thumb-cover" src="/images/5cd205cf025fbb3a.jpg" alt="Photo by Junyesl" loading="lazy" />
                 </a>
             </li>
             <li class="thumb-item" style="--index: 14; z-index: 15;">
@@ -767,12 +767,18 @@
         const featuredActiveTags = new Set();
         const randomPositions = new Map();
         const LAYOUT_STORAGE_KEY = 'writings-random-layout-v2';
+        const homeThemes = [
+            { background: '#f9c7d8', lineColor: '#1d4ed8', ink: '#1b1b1b' },
+            { background: '#d9e6d2', lineColor: '#397451', ink: '#397451' },
+            { background: '#d7e7ed', lineColor: '#a34f3d', ink: '#713a30' }
+        ];
         let antHillActive = true;
-        let homeThemeActive = false;
+        let homeThemeIndex = 0;
         let showTitles = false;
         let tunnelRafId = null;
         let dragState = null;
         let suppressClickUntil = 0;
+        let mobileTooltipCard = null;
 
         function applyCardMetaVisibility() {
             cards.forEach((card) => {
@@ -1060,9 +1066,12 @@
                 suppressClickUntil = Date.now() + 220;
             } else if (dragState.startTarget.closest?.('.thumb-card-back')) {
                 const back = dragState.startTarget.closest('.thumb-card-back');
+                const flippedCard = back.closest('.thumb-card-shell')?.querySelector('.thumb-card-front');
                 if (back.dataset.popupImage) {
                     openPopupImage(back.dataset.popupImage);
-                    back.closest('.thumb-card-shell')?.classList.remove('is-flipped');
+                }
+                if (flippedCard) {
+                    toggleCardFlip(flippedCard);
                 } else {
                     back.closest('.thumb-card-shell')?.classList.remove('is-flipped');
                 }
@@ -1211,20 +1220,54 @@
         }
 
         function showCardTooltip(card, event) {
+            if (isMobileViewer()) {
+                return;
+            }
+
+            setCardTooltipContent(card);
+            if (cardTooltip.hidden) {
+                return;
+            }
+            positionCardTooltip(event);
+        }
+
+        function setCardTooltipContent(card) {
             const previewText = (card.dataset.previewText || '').trim();
             const englishText = (card.dataset.englishTooltip || '').trim();
             const explicitKoreanText = (card.dataset.koreanTooltip || card.dataset.tooltip || '').trim();
             const koreanText = explicitKoreanText || (!englishText ? previewText || card.dataset.title || '' : '');
-            if ((!koreanText && !englishText) || event.pointerType === 'touch') {
-                return;
-            }
 
             koreanCardTooltip.textContent = koreanText;
             koreanCardTooltip.hidden = !koreanText;
             englishCardTooltip.textContent = englishText;
             englishCardTooltip.hidden = !englishText;
-            cardTooltip.hidden = false;
-            positionCardTooltip(event);
+            cardTooltip.hidden = !koreanText && !englishText;
+        }
+
+        function isMobileViewer() {
+            return window.matchMedia('(hover: none) and (pointer: coarse)').matches || window.innerWidth <= 767;
+        }
+
+        function showMobileCardTooltip(card) {
+            setCardTooltipContent(card);
+            if (cardTooltip.hidden) {
+                return;
+            }
+
+            const margin = 8;
+            const gap = 10;
+            const cardRect = card.getBoundingClientRect();
+            const tooltipRect = cardTooltip.getBoundingClientRect();
+            const left = Math.max(margin, Math.min(
+                cardRect.left + (cardRect.width - tooltipRect.width) / 2,
+                window.innerWidth - tooltipRect.width - margin
+            ));
+            const below = cardRect.bottom + gap;
+            const top = below + tooltipRect.height <= window.innerHeight - margin
+                ? below
+                : Math.max(margin, cardRect.top - tooltipRect.height - gap);
+            cardTooltip.style.left = `${left}px`;
+            cardTooltip.style.top = `${top}px`;
         }
 
         function hideCardTooltip() {
@@ -1279,7 +1322,24 @@
                 return;
             }
 
-            shell.classList.toggle('is-flipped');
+            const isFlipped = shell.classList.toggle('is-flipped');
+            if (!isMobileViewer()) {
+                return;
+            }
+
+            if (isFlipped) {
+                cards.forEach((otherCard) => {
+                    const otherShell = otherCard.closest('.thumb-card-shell');
+                    if (otherCard !== card && otherShell?.classList.contains('is-flipped')) {
+                        otherShell.classList.remove('is-flipped');
+                    }
+                });
+                mobileTooltipCard = card;
+                showMobileCardTooltip(card);
+            } else if (mobileTooltipCard === card) {
+                mobileTooltipCard = null;
+                hideCardTooltip();
+            }
         }
 
         function openPopupImage(imagePath) {
@@ -1297,13 +1357,24 @@
             cardItems.forEach((item) => {
                 item.addEventListener('pointerdown', (event) => beginDrag(event, item));
                 item.addEventListener('pointerenter', (event) => {
+                    if (isMobileViewer()) {
+                        return;
+                    }
                     const card = item.querySelector('.thumb-card-front');
                     if (card) {
                         showCardTooltip(card, event);
                     }
                 });
-                item.addEventListener('pointermove', positionCardTooltip);
-                item.addEventListener('pointerleave', hideCardTooltip);
+                item.addEventListener('pointermove', (event) => {
+                    if (!isMobileViewer()) {
+                        positionCardTooltip(event);
+                    }
+                });
+                item.addEventListener('pointerleave', () => {
+                    if (!isMobileViewer()) {
+                        hideCardTooltip();
+                    }
+                });
             });
 
             cards.forEach((card) => {
@@ -1341,7 +1412,7 @@
                     cards.forEach((card) => {
                         const shell = card.closest('.thumb-card-shell');
                         if (shell && shell.classList.contains('is-flipped')) {
-                            shell.classList.remove('is-flipped');
+                            toggleCardFlip(card);
                         }
                     });
                 }
@@ -1861,7 +1932,7 @@
                 '<span class="toolbar-right">' +
                 `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill" aria-pressed="${antHillActive}">ant</button>` +
                 '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee</button>' +
-                `<button type="button" class="tag-filter-btn is-utility${homeThemeActive ? ' is-active' : ''}" data-action="home-theme">home</button>` +
+                `<button type="button" class="tag-filter-btn is-utility${homeThemeIndex > 0 ? ' is-active' : ''}" data-action="home-theme">home</button>` +
                 '</span>';
 
             toolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
@@ -1889,12 +1960,12 @@
                 }
                 if (action === 'home-theme') {
                     button.addEventListener('click', () => {
-                        homeThemeActive = !homeThemeActive;
-                        document.documentElement.classList.toggle('is-home-theme-active', homeThemeActive);
-                        document.documentElement.style.setProperty('--bg', homeThemeActive ? '#d9e6d2' : '#f9c7d8');
-                        const themeColor = homeThemeActive ? '#397451' : '#1d4ed8';
-                        document.documentElement.style.setProperty('--line-color', themeColor);
-                        document.documentElement.style.setProperty('--ink', homeThemeActive ? themeColor : '#1b1b1b');
+                        homeThemeIndex = (homeThemeIndex + 1) % homeThemes.length;
+                        const theme = homeThemes[homeThemeIndex];
+                        document.documentElement.classList.toggle('is-home-theme-active', homeThemeIndex > 0);
+                        document.documentElement.style.setProperty('--bg', theme.background);
+                        document.documentElement.style.setProperty('--line-color', theme.lineColor);
+                        document.documentElement.style.setProperty('--ink', theme.ink);
                         renderTagToolbar();
                     });
                     return;
