@@ -20,7 +20,7 @@
             --edge: rgba(255, 255, 255, 0.12);
             --card-width: 164px;
             --card-height: 236px;
-            --card-count: 26;
+            --card-count: 56;
             --collapsed-step: 28px;
             --expanded-step: 28px;
             --slant-step: 15px;
@@ -413,6 +413,56 @@
             min-height: 0;
             width: 100%;
             padding: 0.72rem 0.68rem;
+        }
+
+        .thumb-item.is-note-expanded {
+            width: var(--note-width, 340px);
+        }
+
+        .thumb-item.is-note-expanded .thumb-card-shell {
+            width: 100%;
+            height: auto;
+            perspective: none;
+        }
+
+        .thumb-item.is-note-expanded .thumb-card-front {
+            position: relative;
+            width: 100%;
+            min-height: var(--card-height);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+        }
+
+        .thumb-item.is-note-expanded .thumb-card-back {
+            display: none;
+        }
+
+        .thumb-item.is-note-expanded .thumb-card-front .thumb-preview {
+            display: block;
+            line-clamp: unset;
+            -webkit-line-clamp: unset;
+            overflow: visible;
+            font-size: 0.78rem;
+            padding: 1rem 0.9rem;
+        }
+
+        .thumb-item.note-photo-item {
+            cursor: default;
+            pointer-events: auto;
+        }
+
+        .note-photo-item img {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: #f9f7f3;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+
+        .thumb-item.is-note-expanded .thumb-cover {
+            height: auto;
+            object-fit: contain;
         }
 
         .card-tooltip {
@@ -828,6 +878,243 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                     <img class="thumb-cover" src="/images/95a6c97fb4ea97ca.jpeg" alt="베껴쓰기로 시작하기" loading="lazy" />
                 </a>
             </li>
+            <li class="thumb-item" style="--index: 26; z-index: 27;">
+                <a class="thumb-card" href="writings/writing-38.html" data-source="writings/writing-38.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="38" data-korean-title="" data-english-title="4/13" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4/13</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 27; z-index: 28;">
+                <a class="thumb-card" href="writings/writing-39.html" data-source="writings/writing-39.html" data-tags="notes" data-author="Unknown" data-id="39" data-korean-title="" data-english-title="4/14" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4/14</h2>
+                    <p class="thumb-byline">Unknown</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 28; z-index: 29;">
+                <a class="thumb-card" href="writings/writing-40.html" data-source="writings/writing-40.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="40" data-korean-title="" data-english-title="4/14" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4/14</h2>
+                    <p class="thumb-byline">Gongmin</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 29; z-index: 30;">
+                <a class="thumb-card" href="writings/writing-41.html" data-source="writings/writing-41.html" data-tags="notes" data-author="Unknown" data-id="41" data-korean-title="" data-english-title="쓰고 싶은 게 있었는데 이미 까먹었어요." data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">쓰고 싶은 게 있었는데 이미 까먹었어요.</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 30; z-index: 31;">
+                <a class="thumb-card" href="writings/writing-42.html" data-source="writings/writing-42.html" data-tags="notes" data-author="Unknown" data-id="42" data-korean-title="" data-english-title="4.11" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4.11</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 31; z-index: 32;">
+                <a class="thumb-card" href="writings/writing-43.html" data-source="writings/writing-43.html" data-tags="notes|by:Kumo" data-author="Kumo" data-id="43" data-korean-title="" data-english-title="4.11" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4.11</h2>
+                    <p class="thumb-byline">Kumo · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 32; z-index: 33;">
+                <a class="thumb-card" href="writings/writing-44.html" data-source="writings/writing-44.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="44" data-korean-title="" data-english-title="4.11" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4.11</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 33; z-index: 34;">
+                <a class="thumb-card" href="writings/writing-45.html" data-source="writings/writing-45.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="45" data-korean-title="" data-english-title="4.11" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4.11</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 34; z-index: 35;">
+                <a class="thumb-card" href="writings/writing-46.html" data-source="writings/writing-46.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="46" data-korean-title="" data-english-title="4.11" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4.11</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 35; z-index: 36;">
+                <a class="thumb-card" href="writings/writing-47.html" data-source="writings/writing-47.html" data-tags="notes|by:Kumo" data-author="Kumo" data-id="47" data-korean-title="" data-english-title="4.11" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">4.11</h2>
+                    <p class="thumb-byline">Kumo · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 36; z-index: 37;">
+                <a class="thumb-card" href="writings/writing-48.html" data-source="writings/writing-48.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="48" data-korean-title="" data-english-title="Memories 1" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">Memories 1</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 37; z-index: 38;">
+                <a class="thumb-card" href="writings/writing-49.html" data-source="writings/writing-49.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="49" data-korean-title="" data-english-title="고양이 놀이" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">고양이 놀이</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 38; z-index: 39;">
+                <a class="thumb-card" href="writings/writing-50.html" data-source="writings/writing-50.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="50" data-korean-title="" data-english-title="설날 새해 석불 앞에서 (     )  수행하기" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">설날 새해 석불 앞에서 (     )  수행하기</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 39; z-index: 40;">
+                <a class="thumb-card" href="writings/writing-51.html" data-source="writings/writing-51.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="51" data-korean-title="" data-english-title="게임 번역 1" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">게임 번역 1</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 40; z-index: 41;">
+                <a class="thumb-card" href="writings/writing-52.html" data-source="writings/writing-52.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="52" data-korean-title="" data-english-title="게임 서브텍스트 1" data-korean-tooltip="" data-english-tooltip="" data-popup-image="/images/d08b9258c70bf0ce.jpg">
+                    <h2 class="thumb-title">게임 서브텍스트 1</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 41; z-index: 42;">
+                <a class="thumb-card" href="writings/writing-53.html" data-source="writings/writing-53.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="53" data-korean-title="" data-english-title="게임 서브텍스트 2" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">게임 서브텍스트 2</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 42; z-index: 43;">
+                <a class="thumb-card" href="writings/writing-54.html" data-source="writings/writing-54.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="54" data-korean-title="" data-english-title="서브텍스트 1" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">서브텍스트 1</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 43; z-index: 44;">
+                <a class="thumb-card" href="writings/writing-55.html" data-source="writings/writing-55.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="55" data-korean-title="" data-english-title="서브텍스트 3" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">서브텍스트 3</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 44; z-index: 45;">
+                <a class="thumb-card" href="writings/writing-56.html" data-source="writings/writing-56.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="56" data-korean-title="" data-english-title="서브텍스트 4" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">서브텍스트 4</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 45; z-index: 46;">
+                <a class="thumb-card" href="writings/writing-57.html" data-source="writings/writing-57.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="57" data-korean-title="" data-english-title="서브텍스트 5" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">서브텍스트 5</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 46; z-index: 47;">
+                <a class="thumb-card" href="writings/writing-58.html" data-source="writings/writing-58.html" data-tags="notes" data-author="Unknown" data-id="58" data-korean-title="" data-english-title="서브텍스트 6" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">서브텍스트 6</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 47; z-index: 48;">
+                <a class="thumb-card" href="writings/writing-59.html" data-source="writings/writing-59.html" data-tags="notes" data-author="Unknown" data-id="59" data-korean-title="" data-english-title="게임" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">게임</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 48; z-index: 49;">
+                <a class="thumb-card" href="writings/writing-60.html" data-source="writings/writing-60.html" data-tags="notes" data-author="Unknown" data-id="60" data-korean-title="" data-english-title="고양이 2" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">고양이 2</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 49; z-index: 50;">
+                <a class="thumb-card" href="writings/writing-61.html" data-source="writings/writing-61.html" data-tags="notes" data-author="Unknown" data-id="61" data-korean-title="" data-english-title="롤플레잉 1" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">롤플레잉 1</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 50; z-index: 51;">
+                <a class="thumb-card" href="writings/writing-62.html" data-source="writings/writing-62.html" data-tags="notes" data-author="Unknown" data-id="62" data-korean-title="" data-english-title="벌레인간" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">벌레인간</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 51; z-index: 52;">
+                <a class="thumb-card" href="writings/writing-63.html" data-source="writings/writing-63.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="63" data-korean-title="" data-english-title="벽돌 바닥" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">벽돌 바닥</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 52; z-index: 53;">
+                <a class="thumb-card" href="writings/writing-64.html" data-source="writings/writing-64.html" data-tags="notes" data-author="Unknown" data-id="64" data-korean-title="" data-english-title="삼신돌" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">삼신돌</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 53; z-index: 54;">
+                <a class="thumb-card" href="writings/writing-65.html" data-source="writings/writing-65.html" data-tags="notes" data-author="Unknown" data-id="65" data-korean-title="" data-english-title="기나긴 행렬" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">기나긴 행렬</h2>
+                    <p class="thumb-byline">Unknown · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 54; z-index: 55;">
+                <a class="thumb-card" href="writings/writing-66.html" data-source="writings/writing-66.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="66" data-korean-title="" data-english-title="사막" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                    <h2 class="thumb-title">사막</h2>
+                    <p class="thumb-byline">Gongmin · 2026</p>
+                    <p class="thumb-tags"><span class="tag-pill">notes</span></p>
+                    <p class="thumb-preview">Loading preview...</p>
+                </a>
+            </li>
+            <li class="thumb-item" style="--index: 55; z-index: 56;">
+                <a class="thumb-card is-image-only" href="writings/writing-67.html" data-source="writings/writing-67.html" data-tags="upcoming|by:Gongmin" data-author="Gongmin" data-id="67" data-image-only="1" data-korean-title="세 친구의 누리집들이" data-english-title="A Website Housewarming for Three Friends" data-korean-tooltip="모두 환영합니다!" data-english-tooltip="Welcome all!" data-popup-image="">
+                    <img class="thumb-cover" src="/images/0d206098c1bcef04.jpeg" alt="세 친구의 누리집들이" loading="lazy" />
+                </a>
+            </li>
         </ul>
     </main>
 
@@ -887,6 +1174,26 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
             { background: '#d7e7ed', lineColor: '#a34f3d', ink: '#713a30' }
         ];
         let notesOnlyActive = false;
+        let focusedNoteItem = null;
+        let lastNoteToggleAt = 0;
+        let notesOrder = new Map();
+
+        function shuffleNotesOrder() {
+            const noteItems = cardItems.filter((item) => {
+                const card = item.querySelector('.thumb-card');
+                return card && parseTags(card).some((tag) => tag.toLowerCase() === 'notes');
+            });
+            for (let i = noteItems.length - 1; i > 0; i -= 1) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [noteItems[i], noteItems[j]] = [noteItems[j], noteItems[i]];
+            }
+            notesOrder = new Map(noteItems.map((item, index) => [item, index]));
+        }
+
+        function sortByNotesOrder(items) {
+            return items.sort((a, b) => (notesOrder.get(a) ?? 0) - (notesOrder.get(b) ?? 0));
+        }
+        let noteGridMinHeight = null;
         let antHillActive = true;
         let homeThemeIndex = 0;
         let showTitles = false;
@@ -916,7 +1223,17 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
             svg.id = 'tunnel-svg';
             rootGrid.insertBefore(svg, rootGrid.firstChild);
 
-            const visible = cardItems.filter((item) => !item.classList.contains('is-notes-hidden'));
+            const visible = [];
+            const chainItems = cardItems.filter((item) => !item.classList.contains('is-notes-hidden'));
+            if (notesOnlyActive) {
+                sortByNotesOrder(chainItems);
+            }
+            chainItems.forEach((item) => {
+                visible.push(item);
+                if (item === focusedNoteItem && notePhotoItem.isConnected) {
+                    visible.push(notePhotoItem);
+                }
+            });
             const pairs = [];
             for (let i = 0; i < visible.length - 1; i++) {
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1467,7 +1784,113 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
             cards.forEach((card) => syncPreviewToFlip(card));
         }
 
+        function isNotesCard(card) {
+            return parseTags(card).some((tag) => tag.toLowerCase() === 'notes');
+        }
+
+        const notePhotoItem = document.createElement('div');
+        notePhotoItem.className = 'thumb-item note-photo-item';
+        const notePhotoImage = document.createElement('img');
+        notePhotoImage.alt = 'Note photo';
+        notePhotoImage.draggable = false;
+        notePhotoItem.appendChild(notePhotoImage);
+        notePhotoImage.addEventListener('load', () => {
+            if (focusedNoteItem && notePhotoItem.isConnected) {
+                applyLayout();
+                if (antHillActive) {
+                    startTunnelLoop();
+                }
+            }
+        });
+
+        function setFocusedNote(item) {
+            focusedNoteItem = item;
+            applyLayout();
+            if (antHillActive) {
+                startTunnelLoop();
+            }
+            if (item) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function layoutFocusedNote(focusedItem, visibleItems) {
+            const width = rootGrid.clientWidth;
+            const topY = 120;
+            const isNarrow = isMobileViewer() || width < 640;
+            const pileX = isNarrow ? 16 : 22;
+            const noteX = isNarrow ? 16 : pileX + 164 + 48;
+            const noteWidth = isNarrow ? width - 32 : Math.max(220, Math.min(360, width - noteX - 22));
+
+            focusedItem.classList.add('is-note-expanded');
+            focusedItem.style.setProperty('--note-width', `${noteWidth}px`);
+            focusedItem.classList.add('is-stacked');
+            focusedItem.style.setProperty('--delay', '0ms');
+            focusedItem.style.setProperty('--stack-x', `${noteX}px`);
+            focusedItem.style.setProperty('--stack-y', `${topY}px`);
+            focusedItem.style.zIndex = '4000';
+
+            const noteHeight = focusedItem.offsetHeight;
+            let belowNoteY = topY + noteHeight;
+
+            const popupSrc = focusedItem.querySelector('.thumb-card-front')?.dataset.popupImage || '';
+            if (popupSrc) {
+                const resolvedSrc = repoAssetPath(popupSrc);
+                if (notePhotoImage.getAttribute('src') !== resolvedSrc) {
+                    notePhotoImage.setAttribute('src', resolvedSrc);
+                }
+
+                const sideX = noteX + noteWidth + 32;
+                const sideWidth = Math.min(320, width - sideX - 22);
+                const placeBeside = !isNarrow && sideWidth >= 140;
+                const photoWidth = placeBeside ? sideWidth : Math.min(320, width - 32);
+                const photoX = placeBeside ? sideX : 16;
+                const photoY = placeBeside ? topY : topY + noteHeight + 40;
+
+                notePhotoItem.style.width = `${photoWidth}px`;
+                notePhotoItem.classList.add('is-stacked');
+                notePhotoItem.style.setProperty('--delay', '0ms');
+                notePhotoItem.style.setProperty('--stack-x', `${photoX}px`);
+                notePhotoItem.style.setProperty('--stack-y', `${photoY}px`);
+                notePhotoItem.style.zIndex = '3900';
+                rootGrid.appendChild(notePhotoItem);
+
+                belowNoteY = Math.max(belowNoteY, photoY + notePhotoItem.offsetHeight);
+            }
+
+            const pileY = isNarrow ? belowNoteY + 60 : topY;
+            createStackLabel('notes', pileX, pileY - 26);
+
+            const others = visibleItems.filter((item) => item !== focusedItem);
+            others.forEach((item, index) => {
+                item.classList.add('is-stacked');
+                item.style.setProperty('--delay', `${index * 40}ms`);
+                item.style.setProperty('--stack-x', `${pileX}px`);
+                item.style.setProperty('--stack-y', `${pileY + (index * 18)}px`);
+                item.style.zIndex = String(3000 + index);
+            });
+
+            const bottom = Math.max(belowNoteY, pileY + 236 + (others.length * 18)) + 80;
+            if (bottom > rootGrid.clientHeight) {
+                if (noteGridMinHeight === null) {
+                    noteGridMinHeight = rootGrid.style.minHeight;
+                }
+                rootGrid.style.minHeight = `${Math.round(bottom)}px`;
+            }
+        }
+
         function toggleCardFlip(card) {
+            if (notesOnlyActive && isNotesCard(card)) {
+                const now = Date.now();
+                if (now - lastNoteToggleAt < 400) {
+                    return;
+                }
+                lastNoteToggleAt = now;
+                const noteItem = card.closest('.thumb-item');
+                setFocusedNote(noteItem === focusedNoteItem ? null : noteItem);
+                return;
+            }
+
             const shell = card.closest('.thumb-card-shell');
             if (!shell) {
                 return;
@@ -1548,6 +1971,25 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 });
             });
 
+            document.querySelectorAll('.thumb-card-back').forEach((back) => {
+                back.addEventListener('click', (event) => {
+                    if (!isMobileViewer()) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (back.dataset.popupImage) {
+                        openPopupImage(back.dataset.popupImage);
+                    }
+
+                    const front = back.closest('.thumb-card-shell')?.querySelector('.thumb-card-front');
+                    if (front) {
+                        toggleCardFlip(front);
+                    }
+                });
+            });
+
             popupImageDialog.querySelector('.popup-image-close').addEventListener('click', () => popupImageDialog.close());
             popupImageView.addEventListener('dragstart', (event) => event.preventDefault());
             popupImageDialog.addEventListener('click', (event) => {
@@ -1611,6 +2053,7 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 .filter(Boolean);
 
             const metadata = Array.from(new Set([title, author, ...tags].filter(Boolean)));
+            const original = next;
 
             let changed = true;
             while (changed) {
@@ -1634,7 +2077,8 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 .replace(/[ \t•·,;:—–-]+$/, '')
                 .trim();
 
-            return next;
+            // A body that only repeats the title (e.g. one-line notes) would otherwise become empty.
+            return next || original;
         }
 
         function extractPreviewText(doc) {
@@ -1915,6 +2359,19 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
         function applyLayout() {
             clearStackLabels();
 
+            if (!notesOnlyActive) {
+                focusedNoteItem = null;
+            }
+            notePhotoItem.remove();
+            cardItems.forEach((item) => {
+                item.classList.remove('is-note-expanded');
+                item.style.removeProperty('--note-width');
+            });
+            if (noteGridMinHeight !== null) {
+                rootGrid.style.minHeight = noteGridMinHeight;
+                noteGridMinHeight = null;
+            }
+
             const visibleCardItems = cardItems.filter((item) => {
                 const card = item.querySelector('.thumb-card');
                 const isNotesCard = card && parseTags(card).some((tag) => tag.toLowerCase() === 'notes');
@@ -1923,8 +2380,11 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 item.inert = !isVisible;
                 return isVisible;
             });
+            if (notesOnlyActive) {
+                sortByNotesOrder(visibleCardItems);
+            }
 
-            const featuredOrder = ['about', 'translation', 'poetry', 'novel', 'essay', 'Lecture', 'zine'];
+            const featuredOrder = ['about', 'translation', 'poetry', 'novel', 'essay', 'Lecture', 'upcoming'];
             const featuredTags = notesOnlyActive
                 ? ['notes']
                 : featuredOrder.filter((tag) => featuredActiveTags.has(tag) || activeTags.has(tag));
@@ -1966,6 +2426,11 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 item.style.setProperty('--y', `${randomData.y}px`);
                 item.style.setProperty('--r', randomData.r);
             });
+
+            if (notesOnlyActive && focusedNoteItem && visibleCardItems.includes(focusedNoteItem)) {
+                layoutFocusedNote(focusedNoteItem, visibleCardItems);
+                return;
+            }
 
             if (featuredTags.length > 0) {
                 const topRowY = 120;
@@ -2058,8 +2523,8 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
 
         function renderFeaturedTagToolbar() {
             const tags = allTags();
-            const featuredTags = ['about', 'translation', 'poetry', 'novel', 'essay', 'Lecture', 'zine'];
-            const featured = featuredTags.filter((tag) => tags.includes(tag));
+            const featuredTags = ['about', 'translation', 'poetry', 'novel', 'essay', 'Lecture', 'upcoming'];
+            const featured = featuredTags.filter((tag) => tag === 'upcoming' || tags.includes(tag));
 
             featuredToolbar.innerHTML = featured.map((tag) => {
                 const activeClass = featuredActiveTags.has(tag) || activeTags.has(tag) ? ' is-active' : '';
@@ -2071,6 +2536,9 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 if (button.getAttribute('data-action') === 'notes-only') {
                     button.addEventListener('click', () => {
                         notesOnlyActive = !notesOnlyActive;
+                        if (notesOnlyActive) {
+                            shuffleNotesOrder();
+                        }
                         renderFeaturedTagToolbar();
                         applyLayout();
                         if (antHillActive) {
@@ -2108,7 +2576,7 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
             const tags = allTags();
             const hiddenToggleTags = new Set(['event', 'events', 'friends', 'lecture', 'zine']);
             const remainingTags = tags.filter((tag) =>
-                !['translation', 'poetry', 'novel', 'essay', 'about', 'Lecture', 'zine'].includes(tag) &&
+                !['translation', 'poetry', 'novel', 'essay', 'about', 'Lecture', 'upcoming', 'zine'].includes(tag) &&
                 !hiddenToggleTags.has(tag.toLowerCase())
             );
 
