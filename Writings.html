@@ -50,14 +50,14 @@
 
         .tag-toolbar {
             position: fixed;
-            right: 1rem;
-            bottom: 1rem;
+            right: calc(var(--visual-viewport-right-inset, 0px) + max(1rem, env(safe-area-inset-right)));
+            bottom: calc(var(--visual-viewport-bottom-inset, 0px) + max(1rem, env(safe-area-inset-bottom)));
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             justify-content: flex-end;
             gap: 0.2rem;
-            z-index: 40;
+            z-index: 8000;
         }
 
         .featured-tag-toolbar {
@@ -65,8 +65,10 @@
             right: auto;
             top: 1rem;
             bottom: auto;
+            max-width: calc(100vw - 2rem);
             align-items: flex-start;
             flex-direction: row;
+            flex-wrap: wrap;
             justify-content: flex-start;
             gap: 0.55rem;
         }
@@ -98,6 +100,25 @@
             background: transparent;
             border: none;
             color: #1d4ed8;
+        }
+
+        @media (pointer: coarse) {
+            .tag-filter-btn {
+                min-width: 44px;
+                min-height: 44px;
+                padding: 10px 8px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .tag-toolbar,
+            .toolbar-right {
+                gap: 0.35rem;
+            }
+
+            .featured-tag-toolbar {
+                gap: 0.3rem;
+            }
         }
 
         #tunnel-svg {
@@ -611,7 +632,7 @@
             </li>
             <li class="thumb-item" style="--index: 2; z-index: 3;">
                 <a class="thumb-card" href="writings/writing-10.html" data-source="writings/writing-10.html" data-tags="notes|by:Gongmin" data-author="Gongmin" data-id="10" data-korean-title="" data-english-title="4/2" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
-                    <h2 class="thumb-title">4/2</h2>
+                    <h2 class="thumb-title">Note 1</h2>
                     <p class="thumb-byline">Gongmin</p>
                     <p class="thumb-tags"><span class="tag-pill">notes</span></p>
                     <p class="thumb-preview">Loading preview...</p>
@@ -720,7 +741,7 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 </a>
             </li>
             <li class="thumb-item" style="--index: 12; z-index: 13;">
-                <a class="thumb-card is-image-only" href="https://nereview.com/translators-notebook-gongmin/" data-source="writings/writing-20.html" data-tags="essay|about|by:Gongmin" data-author="Gongmin" data-id="20" data-image-only="1" data-korean-title="뉴 잉글랜드 리뷰 번역가의 노트" data-english-title="New England Review Translator&#39;s Notebook" data-korean-tooltip="뉴 잉글랜드 리뷰를 위해 번역가의 노트를 작성했습니다. 혐오표현과 욕설을 도대체 어떻게 번역할 수 있는가에 대한 고뇌를 조금 끄적였습니다." data-english-tooltip="I wrote a translator&#39;s notebook for the New England Review. There, I ramble on about the seeming impossibility that is translating slurs and hate speech." data-popup-image="" data-link="https://nereview.com/translators-notebook-gongmin/" target="_blank" rel="noopener noreferrer">
+                <a class="thumb-card is-image-only" href="https://nereview.com/translators-notebook-gongmin/" data-source="writings/writing-20.html" data-tags="essay|translation|by:Gongmin" data-author="Gongmin" data-id="20" data-image-only="1" data-korean-title="뉴 잉글랜드 리뷰 번역가의 노트" data-english-title="New England Review Translator&#39;s Notebook" data-korean-tooltip="뉴 잉글랜드 리뷰를 위해 번역가의 노트를 작성했습니다. 혐오표현과 욕설을 도대체 어떻게 번역할 수 있는가에 대한 고뇌를 조금 끄적였습니다." data-english-tooltip="I wrote a translator&#39;s notebook for the New England Review. There, I ramble on about the seeming impossibility that is translating slurs and hate speech." data-popup-image="" data-link="https://nereview.com/translators-notebook-gongmin/" target="_blank" rel="noopener noreferrer">
                     <img class="thumb-cover" src="/images/db21e798581374dc.jpg" alt="New England Review Translator&#39;s Notebook" loading="lazy" />
                 </a>
             </li>
@@ -779,7 +800,7 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 </a>
             </li>
             <li class="thumb-item" style="--index: 22; z-index: 23;">
-                <a class="thumb-card" href="writings/writing-33.html" data-source="writings/writing-33.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="33" data-korean-title="소개" data-english-title="소개" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                <a class="thumb-card" href="writings/writing-33.html" data-source="writings/writing-33.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="33" data-korean-title="" data-english-title="문의하기: gongminute@gmail.com" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">소개</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">about</span></p>
@@ -787,7 +808,7 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 </a>
             </li>
             <li class="thumb-item" style="--index: 23; z-index: 24;">
-                <a class="thumb-card" href="writings/writing-35.html" data-source="writings/writing-35.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="35" data-korean-title="" data-english-title="About" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
+                <a class="thumb-card" href="writings/writing-35.html" data-source="writings/writing-35.html" data-tags="about|by:Gongmin" data-author="Gongmin" data-id="35" data-korean-title="" data-english-title="For inquiries: gongminute@gmail.com" data-korean-tooltip="" data-english-tooltip="" data-popup-image="">
                     <h2 class="thumb-title">About</h2>
                     <p class="thumb-byline">Gongmin · 2026</p>
                     <p class="thumb-tags"><span class="tag-pill">about</span></p>
@@ -1049,6 +1070,10 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
         }
 
         function beginDrag(event, item) {
+            if (event.pointerType === 'touch') {
+                return;
+            }
+
             if (activeTags.size > 0) {
                 return;
             }
@@ -1070,6 +1095,7 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 offsetX: startX - pos.x,
                 offsetY: startY - pos.y,
                 startTarget: event.target,
+                dragThreshold: 3,
                 moved: false
             };
 
@@ -1092,6 +1118,12 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 return;
             }
 
+            const movedDistance = Math.hypot(event.clientX - (dragState.startX + rootGrid.getBoundingClientRect().left), event.clientY - (dragState.startY + rootGrid.getBoundingClientRect().top));
+            if (movedDistance <= dragState.dragThreshold) {
+                return;
+            }
+            dragState.moved = true;
+
             const gridRect = rootGrid.getBoundingClientRect();
             const cardWidth = 164;
             const cardHeight = 236;
@@ -1102,11 +1134,6 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
             const rawY = event.clientY - gridRect.top - dragState.offsetY;
             const x = clamp(Math.round(rawX), 10, maxX);
             const y = clamp(Math.round(rawY), 10, maxY);
-
-            const movedDistance = Math.hypot(event.clientX - (dragState.startX + gridRect.left), event.clientY - (dragState.startY + gridRect.top));
-            if (movedDistance > 3) {
-                dragState.moved = true;
-            }
 
             dragState.item.style.setProperty('--x', `${x}px`);
             dragState.item.style.setProperty('--y', `${y}px`);
@@ -1897,7 +1924,7 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 return isVisible;
             });
 
-            const featuredOrder = ['translation', 'poetry', 'novel', 'essay', 'about'];
+            const featuredOrder = ['about', 'translation', 'poetry', 'novel', 'essay', 'Lecture', 'zine'];
             const featuredTags = notesOnlyActive
                 ? ['notes']
                 : featuredOrder.filter((tag) => featuredActiveTags.has(tag) || activeTags.has(tag));
@@ -2031,15 +2058,28 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
 
         function renderFeaturedTagToolbar() {
             const tags = allTags();
-            const featuredTags = ['translation', 'poetry', 'novel', 'essay', 'about'];
+            const featuredTags = ['about', 'translation', 'poetry', 'novel', 'essay', 'Lecture', 'zine'];
             const featured = featuredTags.filter((tag) => tags.includes(tag));
 
             featuredToolbar.innerHTML = featured.map((tag) => {
                 const activeClass = featuredActiveTags.has(tag) || activeTags.has(tag) ? ' is-active' : '';
                 return `<button type="button" class="tag-filter-btn${activeClass}" data-tag="${tag}">${formatTagLabel(tag)}</button>`;
-            }).join('');
+            }).join('') +
+                `<button type="button" class="tag-filter-btn is-utility${notesOnlyActive ? ' is-active' : ''}" data-action="notes-only" aria-pressed="${notesOnlyActive}">notes</button>`;
 
             featuredToolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
+                if (button.getAttribute('data-action') === 'notes-only') {
+                    button.addEventListener('click', () => {
+                        notesOnlyActive = !notesOnlyActive;
+                        renderFeaturedTagToolbar();
+                        applyLayout();
+                        if (antHillActive) {
+                            startTunnelLoop();
+                        }
+                    });
+                    return;
+                }
+
                 button.addEventListener('click', () => {
                     const tag = button.getAttribute('data-tag');
                     if (!tag) {
@@ -2066,9 +2106,9 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
 
         function renderTagToolbar() {
             const tags = allTags();
-            const hiddenToggleTags = new Set(['event', 'events', 'friends']);
+            const hiddenToggleTags = new Set(['event', 'events', 'friends', 'lecture', 'zine']);
             const remainingTags = tags.filter((tag) =>
-                !['translation', 'poetry', 'novel', 'essay', 'about'].includes(tag) &&
+                !['translation', 'poetry', 'novel', 'essay', 'about', 'Lecture', 'zine'].includes(tag) &&
                 !hiddenToggleTags.has(tag.toLowerCase())
             );
 
@@ -2078,24 +2118,12 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
             }).join('') +
                 '<span class="toolbar-right">' +
                 `<button type="button" class="tag-filter-btn is-ant-hill${antHillActive ? ' is-active' : ''}" data-action="ant-hill" aria-pressed="${antHillActive}">ant</button>` +
-                '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">bee</button>' +
-                `<button type="button" class="tag-filter-btn is-utility${notesOnlyActive ? ' is-active' : ''}" data-action="notes-only" aria-pressed="${notesOnlyActive}">notes</button>` +
                 `<button type="button" class="tag-filter-btn is-utility${homeThemeIndex > 0 ? ' is-active' : ''}" data-action="home-theme">home</button>` +
+                '<button type="button" class="tag-filter-btn is-utility" data-action="reshuffle">shuffle</button>' +
                 '</span>';
 
             toolbar.querySelectorAll('.tag-filter-btn').forEach((button) => {
                 const action = button.getAttribute('data-action');
-                if (action === 'notes-only') {
-                    button.addEventListener('click', () => {
-                        notesOnlyActive = !notesOnlyActive;
-                        renderTagToolbar();
-                        applyLayout();
-                        if (antHillActive) {
-                            startTunnelLoop();
-                        }
-                    });
-                    return;
-                }
                 if (action === 'ant-hill') {
                     button.addEventListener('click', () => {
                         antHillActive = !antHillActive;
@@ -2110,9 +2138,13 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
                 }
                 if (action === 'reshuffle') {
                     button.addEventListener('click', () => {
+                        activeTags.clear();
+                        featuredActiveTags.clear();
                         localStorage.removeItem(LAYOUT_STORAGE_KEY);
                         randomPositions.clear();
                         buildRandomLayout();
+                        renderTagToolbar();
+                        renderFeaturedTagToolbar();
                         applyLayout();
                     });
                     return;
@@ -2154,6 +2186,18 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
             });
         }
 
+        function syncTagToolbarViewport() {
+            const viewport = window.visualViewport;
+            if (!viewport) {
+                return;
+            }
+
+            const rightInset = Math.max(0, window.innerWidth - viewport.offsetLeft - viewport.width);
+            const bottomInset = Math.max(0, window.innerHeight - viewport.offsetTop - viewport.height);
+            document.getElementById('tag-toolbar').style.setProperty('--visual-viewport-right-inset', `${rightInset}px`);
+            document.getElementById('tag-toolbar').style.setProperty('--visual-viewport-bottom-inset', `${bottomInset}px`);
+        }
+
         prepareFlipCards();
         buildRandomLayout();
 
@@ -2166,10 +2210,16 @@ I wrote the poem *Shall I Whisper It To You*, inspired the songs I heard in the 
         renderFeaturedTagToolbar();
         renderTagToolbar();
         applyLayout();
+        syncTagToolbarViewport();
         startTunnelLoop();
         setupDragging();
 
+        window.addEventListener('scroll', syncTagToolbarViewport, { passive: true });
+        window.visualViewport?.addEventListener('resize', syncTagToolbarViewport);
+        window.visualViewport?.addEventListener('scroll', syncTagToolbarViewport);
+
         window.addEventListener('resize', () => {
+            syncTagToolbarViewport();
             buildRandomLayout();
             applyLayout();
         });
